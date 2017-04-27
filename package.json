@@ -1,12 +1,20 @@
 {
   "name": "ebisu-js",
-  "version": "1.0.0",
+  "version": "0.5.3",
   "main": "index.js",
-  "license": "MIT",
+  "license": "Unlicense",
   "dependencies": {
-    "@stdlib/stdlib": "^0.0.0"
+    "@stdlib/stdlib": "^0.0.2"
   },
   "devDependencies": {
+    "browserify": "^14.3.0",
+    "choo": "^5.4.0",
+    "google-closure-compiler-js": "^20170409.0.0",
+    "plotly.js": "^1.26.1",
     "tape": "^4.6.3"
+  },
+  "scripts": {
+    "build": "make",
+    "test": "tape test.js"
   }
 }

@@ -1,0 +1,73 @@
+<head>
+  <meta charset="utf-8" />
+  <title>Ebisu.js</title>
+  <link rel="stylesheet" href="client/modest.css">
+  <link rel="stylesheet" href="client/custom.css">
+</head>
+<h1 id="ebisu.js">Ebisu.js</h1>
+<p>This is a JavaScript port of the original Python implementation of <a href="https://github.com/fasiha/ebisu">Ebisu</a>, a public-domain library intended for use by quiz apps to intelligently handle scheduling. See <a href="https://github.com/fasiha/ebisu">Ebisu’s literate documentation</a> for <em>all</em> the details! This document just contains a quick guide to how things work.</p>
+<h2 id="install">Install</h2>
+<p><strong>Node.js</strong> Run <code>yarn add ebisu</code> (or <code>npm install --save ebisu</code>) first. Then, <code>var ebisu = require('ebisu');</code> in your code.</p>
+<p><strong>Browser</strong> Download <code>dist/ebisu.min.js</code> for the browser, then <code>&lt;script type=&quot;text/javascript&quot; src=&quot;ebisu.min.js&quot;&gt;&lt;/script&gt;</code> in your HTML.</p>
+<h2 id="api-howto">API howto</h2>
+<p>Let’s start working immediately with code and we’ll explain as we go.</p>
+<p>First, in Node, e.g.,</p>
+<div class="sourceCode"><pre class="sourceCode js"><code class="sourceCode javascript"><span class="kw">var</span> ebisu <span class="op">=</span> <span class="at">require</span>(<span class="st">&#39;ebisu&#39;</span>)<span class="op">;</span></code></pre></div>
+<p>or if you’re developing in this repo,</p>
+<div class="sourceCode"><pre class="sourceCode js"><code class="sourceCode javascript"><span class="kw">var</span> ebisu <span class="op">=</span> <span class="at">require</span>(<span class="st">&#39;./index&#39;</span>)<span class="op">;</span></code></pre></div>
+<p>(The <code>ebisu</code> module is loaded in this webpage. Pop open your JavaScript console to try it out.)</p>
+<h3 id="memory-model">Memory model</h3>
+<p>Now, it’s important to know that Ebisu is a very narrowly-scoped library: it aims to answer just two questions:</p>
+<ul>
+<li>given a set of facts that a student is learning, which is the most (or least) likely to be forgotten?</li>
+<li>After the student is quizzed on one of these facts, how does the result get incorporated into Ebisu’s model of that fact’s memory strength?</li>
+</ul>
+<p>Ebisu doesn’t concern itself with what these facts are, what they mean, nor does it handle <em>storing</em> the results of reviews. The external quiz app, at a minimum, stores a probability <em>model</em> with each fact’s memory strength, and it is this <em>model</em> that Ebisu transforms into predictions about recall probability or into <em>new</em> models after a quiz occurs.</p>
+<p>Create a <em>default</em> model to assign newly-learned facts:</p>
+<div class="sourceCode"><pre class="sourceCode js"><code class="sourceCode javascript"><span class="kw">var</span> defaultModel <span class="op">=</span> <span class="va">ebisu</span>.<span class="at">defaultModel</span>(<span class="dv">24</span>)<span class="op">;</span>
+<span class="co">// Also ok: `ebisu.defaultModel(24, 4)` or even `ebisu.defaultModel(24, 4, 4)`.</span>
+<span class="va">console</span>.<span class="at">log</span>(defaultModel)<span class="op">;</span></code></pre></div>
+<p>This returns a three-element array of numbers: we’ll call them <code>[a, b, t]</code>.</p>
+<p>These three numbers describe the probability distribution on a fact’s recall probability. Specifically, they say that, <code>24</code> hours after review, we believe this fact’s recall probability will have a <code>Beta(a, b)</code> distribution, whose histogram looks like this, for a few thousand samples: <div id="betarng-choo"></div> <div id="betarng-render"></div> In the interactive graph above, that <strong>fourth</strong> slider above lets you say how much time has <em>actually</em> elapsed since this fact was last reviewed. If you move it to be <em>more</em> or <em>less</em> than 24 hours, you’ll see the bulk of the histogram move <em>left</em> or <em>right</em>, since the less time elapsed, the more likely the student remembers this fact.</p>
+<p>You can also move the sliders for <code>a</code> and <code>b</code>. Move the two time sliders back to 24 hours and notice that when <code>a = b</code>, the distribution is centered around 0.5. In this case, <code>t</code> is a half-life, i.e., the length of time it takes for recall probability to drop to 50%. If this <code>a = b</code> is high, the histogram tightly clusters around 0.5. For small <code>a = b</code>, the histogram is very diffuse around 0.5.</p>
+<blockquote>
+<p>We use the <a href="https://en.wikipedia.org/wiki/Beta_distribution">Beta distribution</a>, and not some other probability distribution on numbers between 0 and 1, for <a href="https://en.wikipedia.org/wiki/Conjugate_prior">statistical reasons</a> that are indicated in depth in the <a href="https://fasiha.github.io/ebisu/#bernoulli-quizzes">Ebisu math</a> writeup.</p>
+</blockquote>
+<p>This should give you some insight into what those three numbers, <code>[4, 4, 24]</code> mean, and why you might want to customize them—you might want the half-life to be just two hours instead of a whole day, in which case you’d set <code>defaultModel</code> to <code>ebisu.defaultModel(2)</code>.</p>
+<h3 id="predict-current-recall-probability-ebisu.predictrecall">Predict current recall probability: <code>ebisu.predictRecall</code></h3>
+<p>Given a set of models for facts that the student has learned, you can ask Ebisu to predict each fact’s recall probability by passing in its model and the currently elapsed time since that fact was last reviewed or quizzed via <code>ebisu.predictRecall</code>:</p>
+<div class="sourceCode"><pre class="sourceCode js"><code class="sourceCode javascript"><span class="kw">var</span> model <span class="op">=</span> defaultModel<span class="op">;</span>
+<span class="kw">var</span> elapsed <span class="op">=</span> <span class="dv">1</span><span class="op">;</span>
+<span class="kw">var</span> predictedRecall <span class="op">=</span> <span class="va">ebisu</span>.<span class="at">predictRecall</span>(model<span class="op">,</span> elapsed)<span class="op">;</span>
+<span class="va">console</span>.<span class="at">log</span>(predictedRecall)<span class="op">;</span></code></pre></div>
+<p>This function efficiently calculates the <em>mean</em> of the histogram of recall probabilities in the interactive demo above (it uses math, not histograms!). Below you can see what this function would return for different models. <div id="predict-choo"></div> <div id="predict-render"></div></p>
+<p>A quiz app can call this function on each fact to find which fact is most in danger of being forgotten—that’s the one with the lowest predicted recall probability.</p>
+<blockquote>
+<p>If your quiz app starts having thousands of facts, and it becomes computationally-burdensome to evaluate this function over and over again, you can build a look-up table containing a range of elapsed times and their predicted recall probabilities, then linearly-interpolate into it.</p>
+</blockquote>
+<h3 id="update-a-recall-probability-model-given-a-quiz-result-ebisu.updaterecall">Update a recall probability model given a quiz result: <code>ebisu.updateRecall</code></h3>
+<p>Suppose your quiz app has chosen a fact to quiz and the result is in, either success or failure.</p>
+<div class="sourceCode"><pre class="sourceCode js"><code class="sourceCode javascript"><span class="kw">var</span> model <span class="op">=</span> defaultModel<span class="op">;</span>
+<span class="kw">var</span> result <span class="op">=</span> <span class="kw">true</span><span class="op">;</span>
+<span class="kw">var</span> elapsed <span class="op">=</span> <span class="dv">10</span><span class="op">;</span>
+<span class="kw">var</span> newModel <span class="op">=</span> <span class="va">ebisu</span>.<span class="at">updateRecall</span>(model<span class="op">,</span> result<span class="op">,</span> elapsed)<span class="op">;</span>
+<span class="va">console</span>.<span class="at">log</span>(newModel)<span class="op">;</span></code></pre></div>
+<p>The new model is a new 3-array with a new <code>[a, b, t]</code>. The Bayesian update magic happens inside here: see here for <a href="https://fasiha.github.io/ebisu/#updating-the-posterior-with-quiz-results">the gory math details</a>.</p>
+<h3 id="summary">Summary</h3>
+<p>That’s it! That’s the entire API:</p>
+<ul>
+<li><code>ebisu.defaultModel(t, [a, [b]]) -&gt; model</code> if you can’t bother to create a 3-array,</li>
+<li><code>ebisu.predictRecall(model, tnow) -&gt; number</code> predicts the current recall probability given a model and the time elapsed since the last review or quiz, and</li>
+<li><code>ebisu.updateRecall(model, result, tnow) -&gt; model</code> to update the model given a quiz result and time after its last review.</li>
+</ul>
+<h2 id="building">Building</h2>
+<p>I use <a href="https://yarnpkg.com">yarn</a>, but you don’t have to.</p>
+<p>We use <code>tape</code> for tests: run <code>yarn test</code> (or <code>npm test</code>). This consumes <code>test.json</code>, which came from the <a href="https://fasiha.github.io/ebisu/">Ebisu Python reference implementation</a>.</p>
+<p>The version of this repo matches the Python reference’s.</p>
+<p>We use Browserify followed by Google Closure Compiler to minify Ebisu for the browser (and the interactive components of the website). <code>Makefile</code> coordinates the builds—I prefer <code>make</code> to yarn scripts because Google Closure Compiler takes a few seconds to run, and <code>make</code> easily ensures it’s only run when it needs to.</p>
+<h2 id="acknowledgements">Acknowledgements</h2>
+<p>The interactive website uses <a href="https://choo.io/">Choo</a>, which is, as advertised, quite cute.</p>
+<p>I’m super-grateful for, and happily acknowledge, the hard work of Athan Reines and collaborators on <a href="https://github.com/stdlib-js/stdlib">Stdlib.js</a>, which promises to be the math library JavaScript so badly needs.</p>
+<script type="text/javascript" src="client/plotly.min.js"></script>
+<script type="text/javascript" src="client/interactive.min.js" async></script>
+<script type="text/javascript" src="dist/ebisu.min.js" async></script>

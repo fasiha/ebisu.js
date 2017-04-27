@@ -8,7 +8,7 @@ var lse = require('./logsumexp');
 var log;
 var exp;
 var expm1;
-if (false) {
+if (true) {
   log = Math.log;
   exp = Math.exp;
   expm1 = Math.expm1;
@@ -65,7 +65,6 @@ function updateRecall(prior, result, tnow) {
 
     v = exp(n[0] - d[0])
   }
-  console.log(mu, v);
   var [newAlpha, newBeta] = meanVarToBeta(mu, v);
   return [ newAlpha, newBeta, tnow ];
 }
