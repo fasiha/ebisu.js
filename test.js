@@ -27,5 +27,3 @@ test('compare', (t) => {
   }
   t.end();
 });
-
-ref[6]

@@ -2,8 +2,6 @@
 
 var gammaln = require(
     '@stdlib/stdlib/lib/node_modules/@stdlib/math/base/special/gammaln');
-var betarand =
-    require('@stdlib/stdlib/lib/node_modules/@stdlib/math/base/random/beta');
 
 var lse = require('./logsumexp');
 
@@ -11,9 +9,9 @@ var log;
 var exp;
 var expm1;
 if (false) {
-  var log = Math.log;
-  var exp = Math.exp;
-  var expm1 = Math.expm1;
+  log = Math.log;
+  exp = Math.exp;
+  expm1 = Math.expm1;
 } else {
   log =
       require('@stdlib/stdlib/lib/node_modules/@stdlib/math/base/special/log');
@@ -67,7 +65,7 @@ function updateRecall(prior, result, tnow) {
 
     v = exp(n[0] - d[0])
   }
-  console.log(mu,v);
+  console.log(mu, v);
   var [newAlpha, newBeta] = meanVarToBeta(mu, v);
   return [ newAlpha, newBeta, tnow ];
 }
@@ -79,9 +77,10 @@ function meanVarToBeta(mean, v) {
   return [ alpha, beta ];
 }
 
-// updateRecall([4.4,5.5,6.6],true,91.1)
+function defaultModel(t, a = 4.0, b = a) { return [ a, b, t ]; }
 
 module.exports = {
   updateRecall : updateRecall,
-  predictRecall : predictRecall
+  predictRecall : predictRecall,
+  defaultModel : defaultModel
 };
