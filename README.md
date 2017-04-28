@@ -1,12 +1,24 @@
-#Ebisu.js
+# Ebisu.js
 
 This is a JavaScript port of the original Python implementation of [Ebisu](https://github.com/fasiha/ebisu), a public-domain library intended for use by quiz apps to intelligently handle scheduling. See [Ebisu’s literate documentation](https://github.com/fasiha/ebisu) for *all* the details! This document just contains a quick guide to how things work.
 
 ## Install
 
-**Node.js** Run `yarn add ebisu` (or `npm install --save ebisu`) first. Then, `var ebisu = require('ebisu');` in your code.
+**Node.js** First,
+```
+$ yarn add ebisu
+# or
+$ npm install --save ebisu
+```
+Then, in your code,
+```js
+var ebisu = require('ebisu');
+```
 
-**Browser** Download `dist/ebisu.min.js` for the browser, then `<script type="text/javascript" src="ebisu.min.js"></script>` in your HTML.
+**Browser** Download `dist/ebisu.min.js` for the browser, then in your HTML:
+```html
+<script type="text/javascript" src="ebisu.min.js"></script>
+```
 
 ## API howto
 
