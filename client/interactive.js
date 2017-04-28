@@ -9,7 +9,7 @@ var lse = require('./logsumexp');
 var log;
 var exp;
 var expm1;
-if (false) {
+if (true) {
   log = Math.log;
   exp = Math.exp;
   expm1 = Math.expm1;
@@ -196,7 +196,7 @@ var betarngMain = function(state, emit) {
   function changeTnow(e) { emit('changeTnow', e.target.value); }
   function lockBToA(e) { emit('lockBToA', e.target.checked); }
 };
-betarng.route('/', betarngMain);
+betarng.route('*', betarngMain);
 betarng.mount('#betarng-choo');
 
 // Predict plot
@@ -255,7 +255,7 @@ var predictMain = function(state, emit) {
   function changeBeta(e) { emit('changeBeta', e.target.value); }
   function changeT(e) { emit('changeT', e.target.value); }
 };
-predict.route('/', predictMain);
+predict.route('*', predictMain);
 predict.mount('#predict-choo');
 
 },{"./index":1,"@stdlib/stdlib/lib/node_modules/@stdlib/math/base/random/beta":61,"choo":222,"choo/html":221}],3:[function(require,module,exports){

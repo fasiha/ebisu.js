@@ -108,7 +108,7 @@ var betarngMain = function(state, emit) {
   function changeTnow(e) { emit('changeTnow', e.target.value); }
   function lockBToA(e) { emit('lockBToA', e.target.checked); }
 };
-betarng.route('/', betarngMain);
+betarng.route('*', betarngMain);
 betarng.mount('#betarng-choo');
 
 // Predict plot
@@ -167,5 +167,5 @@ var predictMain = function(state, emit) {
   function changeBeta(e) { emit('changeBeta', e.target.value); }
   function changeT(e) { emit('changeT', e.target.value); }
 };
-predict.route('/', predictMain);
+predict.route('*', predictMain);
 predict.mount('#predict-choo');
