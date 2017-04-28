@@ -2,6 +2,8 @@
 
 This is a JavaScript port of the original Python implementation of [Ebisu](https://github.com/fasiha/ebisu), a public-domain library intended for use by quiz apps to intelligently handle scheduling. See [Ebisu’s literate documentation](https://github.com/fasiha/ebisu) for *all* the details! This document just contains a quick guide to how things work.
 
+Browse this library’s [GitHub repo](https://github.com/fasiha/ebisu.js). Read this [document in HTML](https://fasiha.github.io/ebisu.js/) (cool interactive demos!).
+
 ## Install
 
 **Node.js** First,
