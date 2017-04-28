@@ -110,6 +110,8 @@ We use Browserify followed by Google Closure Compiler to minify Ebisu for the br
 
 ## Acknowledgements
 
-The interactive website uses [Choo](https://choo.io/), which is, as advertised, quite cute.
+The interactive website uses [Choo](https://choo.io), which is, as advertised, quite cute.
+
+It’s generated from Markdown via [Pandoc](http://pandoc.org), and styled with John Otander’s [Modest CSS](http://markdowncss.github.io/modest/).
 
 I’m super-grateful for, and happily acknowledge, the hard work of Athan Reines and collaborators on [Stdlib.js](https://github.com/stdlib-js/stdlib), which promises to be the math library JavaScript so badly needs.
