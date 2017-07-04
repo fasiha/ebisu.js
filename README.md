@@ -8,13 +8,13 @@ Browse this library’s [GitHub repo](https://github.com/fasiha/ebisu.js). Read 
 
 **Node.js** First,
 ```
-$ yarn add ebisu
+$ yarn add ebisu-js
 # or
-$ npm install --save ebisu
+$ npm install --save ebisu-js
 ```
 Then, in your code,
 ```js
-var ebisu = require('ebisu');
+var ebisu = require('ebisu-js');
 ```
 
 **Browser** Download `dist/ebisu.min.js` for the browser, then in your HTML:

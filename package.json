@@ -13,6 +13,8 @@
     "plotly.js": "^1.26.1",
     "tape": "^4.6.3"
   },
+  "repository": "fasiha/ebisu.js",
+  "bugs": "https://github.com/fasiha/ebisu.js/issues",
   "scripts": {
     "build": "make",
     "test": "tape test.js"
