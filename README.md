@@ -17,7 +17,7 @@ Then, in your code,
 var ebisu = require('ebisu-js');
 ```
 
-**Browser** Download `dist/ebisu.min.js` for the browser, then in your HTML:
+**Browser** Download [`dist/ebisu.min.js`](https://raw.githubusercontent.com/fasiha/ebisu.js/gh-pages/dist/ebisu.min.js) for the browser, then in your HTML:
 ```html
 <script type="text/javascript" src="ebisu.min.js"></script>
 ```
