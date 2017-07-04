@@ -28,7 +28,7 @@ Let’s start working immediately with code and we’ll explain as we go.
 
 First, in Node, e.g.,
 ```js
-var ebisu = require('ebisu');
+var ebisu = require('ebisu-js');
 ```
 or if you’re developing in this repo,
 ```js
