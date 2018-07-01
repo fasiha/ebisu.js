@@ -16,9 +16,7 @@
 <p>Browse this library’s <a href="https://github.com/fasiha/ebisu.js">GitHub repo</a>. Read this <a href="https://fasiha.github.io/ebisu.js/">document in HTML</a> (cool interactive demos!).</p>
 <h2 id="install">Install</h2>
 <p><strong>Node.js</strong> First,</p>
-<pre><code>$ yarn add ebisu-js
-# or
-$ npm install --save ebisu-js</code></pre>
+<pre><code>$ npm install --save ebisu-js</code></pre>
 <p>Then, in your code,</p>
 <div class="sourceCode"><pre class="sourceCode js"><code class="sourceCode javascript"><span class="kw">var</span> ebisu <span class="op">=</span> <span class="at">require</span>(<span class="st">&#39;ebisu-js&#39;</span>)<span class="op">;</span></code></pre></div>
 <p><strong>Browser</strong> Download <a href="https://raw.githubusercontent.com/fasiha/ebisu.js/gh-pages/dist/ebisu.min.js"><code>dist/ebisu.min.js</code></a> for the browser, then in your HTML:</p>
@@ -75,10 +73,9 @@ $ npm install --save ebisu-js</code></pre>
 <li><code>ebisu.updateRecall(model, result, tnow) -&gt; model</code> to update the model given a quiz result and time after its last review.</li>
 </ul>
 <h2 id="building">Building</h2>
-<p>I use <a href="https://yarnpkg.com">yarn</a>, but you don’t have to.</p>
-<p>We use <code>tape</code> for tests: run <code>yarn test</code> (or <code>npm test</code>). This consumes <code>test.json</code>, which came from the <a href="https://fasiha.github.io/ebisu/">Ebisu Python reference implementation</a>.</p>
+<p>We use <code>tape</code> for tests: run <code>npm test</code>. This consumes <code>test.json</code>, which came from the <a href="https://fasiha.github.io/ebisu/">Ebisu Python reference implementation</a>.</p>
 <p>The version of this repo matches the Python reference’s.</p>
-<p>We use Browserify followed by Google Closure Compiler to minify Ebisu for the browser (and the interactive components of the website). <code>Makefile</code> coordinates the builds—I prefer <code>make</code> to yarn scripts because Google Closure Compiler takes a few seconds to run, and <code>make</code> easily ensures it’s only run when it needs to.</p>
+<p>We use Browserify followed by Google Closure Compiler to minify Ebisu for the browser (and the interactive components of the website). <code>Makefile</code> coordinates the builds—I prefer <code>make</code> to npm scripts because Google Closure Compiler takes a few seconds to run, and <code>make</code> easily ensures it’s only run when it needs to.</p>
 <h2 id="acknowledgements">Acknowledgements</h2>
 <p>I’m super-grateful for, and happily acknowledge, the hard work of Athan Reines and collaborators on <a href="https://github.com/stdlib-js/stdlib">Stdlib.js</a>, which promises to be the math library JavaScript so badly needs.</p>
 <p>The interactive website uses <a href="https://choo.io">Choo</a>, which is, as advertised, quite cute.</p>

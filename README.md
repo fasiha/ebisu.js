@@ -8,8 +8,6 @@ Browse this library’s [GitHub repo](https://github.com/fasiha/ebisu.js). Read 
 
 **Node.js** First,
 ```
-$ yarn add ebisu-js
-# or
 $ npm install --save ebisu-js
 ```
 Then, in your code,
@@ -102,13 +100,11 @@ That’s it! That’s the entire API:
 
 ## Building
 
-I use [yarn](https://yarnpkg.com), but you don’t have to.
-
-We use `tape` for tests: run `yarn test` (or `npm test`). This consumes `test.json`, which came from the [Ebisu Python reference implementation](https://fasiha.github.io/ebisu/).
+We use `tape` for tests: run `npm test`. This consumes `test.json`, which came from the [Ebisu Python reference implementation](https://fasiha.github.io/ebisu/).
 
 The version of this repo matches the Python reference’s.
 
-We use Browserify followed by Google Closure Compiler to minify Ebisu for the browser (and the interactive components of the website). `Makefile` coordinates the builds—I prefer `make` to yarn scripts because Google Closure Compiler takes a few seconds to run, and `make` easily ensures it’s only run when it needs to.
+We use Browserify followed by Google Closure Compiler to minify Ebisu for the browser (and the interactive components of the website). `Makefile` coordinates the builds—I prefer `make` to npm scripts because Google Closure Compiler takes a few seconds to run, and `make` easily ensures it’s only run when it needs to.
 
 ## Acknowledgements
 

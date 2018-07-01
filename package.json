@@ -10,7 +10,6 @@
     "browserify": "^14.3.0",
     "choo": "^5.4.0",
     "google-closure-compiler-js": "^20180101.0.0",
-    "plotly.js": "^1.26.1",
     "tape": "^4.6.3"
   },
   "repository": "fasiha/ebisu.js",
