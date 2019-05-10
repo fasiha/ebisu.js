@@ -1,4 +1,4 @@
-(function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.ebisu = f()}})(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
+(function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.ebisu = f()}})(function(){var define,module,exports;return (function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c="function"==typeof require&&require;if(!f&&c)return c(i,!0);if(u)return u(i,!0);var a=new Error("Cannot find module '"+i+"'");throw a.code="MODULE_NOT_FOUND",a}var p=n[i]={exports:{}};e[i][0].call(p.exports,function(r){var n=e[i][1][r];return o(n||r)},p,p.exports,r,e,n,t)}return n[i].exports}for(var u="function"==typeof require&&require,i=0;i<t.length;i++)o(t[i]);return o}return r})()({1:[function(require,module,exports){
 "use strict";
 
 var gammaln = require(
@@ -85,7 +85,7 @@ module.exports = {
   defaultModel : defaultModel
 };
 
-},{"./logsumexp":2,"@stdlib/stdlib/lib/node_modules/@stdlib/math/base/special/exp":26,"@stdlib/stdlib/lib/node_modules/@stdlib/math/base/special/expm1":28,"@stdlib/stdlib/lib/node_modules/@stdlib/math/base/special/gammaln":32,"@stdlib/stdlib/lib/node_modules/@stdlib/math/base/special/log":41}],2:[function(require,module,exports){
+},{"./logsumexp":2,"@stdlib/stdlib/lib/node_modules/@stdlib/math/base/special/exp":71,"@stdlib/stdlib/lib/node_modules/@stdlib/math/base/special/expm1":74,"@stdlib/stdlib/lib/node_modules/@stdlib/math/base/special/gammaln":79,"@stdlib/stdlib/lib/node_modules/@stdlib/math/base/special/log":102}],2:[function(require,module,exports){
 var exp = Math.exp;
 var log = Math.log;
 var sign = Math.sign;
@@ -106,6 +106,703 @@ function logsumexp(a, b) {
 module.exports = logsumexp;
 
 },{}],3:[function(require,module,exports){
+/**
+* @license Apache-2.0
+*
+* Copyright (c) 2018 The Stdlib Authors.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*    http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
+
+'use strict';
+
+// MAIN //
+
+var ctor = ( typeof Float64Array === 'function' ) ? Float64Array : null; // eslint-disable-line stdlib/require-globals
+
+
+// EXPORTS //
+
+module.exports = ctor;
+
+},{}],4:[function(require,module,exports){
+/**
+* @license Apache-2.0
+*
+* Copyright (c) 2018 The Stdlib Authors.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*    http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
+
+'use strict';
+
+/**
+* Typed array constructor which returns a typed array representing an array of double-precision floating-point numbers in the platform byte order.
+*
+* @module @stdlib/array/float64
+*
+* @example
+* var ctor = require( '@stdlib/array/float64' );
+*
+* var arr = new ctor( 10 );
+* // returns <Float64Array>
+*/
+
+// MODULES //
+
+var hasFloat64ArraySupport = require( '@stdlib/assert/has-float64array-support' );
+var builtin = require( './float64array.js' );
+var polyfill = require( './polyfill.js' );
+
+
+// MAIN //
+
+var ctor;
+if ( hasFloat64ArraySupport() ) {
+	ctor = builtin;
+} else {
+	ctor = polyfill;
+}
+
+
+// EXPORTS //
+
+module.exports = ctor;
+
+},{"./float64array.js":3,"./polyfill.js":5,"@stdlib/assert/has-float64array-support":16}],5:[function(require,module,exports){
+/**
+* @license Apache-2.0
+*
+* Copyright (c) 2018 The Stdlib Authors.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*    http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
+
+'use strict';
+
+// TODO: write polyfill
+
+// MAIN //
+
+/**
+* Typed array which represents an array of double-precision floating-point numbers in the platform byte order.
+*
+* @throws {Error} not implemented
+*/
+function polyfill() {
+	throw new Error( 'not implemented' );
+}
+
+
+// EXPORTS //
+
+module.exports = polyfill;
+
+},{}],6:[function(require,module,exports){
+/**
+* @license Apache-2.0
+*
+* Copyright (c) 2018 The Stdlib Authors.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*    http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
+
+'use strict';
+
+/**
+* Typed array constructor which returns a typed array representing an array of 16-bit unsigned integers in the platform byte order.
+*
+* @module @stdlib/array/uint16
+*
+* @example
+* var ctor = require( '@stdlib/array/uint16' );
+*
+* var arr = new ctor( 10 );
+* // returns <Uint16Array>
+*/
+
+// MODULES //
+
+var hasUint16ArraySupport = require( '@stdlib/assert/has-uint16array-support' );
+var builtin = require( './uint16array.js' );
+var polyfill = require( './polyfill.js' );
+
+
+// MAIN //
+
+var ctor;
+if ( hasUint16ArraySupport() ) {
+	ctor = builtin;
+} else {
+	ctor = polyfill;
+}
+
+
+// EXPORTS //
+
+module.exports = ctor;
+
+},{"./polyfill.js":7,"./uint16array.js":8,"@stdlib/assert/has-uint16array-support":24}],7:[function(require,module,exports){
+/**
+* @license Apache-2.0
+*
+* Copyright (c) 2018 The Stdlib Authors.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*    http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
+
+'use strict';
+
+// TODO: write polyfill
+
+// MAIN //
+
+/**
+* Typed array which represents an array of 16-bit unsigned integers in the platform byte order.
+*
+* @throws {Error} not implemented
+*/
+function polyfill() {
+	throw new Error( 'not implemented' );
+}
+
+
+// EXPORTS //
+
+module.exports = polyfill;
+
+},{}],8:[function(require,module,exports){
+/**
+* @license Apache-2.0
+*
+* Copyright (c) 2018 The Stdlib Authors.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*    http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
+
+'use strict';
+
+// MAIN //
+
+var ctor = ( typeof Uint16Array === 'function' ) ? Uint16Array : null; // eslint-disable-line stdlib/require-globals
+
+
+// EXPORTS //
+
+module.exports = ctor;
+
+},{}],9:[function(require,module,exports){
+/**
+* @license Apache-2.0
+*
+* Copyright (c) 2018 The Stdlib Authors.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*    http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
+
+'use strict';
+
+/**
+* Typed array constructor which returns a typed array representing an array of 32-bit unsigned integers in the platform byte order.
+*
+* @module @stdlib/array/uint32
+*
+* @example
+* var ctor = require( '@stdlib/array/uint32' );
+*
+* var arr = new ctor( 10 );
+* // returns <Uint32Array>
+*/
+
+// MODULES //
+
+var hasUint32ArraySupport = require( '@stdlib/assert/has-uint32array-support' );
+var builtin = require( './uint32array.js' );
+var polyfill = require( './polyfill.js' );
+
+
+// MAIN //
+
+var ctor;
+if ( hasUint32ArraySupport() ) {
+	ctor = builtin;
+} else {
+	ctor = polyfill;
+}
+
+
+// EXPORTS //
+
+module.exports = ctor;
+
+},{"./polyfill.js":10,"./uint32array.js":11,"@stdlib/assert/has-uint32array-support":27}],10:[function(require,module,exports){
+/**
+* @license Apache-2.0
+*
+* Copyright (c) 2018 The Stdlib Authors.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*    http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
+
+'use strict';
+
+// TODO: write polyfill
+
+// MAIN //
+
+/**
+* Typed array which represents an array of 32-bit unsigned integers in the platform byte order.
+*
+* @throws {Error} not implemented
+*/
+function polyfill() {
+	throw new Error( 'not implemented' );
+}
+
+
+// EXPORTS //
+
+module.exports = polyfill;
+
+},{}],11:[function(require,module,exports){
+/**
+* @license Apache-2.0
+*
+* Copyright (c) 2018 The Stdlib Authors.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*    http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
+
+'use strict';
+
+// MAIN //
+
+var ctor = ( typeof Uint32Array === 'function' ) ? Uint32Array : null; // eslint-disable-line stdlib/require-globals
+
+
+// EXPORTS //
+
+module.exports = ctor;
+
+},{}],12:[function(require,module,exports){
+/**
+* @license Apache-2.0
+*
+* Copyright (c) 2018 The Stdlib Authors.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*    http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
+
+'use strict';
+
+/**
+* Typed array constructor which returns a typed array representing an array of 8-bit unsigned integers in the platform byte order.
+*
+* @module @stdlib/array/uint8
+*
+* @example
+* var ctor = require( '@stdlib/array/uint8' );
+*
+* var arr = new ctor( 10 );
+* // returns <Uint8Array>
+*/
+
+// MODULES //
+
+var hasUint8ArraySupport = require( '@stdlib/assert/has-uint8array-support' );
+var builtin = require( './uint8array.js' );
+var polyfill = require( './polyfill.js' );
+
+
+// MAIN //
+
+var ctor;
+if ( hasUint8ArraySupport() ) {
+	ctor = builtin;
+} else {
+	ctor = polyfill;
+}
+
+
+// EXPORTS //
+
+module.exports = ctor;
+
+},{"./polyfill.js":13,"./uint8array.js":14,"@stdlib/assert/has-uint8array-support":30}],13:[function(require,module,exports){
+/**
+* @license Apache-2.0
+*
+* Copyright (c) 2018 The Stdlib Authors.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*    http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
+
+'use strict';
+
+// TODO: write polyfill
+
+// MAIN //
+
+/**
+* Typed array which represents an array of 8-bit unsigned integers in the platform byte order.
+*
+* @throws {Error} not implemented
+*/
+function polyfill() {
+	throw new Error( 'not implemented' );
+}
+
+
+// EXPORTS //
+
+module.exports = polyfill;
+
+},{}],14:[function(require,module,exports){
+/**
+* @license Apache-2.0
+*
+* Copyright (c) 2018 The Stdlib Authors.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*    http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
+
+'use strict';
+
+// MAIN //
+
+var ctor = ( typeof Uint8Array === 'function' ) ? Uint8Array : null; // eslint-disable-line stdlib/require-globals
+
+
+// EXPORTS //
+
+module.exports = ctor;
+
+},{}],15:[function(require,module,exports){
+/**
+* @license Apache-2.0
+*
+* Copyright (c) 2018 The Stdlib Authors.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*    http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
+
+'use strict';
+
+// MAIN //
+
+var main = ( typeof Float64Array === 'function' ) ? Float64Array : null; // eslint-disable-line stdlib/require-globals
+
+
+// EXPORTS //
+
+module.exports = main;
+
+},{}],16:[function(require,module,exports){
+/**
+* @license Apache-2.0
+*
+* Copyright (c) 2018 The Stdlib Authors.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*    http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
+
+'use strict';
+
+/**
+* Test for native `Float64Array` support.
+*
+* @module @stdlib/assert/has-float64array-support
+*
+* @example
+* var hasFloat64ArraySupport = require( '@stdlib/assert/has-float64array-support' );
+*
+* var bool = hasFloat64ArraySupport();
+* // returns <boolean>
+*/
+
+// MODULES //
+
+var hasFloat64ArraySupport = require( './main.js' );
+
+
+// EXPORTS //
+
+module.exports = hasFloat64ArraySupport;
+
+},{"./main.js":17}],17:[function(require,module,exports){
+/**
+* @license Apache-2.0
+*
+* Copyright (c) 2018 The Stdlib Authors.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*    http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
+
+'use strict';
+
+// MODULES //
+
+var isFloat64Array = require( '@stdlib/assert/is-float64array' );
+var GlobalFloat64Array = require( './float64array.js' );
+
+
+// MAIN //
+
+/**
+* Tests for native `Float64Array` support.
+*
+* @returns {boolean} boolean indicating if an environment has `Float64Array` support
+*
+* @example
+* var bool = hasFloat64ArraySupport();
+* // returns <boolean>
+*/
+function hasFloat64ArraySupport() {
+	var bool;
+	var arr;
+
+	if ( typeof GlobalFloat64Array !== 'function' ) {
+		return false;
+	}
+	// Test basic support...
+	try {
+		arr = new GlobalFloat64Array( [ 1.0, 3.14, -3.14, NaN ] );
+		bool = (
+			isFloat64Array( arr ) &&
+			arr[ 0 ] === 1.0 &&
+			arr[ 1 ] === 3.14 &&
+			arr[ 2 ] === -3.14 &&
+			arr[ 3 ] !== arr[ 3 ]
+		);
+	} catch ( err ) { // eslint-disable-line no-unused-vars
+		bool = false;
+	}
+	return bool;
+}
+
+
+// EXPORTS //
+
+module.exports = hasFloat64ArraySupport;
+
+},{"./float64array.js":15,"@stdlib/assert/is-float64array":33}],18:[function(require,module,exports){
+/**
+* @license Apache-2.0
+*
+* Copyright (c) 2018 The Stdlib Authors.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*    http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
+
+'use strict';
+
+/**
+* Test whether an object has a specified property.
+*
+* @module @stdlib/assert/has-own-property
+*
+* @example
+* var hasOwnProp = require( '@stdlib/assert/has-own-property' );
+*
+* var beep = {
+*     'boop': true
+* };
+*
+* var bool = hasOwnProp( beep, 'boop' );
+* // returns true
+*
+* bool = hasOwnProp( beep, 'bop' );
+* // returns false
+*/
+
+// MODULES //
+
+var hasOwnProp = require( './main.js' );
+
+
+// EXPORTS //
+
+module.exports = hasOwnProp;
+
+},{"./main.js":19}],19:[function(require,module,exports){
+/**
+* @license Apache-2.0
+*
+* Copyright (c) 2018 The Stdlib Authors.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*    http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
+
 'use strict';
 
 // FUNCTIONS //
@@ -146,45 +843,634 @@ function hasOwnProp( value, property ) {
 		return false;
 	}
 	return has.call( value, property );
-} // end FUNCTION hasOwnProp()
+}
 
 
 // EXPORTS //
 
 module.exports = hasOwnProp;
 
-},{}],4:[function(require,module,exports){
+},{}],20:[function(require,module,exports){
+/**
+* @license Apache-2.0
+*
+* Copyright (c) 2018 The Stdlib Authors.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*    http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
+
 'use strict';
 
 /**
-* Test whether an object has a specified property.
+* Test for native `Symbol` support.
 *
-* @module @stdlib/assert/has-own-property
+* @module @stdlib/assert/has-symbol-support
 *
 * @example
-* var hasOwnProp = require( '@stdlib/assert/has-own-property' );
+* var hasSymbolSupport = require( '@stdlib/assert/has-symbol-support' );
 *
-* var beep = {
-*     'boop': true
-* };
-*
-* var bool = hasOwnProp( beep, 'boop' );
-* // returns true
-*
-* bool = hasOwnProp( beep, 'bop' );
-* // returns false
+* var bool = hasSymbolSupport();
+* // returns <boolean>
 */
 
 // MODULES //
 
-var hasOwnProp = require( './has_own_property.js' );
+var hasSymbolSupport = require( './main.js' );
 
 
 // EXPORTS //
 
-module.exports = hasOwnProp;
+module.exports = hasSymbolSupport;
 
-},{"./has_own_property.js":3}],5:[function(require,module,exports){
+},{"./main.js":21}],21:[function(require,module,exports){
+/**
+* @license Apache-2.0
+*
+* Copyright (c) 2018 The Stdlib Authors.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*    http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
+
+'use strict';
+
+// MAIN //
+
+/**
+* Tests for native `Symbol` support.
+*
+* @returns {boolean} boolean indicating if an environment has `Symbol` support
+*
+* @example
+* var bool = hasSymbolSupport();
+* // returns <boolean>
+*/
+function hasSymbolSupport() {
+	return (
+		typeof Symbol === 'function' &&
+		typeof Symbol( 'foo' ) === 'symbol'
+	);
+}
+
+
+// EXPORTS //
+
+module.exports = hasSymbolSupport;
+
+},{}],22:[function(require,module,exports){
+/**
+* @license Apache-2.0
+*
+* Copyright (c) 2018 The Stdlib Authors.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*    http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
+
+'use strict';
+
+/**
+* Test for native `toStringTag` support.
+*
+* @module @stdlib/assert/has-tostringtag-support
+*
+* @example
+* var hasToStringTagSupport = require( '@stdlib/assert/has-tostringtag-support' );
+*
+* var bool = hasToStringTagSupport();
+* // returns <boolean>
+*/
+
+// MODULES //
+
+var hasToStringTagSupport = require( './main.js' );
+
+
+// EXPORTS //
+
+module.exports = hasToStringTagSupport;
+
+},{"./main.js":23}],23:[function(require,module,exports){
+/**
+* @license Apache-2.0
+*
+* Copyright (c) 2018 The Stdlib Authors.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*    http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
+
+'use strict';
+
+// MODULES //
+
+var hasSymbols = require( '@stdlib/assert/has-symbol-support' );
+
+
+// VARIABLES //
+
+var FLG = hasSymbols();
+
+
+// MAIN //
+
+/**
+* Tests for native `toStringTag` support.
+*
+* @returns {boolean} boolean indicating if an environment has `toStringTag` support
+*
+* @example
+* var bool = hasToStringTagSupport();
+* // returns <boolean>
+*/
+function hasToStringTagSupport() {
+	return ( FLG && typeof Symbol.toStringTag === 'symbol' );
+}
+
+
+// EXPORTS //
+
+module.exports = hasToStringTagSupport;
+
+},{"@stdlib/assert/has-symbol-support":20}],24:[function(require,module,exports){
+/**
+* @license Apache-2.0
+*
+* Copyright (c) 2018 The Stdlib Authors.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*    http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
+
+'use strict';
+
+/**
+* Test for native `Uint16Array` support.
+*
+* @module @stdlib/assert/has-uint16array-support
+*
+* @example
+* var hasUint16ArraySupport = require( '@stdlib/assert/has-uint16array-support' );
+*
+* var bool = hasUint16ArraySupport();
+* // returns <boolean>
+*/
+
+// MODULES //
+
+var hasUint16ArraySupport = require( './main.js' );
+
+
+// EXPORTS //
+
+module.exports = hasUint16ArraySupport;
+
+},{"./main.js":25}],25:[function(require,module,exports){
+/**
+* @license Apache-2.0
+*
+* Copyright (c) 2018 The Stdlib Authors.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*    http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
+
+'use strict';
+
+// MODULES //
+
+var isUint16Array = require( '@stdlib/assert/is-uint16array' );
+var UINT16_MAX = require( '@stdlib/constants/math/uint16-max' );
+var GlobalUint16Array = require( './uint16array.js' );
+
+
+// MAIN //
+
+/**
+* Tests for native `Uint16Array` support.
+*
+* @returns {boolean} boolean indicating if an environment has `Uint16Array` support
+*
+* @example
+* var bool = hasUint16ArraySupport();
+* // returns <boolean>
+*/
+function hasUint16ArraySupport() {
+	var bool;
+	var arr;
+
+	if ( typeof GlobalUint16Array !== 'function' ) {
+		return false;
+	}
+	// Test basic support...
+	try {
+		arr = [ 1, 3.14, -3.14, UINT16_MAX+1, UINT16_MAX+2 ];
+		arr = new GlobalUint16Array( arr );
+		bool = (
+			isUint16Array( arr ) &&
+			arr[ 0 ] === 1 &&
+			arr[ 1 ] === 3 &&            // truncation
+			arr[ 2 ] === UINT16_MAX-2 && // truncation and wrap around
+			arr[ 3 ] === 0 &&            // wrap around
+			arr[ 4 ] === 1               // wrap around
+		);
+	} catch ( err ) { // eslint-disable-line no-unused-vars
+		bool = false;
+	}
+	return bool;
+}
+
+
+// EXPORTS //
+
+module.exports = hasUint16ArraySupport;
+
+},{"./uint16array.js":26,"@stdlib/assert/is-uint16array":38,"@stdlib/constants/math/uint16-max":54}],26:[function(require,module,exports){
+/**
+* @license Apache-2.0
+*
+* Copyright (c) 2018 The Stdlib Authors.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*    http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
+
+'use strict';
+
+// MAIN //
+
+var main = ( typeof Uint16Array === 'function' ) ? Uint16Array : null; // eslint-disable-line stdlib/require-globals
+
+
+// EXPORTS //
+
+module.exports = main;
+
+},{}],27:[function(require,module,exports){
+/**
+* @license Apache-2.0
+*
+* Copyright (c) 2018 The Stdlib Authors.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*    http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
+
+'use strict';
+
+/**
+* Test for native `Uint32Array` support.
+*
+* @module @stdlib/assert/has-uint32array-support
+*
+* @example
+* var hasUint32ArraySupport = require( '@stdlib/assert/has-uint32array-support' );
+*
+* var bool = hasUint32ArraySupport();
+* // returns <boolean>
+*/
+
+// MODULES //
+
+var hasUint32ArraySupport = require( './main.js' );
+
+
+// EXPORTS //
+
+module.exports = hasUint32ArraySupport;
+
+},{"./main.js":28}],28:[function(require,module,exports){
+/**
+* @license Apache-2.0
+*
+* Copyright (c) 2018 The Stdlib Authors.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*    http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
+
+'use strict';
+
+// MODULES //
+
+var isUint32Array = require( '@stdlib/assert/is-uint32array' );
+var UINT32_MAX = require( '@stdlib/constants/math/uint32-max' );
+var GlobalUint32Array = require( './uint32array.js' );
+
+
+// MAIN //
+
+/**
+* Tests for native `Uint32Array` support.
+*
+* @returns {boolean} boolean indicating if an environment has `Uint32Array` support
+*
+* @example
+* var bool = hasUint32ArraySupport();
+* // returns <boolean>
+*/
+function hasUint32ArraySupport() {
+	var bool;
+	var arr;
+
+	if ( typeof GlobalUint32Array !== 'function' ) {
+		return false;
+	}
+	// Test basic support...
+	try {
+		arr = [ 1, 3.14, -3.14, UINT32_MAX+1, UINT32_MAX+2 ];
+		arr = new GlobalUint32Array( arr );
+		bool = (
+			isUint32Array( arr ) &&
+			arr[ 0 ] === 1 &&
+			arr[ 1 ] === 3 &&            // truncation
+			arr[ 2 ] === UINT32_MAX-2 && // truncation and wrap around
+			arr[ 3 ] === 0 &&            // wrap around
+			arr[ 4 ] === 1               // wrap around
+		);
+	} catch ( err ) { // eslint-disable-line no-unused-vars
+		bool = false;
+	}
+	return bool;
+}
+
+
+// EXPORTS //
+
+module.exports = hasUint32ArraySupport;
+
+},{"./uint32array.js":29,"@stdlib/assert/is-uint32array":40,"@stdlib/constants/math/uint32-max":55}],29:[function(require,module,exports){
+/**
+* @license Apache-2.0
+*
+* Copyright (c) 2018 The Stdlib Authors.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*    http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
+
+'use strict';
+
+// MAIN //
+
+var main = ( typeof Uint32Array === 'function' ) ? Uint32Array : null; // eslint-disable-line stdlib/require-globals
+
+
+// EXPORTS //
+
+module.exports = main;
+
+},{}],30:[function(require,module,exports){
+/**
+* @license Apache-2.0
+*
+* Copyright (c) 2018 The Stdlib Authors.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*    http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
+
+'use strict';
+
+/**
+* Test for native `Uint8Array` support.
+*
+* @module @stdlib/assert/has-uint8array-support
+*
+* @example
+* var hasUint8ArraySupport = require( '@stdlib/assert/has-uint8array-support' );
+*
+* var bool = hasUint8ArraySupport();
+* // returns <boolean>
+*/
+
+// MODULES //
+
+var hasUint8ArraySupport = require( './main.js' );
+
+
+// EXPORTS //
+
+module.exports = hasUint8ArraySupport;
+
+},{"./main.js":31}],31:[function(require,module,exports){
+/**
+* @license Apache-2.0
+*
+* Copyright (c) 2018 The Stdlib Authors.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*    http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
+
+'use strict';
+
+// MODULES //
+
+var isUint8Array = require( '@stdlib/assert/is-uint8array' );
+var UINT8_MAX = require( '@stdlib/constants/math/uint8-max' );
+var GlobalUint8Array = require( './uint8array.js' );
+
+
+// MAIN //
+
+/**
+* Tests for native `Uint8Array` support.
+*
+* @returns {boolean} boolean indicating if an environment has `Uint8Array` support
+*
+* @example
+* var bool = hasUint8ArraySupport();
+* // returns <boolean>
+*/
+function hasUint8ArraySupport() {
+	var bool;
+	var arr;
+
+	if ( typeof GlobalUint8Array !== 'function' ) {
+		return false;
+	}
+	// Test basic support...
+	try {
+		arr = [ 1, 3.14, -3.14, UINT8_MAX+1, UINT8_MAX+2 ];
+		arr = new GlobalUint8Array( arr );
+		bool = (
+			isUint8Array( arr ) &&
+			arr[ 0 ] === 1 &&
+			arr[ 1 ] === 3 &&           // truncation
+			arr[ 2 ] === UINT8_MAX-2 && // truncation and wrap around
+			arr[ 3 ] === 0 &&           // wrap around
+			arr[ 4 ] === 1              // wrap around
+		);
+	} catch ( err ) { // eslint-disable-line no-unused-vars
+		bool = false;
+	}
+	return bool;
+}
+
+
+// EXPORTS //
+
+module.exports = hasUint8ArraySupport;
+
+},{"./uint8array.js":32,"@stdlib/assert/is-uint8array":42,"@stdlib/constants/math/uint8-max":56}],32:[function(require,module,exports){
+/**
+* @license Apache-2.0
+*
+* Copyright (c) 2018 The Stdlib Authors.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*    http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
+
+'use strict';
+
+// MAIN //
+
+var main = ( typeof Uint8Array === 'function' ) ? Uint8Array : null; // eslint-disable-line stdlib/require-globals
+
+
+// EXPORTS //
+
+module.exports = main;
+
+},{}],33:[function(require,module,exports){
+/**
+* @license Apache-2.0
+*
+* Copyright (c) 2018 The Stdlib Authors.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*    http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
+
 'use strict';
 
 /**
@@ -204,19 +1490,42 @@ module.exports = hasOwnProp;
 
 // MODULES //
 
-var isFloat64Array = require( './is_float64array.js' );
+var isFloat64Array = require( './main.js' );
 
 
 // EXPORTS //
 
 module.exports = isFloat64Array;
 
-},{"./is_float64array.js":6}],6:[function(require,module,exports){
+},{"./main.js":34}],34:[function(require,module,exports){
+/**
+* @license Apache-2.0
+*
+* Copyright (c) 2018 The Stdlib Authors.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*    http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
+
 'use strict';
 
 // MODULES //
 
 var nativeClass = require( '@stdlib/utils/native-class' );
+
+
+// VARIABLES //
+
+var hasFloat64Array = ( typeof Float64Array === 'function' ); // eslint-disable-line stdlib/require-globals
 
 
 // MAIN //
@@ -236,16 +1545,45 @@ var nativeClass = require( '@stdlib/utils/native-class' );
 * // returns false
 */
 function isFloat64Array( value ) {
-	return ( nativeClass( value ) === '[object Float64Array]' );
-} // end FUNCTION isFloat64Array()
+	return (
+		( hasFloat64Array && value instanceof Float64Array ) || // eslint-disable-line stdlib/require-globals
+		nativeClass( value ) === '[object Float64Array]'
+	);
+}
 
 
 // EXPORTS //
 
 module.exports = isFloat64Array;
 
-},{"@stdlib/utils/native-class":106}],7:[function(require,module,exports){
+},{"@stdlib/utils/native-class":139}],35:[function(require,module,exports){
+/**
+* @license Apache-2.0
+*
+* Copyright (c) 2018 The Stdlib Authors.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*    http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
+
 'use strict';
+
+// MODULES //
+
+var Uint8Array = require( '@stdlib/array/uint8' );
+var Uint16Array = require( '@stdlib/array/uint16' );
+
+
+// MAIN //
 
 var ctors = {
 	'uint16': Uint16Array,
@@ -257,11 +1595,29 @@ var ctors = {
 
 module.exports = ctors;
 
-},{}],8:[function(require,module,exports){
+},{"@stdlib/array/uint16":6,"@stdlib/array/uint8":12}],36:[function(require,module,exports){
+/**
+* @license Apache-2.0
+*
+* Copyright (c) 2018 The Stdlib Authors.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*    http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
+
 'use strict';
 
 /**
-* Returns a boolean indicating if an environment is little endian.
+* Return a boolean indicating if an environment is little endian.
 *
 * @module @stdlib/assert/is-little-endian
 *
@@ -274,14 +1630,32 @@ module.exports = ctors;
 
 // MODULES //
 
-var IS_LITTLE_ENDIAN = require( './is_little_endian.js' );
+var IS_LITTLE_ENDIAN = require( './main.js' );
 
 
 // EXPORTS //
 
 module.exports = IS_LITTLE_ENDIAN;
 
-},{"./is_little_endian.js":9}],9:[function(require,module,exports){
+},{"./main.js":37}],37:[function(require,module,exports){
+/**
+* @license Apache-2.0
+*
+* Copyright (c) 2018 The Stdlib Authors.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*    http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
+
 'use strict';
 
 // MODULES //
@@ -289,11 +1663,17 @@ module.exports = IS_LITTLE_ENDIAN;
 var ctors = require( './ctors.js' );
 
 
-// MAIN //
+// VARIABLES //
+
+var bool;
+
+
+// FUNCTIONS //
 
 /**
 * Returns a boolean indicating if an environment is little endian.
 *
+* @private
 * @returns {boolean} boolean indicating if an environment is little endian
 *
 * @example
@@ -308,6 +1688,7 @@ function isLittleEndian() {
 
 	/*
 	* Set the uint16 view to a value having distinguishable lower and higher order words.
+	*
 	* 4660 => 0x1234 => 0x12 0x34 => '00010010 00110100' => (0x12,0x34) == (18,52)
 	*/
 	uint16view[ 0 ] = 0x1234;
@@ -317,14 +1698,141 @@ function isLittleEndian() {
 
 	// If little endian, the least significant byte will be first...
 	return ( uint8view[ 0 ] === 0x34 );
-} // end FUNCTION isLittleEndian()
+}
+
+
+// MAIN //
+
+bool = isLittleEndian();
 
 
 // EXPORTS //
 
-module.exports = isLittleEndian();
+module.exports = bool;
 
-},{"./ctors.js":7}],10:[function(require,module,exports){
+},{"./ctors.js":35}],38:[function(require,module,exports){
+/**
+* @license Apache-2.0
+*
+* Copyright (c) 2018 The Stdlib Authors.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*    http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
+
+'use strict';
+
+/**
+* Test if a value is a Uint16Array.
+*
+* @module @stdlib/assert/is-uint16array
+*
+* @example
+* var isUint16Array = require( '@stdlib/assert/is-uint16array' );
+*
+* var bool = isUint16Array( new Uint16Array( 10 ) );
+* // returns true
+*
+* bool = isUint16Array( [] );
+* // returns false
+*/
+
+// MODULES //
+
+var isUint16Array = require( './main.js' );
+
+
+// EXPORTS //
+
+module.exports = isUint16Array;
+
+},{"./main.js":39}],39:[function(require,module,exports){
+/**
+* @license Apache-2.0
+*
+* Copyright (c) 2018 The Stdlib Authors.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*    http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
+
+'use strict';
+
+// MODULES //
+
+var nativeClass = require( '@stdlib/utils/native-class' );
+
+
+// VARIABLES //
+
+var hasUint16Array = ( typeof Uint16Array === 'function' ); // eslint-disable-line stdlib/require-globals
+
+
+// MAIN //
+
+/**
+* Tests if a value is a Uint16Array.
+*
+* @param {*} value - value to test
+* @returns {boolean} boolean indicating whether value is a Uint16Array
+*
+* @example
+* var bool = isUint16Array( new Uint16Array( 10 ) );
+* // returns true
+*
+* @example
+* var bool = isUint16Array( [] );
+* // returns false
+*/
+function isUint16Array( value ) {
+	return (
+		( hasUint16Array && value instanceof Uint16Array ) || // eslint-disable-line stdlib/require-globals
+		nativeClass( value ) === '[object Uint16Array]'
+	);
+}
+
+
+// EXPORTS //
+
+module.exports = isUint16Array;
+
+},{"@stdlib/utils/native-class":139}],40:[function(require,module,exports){
+/**
+* @license Apache-2.0
+*
+* Copyright (c) 2018 The Stdlib Authors.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*    http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
+
 'use strict';
 
 /**
@@ -344,19 +1852,42 @@ module.exports = isLittleEndian();
 
 // MODULES //
 
-var isUint32Array = require( './is_uint32array.js' );
+var isUint32Array = require( './main.js' );
 
 
 // EXPORTS //
 
 module.exports = isUint32Array;
 
-},{"./is_uint32array.js":11}],11:[function(require,module,exports){
+},{"./main.js":41}],41:[function(require,module,exports){
+/**
+* @license Apache-2.0
+*
+* Copyright (c) 2018 The Stdlib Authors.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*    http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
+
 'use strict';
 
 // MODULES //
 
 var nativeClass = require( '@stdlib/utils/native-class' );
+
+
+// VARIABLES //
+
+var hasUint32Array = ( typeof Uint32Array === 'function' ); // eslint-disable-line stdlib/require-globals
 
 
 // MAIN //
@@ -376,21 +1907,907 @@ var nativeClass = require( '@stdlib/utils/native-class' );
 * // returns false
 */
 function isUint32Array( value ) {
-	return ( nativeClass( value ) === '[object Uint32Array]' );
-} // end FUNCTION isUint32Array()
+	return (
+		( hasUint32Array && value instanceof Uint32Array ) || // eslint-disable-line stdlib/require-globals
+		nativeClass( value ) === '[object Uint32Array]'
+	);
+}
 
 
 // EXPORTS //
 
 module.exports = isUint32Array;
 
-},{"@stdlib/utils/native-class":106}],12:[function(require,module,exports){
+},{"@stdlib/utils/native-class":139}],42:[function(require,module,exports){
+/**
+* @license Apache-2.0
+*
+* Copyright (c) 2018 The Stdlib Authors.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*    http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
+
+'use strict';
+
+/**
+* Test if a value is a Uint8Array.
+*
+* @module @stdlib/assert/is-uint8array
+*
+* @example
+* var isUint8Array = require( '@stdlib/assert/is-uint8array' );
+*
+* var bool = isUint8Array( new Uint8Array( 10 ) );
+* // returns true
+*
+* bool = isUint8Array( [] );
+* // returns false
+*/
+
+// MODULES //
+
+var isUint8Array = require( './main.js' );
+
+
+// EXPORTS //
+
+module.exports = isUint8Array;
+
+},{"./main.js":43}],43:[function(require,module,exports){
+/**
+* @license Apache-2.0
+*
+* Copyright (c) 2018 The Stdlib Authors.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*    http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
+
+'use strict';
+
+// MODULES //
+
+var nativeClass = require( '@stdlib/utils/native-class' );
+
+
+// VARIABLES //
+
+var hasUint8Array = ( typeof Uint8Array === 'function' ); // eslint-disable-line stdlib/require-globals
+
+
+// MAIN //
+
+/**
+* Tests if a value is a Uint8Array.
+*
+* @param {*} value - value to test
+* @returns {boolean} boolean indicating whether value is a Uint8Array
+*
+* @example
+* var bool = isUint8Array( new Uint8Array( 10 ) );
+* // returns true
+*
+* @example
+* var bool = isUint8Array( [] );
+* // returns false
+*/
+function isUint8Array( value ) {
+	return (
+		( hasUint8Array && value instanceof Uint8Array ) || // eslint-disable-line stdlib/require-globals
+		nativeClass( value ) === '[object Uint8Array]'
+	);
+}
+
+
+// EXPORTS //
+
+module.exports = isUint8Array;
+
+},{"@stdlib/utils/native-class":139}],44:[function(require,module,exports){
+/**
+* @license Apache-2.0
+*
+* Copyright (c) 2018 The Stdlib Authors.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*    http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
+
+'use strict';
+
+/**
+* The bias of a double-precision floating-point number's exponent.
+*
+* @module @stdlib/constants/math/float64-exponent-bias
+* @type {integer32}
+*
+* @example
+* var FLOAT64_EXPONENT_BIAS = require( '@stdlib/constants/math/float64-exponent-bias' );
+* // returns 1023
+*/
+
+
+// MAIN //
+
+/**
+* Bias of a double-precision floating-point number's exponent.
+*
+* ## Notes
+*
+* The bias can be computed via
+*
+* ```tex
+* \mathrm{bias} = 2^{k-1} - 1
+* ```
+*
+* where \\(k\\) is the number of bits in the exponent; here, \\(k = 11\\).
+*
+* @constant
+* @type {integer32}
+* @default 1023
+* @see [IEEE 754]{@link https://en.wikipedia.org/wiki/IEEE_754-1985}
+*/
+var FLOAT64_EXPONENT_BIAS = 1023|0; // asm type annotation
+
+
+// EXPORTS //
+
+module.exports = FLOAT64_EXPONENT_BIAS;
+
+},{}],45:[function(require,module,exports){
+/**
+* @license Apache-2.0
+*
+* Copyright (c) 2018 The Stdlib Authors.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*    http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
+
+'use strict';
+
+/**
+* One half times the natural logarithm of 2.
+*
+* @module @stdlib/constants/math/float64-half-ln-two
+* @type {number}
+*
+* @example
+* var HALF_LN2 = require( '@stdlib/constants/math/float64-half-ln-two' );
+* // returns 3.46573590279972654709e-01
+*/
+
+// MAIN //
+
+/**
+* One half times the natural logarithm of 2.
+*
+* ```tex
+* \frac{\ln 2}{2}
+* ```
+*
+* @constant
+* @type {number}
+* @default 3.46573590279972654709e-01
+*/
+var HALF_LN2 = 3.46573590279972654709e-01; // 0x3FD62E42 0xFEFA39EF
+
+
+// EXPORTS //
+
+module.exports = HALF_LN2;
+
+},{}],46:[function(require,module,exports){
+/**
+* @license Apache-2.0
+*
+* Copyright (c) 2018 The Stdlib Authors.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*    http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
+
+'use strict';
+
+/**
+* High word mask for the exponent of a double-precision floating-point number.
+*
+* @module @stdlib/constants/math/float64-high-word-exponent-mask
+* @type {uinteger32}
+*
+* @example
+* var FLOAT64_HIGH_WORD_EXPONENT_MASK = require( '@stdlib/constants/math/float64-high-word-exponent-mask' );
+* // returns 2146435072
+*/
+
+
+// MAIN //
+
+/**
+* High word mask for the exponent of a double-precision floating-point number.
+*
+* ## Notes
+*
+* The high word mask for the exponent of a double-precision floating-point number is an unsigned 32-bit integer with the value \\( 2146435072 \\), which corresponds to the bit sequence
+*
+* ```binarystring
+* 0 11111111111 00000000000000000000
+* ```
+*
+* @constant
+* @type {uinteger32}
+* @default 0x7ff00000
+* @see [IEEE 754]{@link https://en.wikipedia.org/wiki/IEEE_754-1985}
+*/
+var FLOAT64_HIGH_WORD_EXPONENT_MASK = 0x7ff00000;
+
+
+// EXPORTS //
+
+module.exports = FLOAT64_HIGH_WORD_EXPONENT_MASK;
+
+},{}],47:[function(require,module,exports){
+/**
+* @license Apache-2.0
+*
+* Copyright (c) 2018 The Stdlib Authors.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*    http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
+
+'use strict';
+
+/**
+* The maximum biased base 2 exponent for a subnormal double-precision floating-point number.
+*
+* @module @stdlib/constants/math/float64-max-base2-exponent-subnormal
+* @type {integer32}
+*
+* @example
+* var FLOAT64_MAX_BASE2_EXPONENT_SUBNORMAL = require( '@stdlib/constants/math/float64-max-base2-exponent-subnormal' );
+* // returns -1023
+*/
+
+
+// MAIN //
+
+/**
+* The maximum biased base 2 exponent for a subnormal double-precision floating-point number.
+*
+* ```text
+* 00000000000 => 0 - BIAS = -1023
+* ```
+*
+* where `BIAS = 1023`.
+*
+* @constant
+* @type {integer32}
+* @default -1023
+* @see [IEEE 754]{@link https://en.wikipedia.org/wiki/IEEE_754-1985}
+*/
+var FLOAT64_MAX_BASE2_EXPONENT_SUBNORMAL = -1023|0; // asm type annotation
+
+
+// EXPORTS //
+
+module.exports = FLOAT64_MAX_BASE2_EXPONENT_SUBNORMAL;
+
+},{}],48:[function(require,module,exports){
+/**
+* @license Apache-2.0
+*
+* Copyright (c) 2018 The Stdlib Authors.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*    http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
+
+'use strict';
+
+/**
+* The maximum biased base 2 exponent for a double-precision floating-point number.
+*
+* @module @stdlib/constants/math/float64-max-base2-exponent
+* @type {integer32}
+*
+* @example
+* var FLOAT64_MAX_BASE2_EXPONENT = require( '@stdlib/constants/math/float64-max-base2-exponent' );
+* // returns 1023
+*/
+
+
+// MAIN //
+
+/**
+* The maximum biased base 2 exponent for a double-precision floating-point number.
+*
+* ```text
+* 11111111110 => 2046 - BIAS = 1023
+* ```
+*
+* where `BIAS = 1023`.
+*
+* @constant
+* @type {integer32}
+* @default 1023
+* @see [IEEE 754]{@link https://en.wikipedia.org/wiki/IEEE_754-1985}
+*/
+var FLOAT64_MAX_BASE2_EXPONENT = 1023|0; // asm type annotation
+
+
+// EXPORTS //
+
+module.exports = FLOAT64_MAX_BASE2_EXPONENT;
+
+},{}],49:[function(require,module,exports){
+/**
+* @license Apache-2.0
+*
+* Copyright (c) 2018 The Stdlib Authors.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*    http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
+
+'use strict';
+
+/**
+* The minimum biased base 2 exponent for a subnormal double-precision floating-point number.
+*
+* @module @stdlib/constants/math/float64-min-base2-exponent-subnormal
+* @type {integer32}
+*
+* @example
+* var FLOAT64_MIN_BASE2_EXPONENT_SUBNORMAL = require( '@stdlib/constants/math/float64-min-base2-exponent-subnormal' );
+* // returns -1074
+*/
+
+
+// MAIN //
+
+/**
+* The minimum biased base 2 exponent for a subnormal double-precision floating-point number.
+*
+* ```text
+* -(BIAS+(52-1)) = -(1023+51) = -1074
+* ```
+*
+* where `BIAS = 1023` and `52` is the number of digits in the significand.
+*
+* @constant
+* @type {integer32}
+* @default -1074
+* @see [IEEE 754]{@link https://en.wikipedia.org/wiki/IEEE_754-1985}
+*/
+var FLOAT64_MIN_BASE2_EXPONENT_SUBNORMAL = -1074|0; // asm type annotation
+
+
+// EXPORTS //
+
+module.exports = FLOAT64_MIN_BASE2_EXPONENT_SUBNORMAL;
+
+},{}],50:[function(require,module,exports){
+/**
+* @license Apache-2.0
+*
+* Copyright (c) 2018 The Stdlib Authors.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*    http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
+
+'use strict';
+
+/**
+* Double-precision floating-point negative infinity.
+*
+* @module @stdlib/constants/math/float64-ninf
+* @type {number}
+*
+* @example
+* var FLOAT64_NINF = require( '@stdlib/constants/math/float64-ninf' );
+* // returns -Infinity
+*/
+
+// MODULES //
+
+var Number = require( '@stdlib/number/ctor' );
+
+
+// MAIN //
+
+/**
+* Double-precision floating-point negative infinity.
+*
+* ## Notes
+*
+* Double-precision floating-point negative infinity has the bit sequence
+*
+* ```binarystring
+* 1 11111111111 00000000000000000000 00000000000000000000000000000000
+* ```
+*
+* @constant
+* @type {number}
+* @default Number.NEGATIVE_INFINITY
+* @see [IEEE 754]{@link https://en.wikipedia.org/wiki/IEEE_754-1985}
+*/
+var FLOAT64_NINF = Number.NEGATIVE_INFINITY;
+
+
+// EXPORTS //
+
+module.exports = FLOAT64_NINF;
+
+},{"@stdlib/number/ctor":116}],51:[function(require,module,exports){
+/**
+* @license Apache-2.0
+*
+* Copyright (c) 2018 The Stdlib Authors.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*    http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
+
+'use strict';
+
+/**
+* The mathematical constant `π`.
+*
+* @module @stdlib/constants/math/float64-pi
+* @type {number}
+*
+* @example
+* var PI = require( '@stdlib/constants/math/float64-pi' );
+* // returns 3.141592653589793
+*/
+
+
+// MAIN //
+
+/**
+* The mathematical constant `π`.
+*
+* @constant
+* @type {number}
+* @default 3.141592653589793
+* @see [Wikipedia]{@link https://en.wikipedia.org/wiki/Pi}
+*/
+var PI = 3.1415926535897932384626433832795028841971693993751058209749445923078164062862089986280348253421170679; // eslint-disable-line max-len
+
+
+// EXPORTS //
+
+module.exports = PI;
+
+},{}],52:[function(require,module,exports){
+/**
+* @license Apache-2.0
+*
+* Copyright (c) 2018 The Stdlib Authors.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*    http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
+
+'use strict';
+
+/**
+* Double-precision floating-point positive infinity.
+*
+* @module @stdlib/constants/math/float64-pinf
+* @type {number}
+*
+* @example
+* var FLOAT64_PINF = require( '@stdlib/constants/math/float64-pinf' );
+* // returns Infinity
+*/
+
+
+// MAIN //
+
+/**
+* Double-precision floating-point positive infinity.
+*
+* ## Notes
+*
+* Double-precision floating-point positive infinity has the bit sequence
+*
+* ```binarystring
+* 0 11111111111 00000000000000000000 00000000000000000000000000000000
+* ```
+*
+* @constant
+* @type {number}
+* @default Number.POSITIVE_INFINITY
+* @see [IEEE 754]{@link https://en.wikipedia.org/wiki/IEEE_754-1985}
+*/
+var FLOAT64_PINF = Number.POSITIVE_INFINITY; // eslint-disable-line stdlib/require-globals
+
+
+// EXPORTS //
+
+module.exports = FLOAT64_PINF;
+
+},{}],53:[function(require,module,exports){
+/**
+* @license Apache-2.0
+*
+* Copyright (c) 2018 The Stdlib Authors.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*    http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
+
+'use strict';
+
+/**
+* Smallest positive double-precision floating-point normal number.
+*
+* @module @stdlib/constants/math/float64-smallest-normal
+* @type {number}
+*
+* @example
+* var FLOAT64_SMALLEST_NORMAL = require( '@stdlib/constants/math/float64-smallest-normal' );
+* // returns 2.2250738585072014e-308
+*/
+
+
+// MAIN //
+
+/**
+* The smallest positive double-precision floating-point normal number.
+*
+* ## Notes
+*
+* The number has the value
+*
+* ```tex
+* \frac{1}{2^{1023-1}}
+* ```
+*
+* which corresponds to the bit sequence
+*
+* ```binarystring
+* 0 00000000001 00000000000000000000 00000000000000000000000000000000
+* ```
+*
+* @constant
+* @type {number}
+* @default 2.2250738585072014e-308
+* @see [IEEE 754]{@link https://en.wikipedia.org/wiki/IEEE_754-1985}
+*/
+var FLOAT64_SMALLEST_NORMAL = 2.2250738585072014e-308;
+
+
+// EXPORTS //
+
+module.exports = FLOAT64_SMALLEST_NORMAL;
+
+},{}],54:[function(require,module,exports){
+/**
+* @license Apache-2.0
+*
+* Copyright (c) 2018 The Stdlib Authors.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*    http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
+
+'use strict';
+
+/**
+* Maximum unsigned 16-bit integer.
+*
+* @module @stdlib/constants/math/uint16-max
+* @type {integer32}
+*
+* @example
+* var UINT16_MAX = require( '@stdlib/constants/math/uint16-max' );
+* // returns 65535
+*/
+
+
+// MAIN //
+
+/**
+* Maximum unsigned 16-bit integer.
+*
+* ## Notes
+*
+* The number has the value
+*
+* ```tex
+* 2^{16} - 1
+* ```
+*
+* which corresponds to the bit sequence
+*
+* ```binarystring
+* 1111111111111111
+* ```
+*
+* @constant
+* @type {integer32}
+* @default 65535
+*/
+var UINT16_MAX = 65535|0; // asm type annotation
+
+
+// EXPORTS //
+
+module.exports = UINT16_MAX;
+
+},{}],55:[function(require,module,exports){
+/**
+* @license Apache-2.0
+*
+* Copyright (c) 2018 The Stdlib Authors.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*    http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
+
+'use strict';
+
+/**
+* Maximum unsigned 32-bit integer.
+*
+* @module @stdlib/constants/math/uint32-max
+* @type {uinteger32}
+*
+* @example
+* var UINT32_MAX = require( '@stdlib/constants/math/uint32-max' );
+* // returns 4294967295
+*/
+
+
+// MAIN //
+
+/**
+* Maximum unsigned 32-bit integer.
+*
+* ## Notes
+*
+* The number has the value
+*
+* ```tex
+* 2^{32} - 1
+* ```
+*
+* which corresponds to the bit sequence
+*
+* ```binarystring
+* 11111111111111111111111111111111
+* ```
+*
+* @constant
+* @type {uinteger32}
+* @default 4294967295
+*/
+var UINT32_MAX = 4294967295;
+
+
+// EXPORTS //
+
+module.exports = UINT32_MAX;
+
+},{}],56:[function(require,module,exports){
+/**
+* @license Apache-2.0
+*
+* Copyright (c) 2018 The Stdlib Authors.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*    http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
+
+'use strict';
+
+/**
+* Maximum unsigned 8-bit integer.
+*
+* @module @stdlib/constants/math/uint8-max
+* @type {integer32}
+*
+* @example
+* var UINT8_MAX = require( '@stdlib/constants/math/uint8-max' );
+* // returns 255
+*/
+
+
+// MAIN //
+
+/**
+* Maximum unsigned 8-bit integer.
+*
+* ## Notes
+*
+* The number has the value
+*
+* ```tex
+* 2^{8} - 1
+* ```
+*
+* which corresponds to the bit sequence
+*
+* ```binarystring
+* 11111111
+* ```
+*
+* @constant
+* @type {integer32}
+* @default 255
+*/
+var UINT8_MAX = 255|0; // asm type annotation
+
+
+// EXPORTS //
+
+module.exports = UINT8_MAX;
+
+},{}],57:[function(require,module,exports){
+/**
+* @license Apache-2.0
+*
+* Copyright (c) 2018 The Stdlib Authors.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*    http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
+
 'use strict';
 
 /**
 * Test if a numeric value is infinite.
 *
-* @module @stdlib/assert/is-infinite
+* @module @stdlib/math/base/assert/is-infinite
 *
 * @example
 * var isInfinite = require( '@stdlib/math/base/assert/is-infinite' );
@@ -417,13 +2834,31 @@ var isInfinite = require( './is_infinite.js' );
 
 module.exports = isInfinite;
 
-},{"./is_infinite.js":13}],13:[function(require,module,exports){
+},{"./is_infinite.js":58}],58:[function(require,module,exports){
+/**
+* @license Apache-2.0
+*
+* Copyright (c) 2018 The Stdlib Authors.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*    http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
+
 'use strict';
 
 // MODULES //
 
-var PINF = require( '@stdlib/math/constants/float64-pinf' );
-var NINF = require( '@stdlib/math/constants/float64-ninf' );
+var PINF = require( '@stdlib/constants/math/float64-pinf' );
+var NINF = require( '@stdlib/constants/math/float64-ninf' );
 
 
 // MAIN //
@@ -452,14 +2887,32 @@ var NINF = require( '@stdlib/math/constants/float64-ninf' );
 */
 function isInfinite( x ) {
 	return (x === PINF || x === NINF);
-} // end FUNCTION isInfinite()
+}
 
 
 // EXPORTS //
 
 module.exports = isInfinite;
 
-},{"@stdlib/math/constants/float64-ninf":83,"@stdlib/math/constants/float64-pinf":85}],14:[function(require,module,exports){
+},{"@stdlib/constants/math/float64-ninf":50,"@stdlib/constants/math/float64-pinf":52}],59:[function(require,module,exports){
+/**
+* @license Apache-2.0
+*
+* Copyright (c) 2018 The Stdlib Authors.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*    http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
+
 'use strict';
 
 /**
@@ -486,7 +2939,25 @@ var isnan = require( './is_nan.js' );
 
 module.exports = isnan;
 
-},{"./is_nan.js":15}],15:[function(require,module,exports){
+},{"./is_nan.js":60}],60:[function(require,module,exports){
+/**
+* @license Apache-2.0
+*
+* Copyright (c) 2018 The Stdlib Authors.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*    http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
+
 'use strict';
 
 // MAIN //
@@ -506,15 +2977,33 @@ module.exports = isnan;
 * // returns false
 */
 function isnan( x ) {
-	return (x !== x);
-} // end FUNCTION isnan()
+	return ( x !== x );
+}
 
 
 // EXPORTS //
 
 module.exports = isnan;
 
-},{}],16:[function(require,module,exports){
+},{}],61:[function(require,module,exports){
+/**
+* @license Apache-2.0
+*
+* Copyright (c) 2018 The Stdlib Authors.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*    http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
+
 'use strict';
 
 /**
@@ -551,14 +3040,32 @@ function abs( x ) {
 		return 0.0; // handle negative zero
 	}
 	return x;
-} // end FUNCTION abs()
+}
 
 
 // EXPORTS //
 
 module.exports = abs;
 
-},{}],17:[function(require,module,exports){
+},{}],62:[function(require,module,exports){
+/**
+* @license Apache-2.0
+*
+* Copyright (c) 2018 The Stdlib Authors.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*    http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
+
 'use strict';
 
 /**
@@ -594,7 +3101,25 @@ var abs = require( './abs.js' );
 
 module.exports = abs;
 
-},{"./abs.js":16}],18:[function(require,module,exports){
+},{"./abs.js":61}],63:[function(require,module,exports){
+/**
+* @license Apache-2.0
+*
+* Copyright (c) 2018 The Stdlib Authors.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*    http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
+
 'use strict';
 
 // TODO: implementation (?)
@@ -621,14 +3146,32 @@ module.exports = abs;
 * var v = ceil( NaN );
 * // returns NaN
 */
-var ceil = Math.ceil;
+var ceil = Math.ceil; // eslint-disable-line stdlib/no-builtin-math
 
 
 // EXPORTS //
 
 module.exports = ceil;
 
-},{}],19:[function(require,module,exports){
+},{}],64:[function(require,module,exports){
+/**
+* @license Apache-2.0
+*
+* Copyright (c) 2018 The Stdlib Authors.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*    http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
+
 'use strict';
 
 /**
@@ -661,23 +3204,44 @@ var ceil = require( './ceil.js' );
 
 module.exports = ceil;
 
-},{"./ceil.js":18}],20:[function(require,module,exports){
+},{"./ceil.js":63}],65:[function(require,module,exports){
+/**
+* @license Apache-2.0
+*
+* Copyright (c) 2018 The Stdlib Authors.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*    http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
+
 'use strict';
 
 // MODULES //
 
-var toWords = require( '@stdlib/math/base/utils/float64-to-words' );
-var getHighWord = require( '@stdlib/math/base/utils/float64-get-high-word' );
-var fromWords = require( '@stdlib/math/base/utils/float64-from-words' );
+var toWords = require( '@stdlib/number/float64/base/to-words' );
+var getHighWord = require( '@stdlib/number/float64/base/get-high-word' );
+var fromWords = require( '@stdlib/number/float64/base/from-words' );
 
 
 // VARIABLES //
 
 // 10000000000000000000000000000000 => 2147483648 => 0x80000000
-var SIGN_MASK = 0x80000000;
+var SIGN_MASK = 0x80000000>>>0; // asm type annotation
 
 // 01111111111111111111111111111111 => 2147483647 => 0x7fffffff
-var MAGNITUDE_MASK = 0x7fffffff;
+var MAGNITUDE_MASK = 0x7fffffff|0; // asm type annotation
+
+// High/low words workspace:
+var WORDS = [ 0, 0 ]; // WARNING: not thread safe
 
 
 // MAIN //
@@ -714,8 +3278,8 @@ function copysign( x, y ) {
 	var hy;
 
 	// Split `x` into higher and lower order words:
-	x = toWords( x );
-	hx = x[ 0 ];
+	toWords( WORDS, x );
+	hx = WORDS[ 0 ];
 
 	// Turn off the sign bit of `x`:
 	hx &= MAGNITUDE_MASK;
@@ -730,15 +3294,33 @@ function copysign( x, y ) {
 	hx |= hy;
 
 	// Return a new value having the same magnitude as `x`, but with the sign of `y`:
-	return fromWords( hx, x[ 1 ] );
-} // end FUNCTION copysign()
+	return fromWords( hx, WORDS[ 1 ] );
+}
 
 
 // EXPORTS //
 
 module.exports = copysign;
 
-},{"@stdlib/math/base/utils/float64-from-words":61,"@stdlib/math/base/utils/float64-get-high-word":65,"@stdlib/math/base/utils/float64-to-words":74}],21:[function(require,module,exports){
+},{"@stdlib/number/float64/base/from-words":120,"@stdlib/number/float64/base/get-high-word":124,"@stdlib/number/float64/base/to-words":135}],66:[function(require,module,exports){
+/**
+* @license Apache-2.0
+*
+* Copyright (c) 2018 The Stdlib Authors.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*    http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
+
 'use strict';
 
 /**
@@ -774,29 +3356,44 @@ var copysign = require( './copysign.js' );
 
 module.exports = copysign;
 
-},{"./copysign.js":20}],22:[function(require,module,exports){
-'use strict';
-
-/*
-* The following copyright, license, and long comment were part of the original implementation available as part of [FreeBSD]{@link https://svnweb.freebsd.org/base/release/9.3.0/lib/msun/src/s_cos.c?view=log}.
+},{"./copysign.js":65}],67:[function(require,module,exports){
+/**
+* @license Apache-2.0
 *
-* The implementation follows the original, but has been modified for JavaScript.
-*/
-
-/*
-* ====================================================
+* Copyright (c) 2018 The Stdlib Authors.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*    http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*
+*
+* ## Notice
+*
+* The following copyright, license, and long comment were part of the original implementation available as part of [FreeBSD]{@link https://svnweb.freebsd.org/base/release/9.3.0/lib/msun/src/s_cos.c}. The implementation follows the original, but has been modified for JavaScript.
+*
+* ```text
 * Copyright (C) 1993 by Sun Microsystems, Inc. All rights reserved.
 *
 * Developed at SunPro, a Sun Microsystems, Inc. business.
 * Permission to use, copy, modify, and distribute this
 * software is freely granted, provided that this notice
 * is preserved.
-* ====================================================
+* ```
 */
+
+'use strict';
 
 // MODULES //
 
-var getHighWord = require( '@stdlib/math/base/utils/float64-get-high-word' );
+var getHighWord = require( '@stdlib/number/float64/base/get-high-word' );
 var kernelCos = require( '@stdlib/math/base/special/kernel-cos' );
 var kernelSin = require( '@stdlib/math/base/special/kernel-sin' );
 var rempio2 = require( '@stdlib/math/base/special/rempio2' );
@@ -804,8 +3401,8 @@ var rempio2 = require( '@stdlib/math/base/special/rempio2' );
 
 // VARIABLES //
 
-// Scratch array for storing temporary values. Note that, in C, this would not be thread safe.
-var buffer = new Array( 2 );
+// Scratch array for storing temporary values:
+var buffer = [ 0.0, 0.0 ]; // WARNING: not thread safe
 
 // High word absolute value mask: 0x7fffffff => 01111111111111111111111111111111
 var HIGH_WORD_ABS_MASK = 0x7fffffff|0; // asm type annotation
@@ -833,11 +3430,11 @@ var HIGH_WORD_EXPONENT_MASK = 0x7ff00000|0; // asm type annotation
 * // returns 1.0
 *
 * @example
-* var v = cos( Math.PI/4.0 );
+* var v = cos( 3.141592653589793/4.0 );
 * // returns ~0.707
 *
 * @example
-* var v = cos( -Math.PI/6.0 );
+* var v = cos( -3.141592653589793/6.0 );
 * // returns ~0.866
 *
 * @example
@@ -875,14 +3472,32 @@ function cos( x ) {
 	default:
 		return kernelSin( buffer[ 0 ], buffer[ 1 ] );
 	}
-} // end FUNCTION cos()
+}
 
 
 // EXPORTS //
 
 module.exports = cos;
 
-},{"@stdlib/math/base/special/kernel-cos":33,"@stdlib/math/base/special/kernel-sin":35,"@stdlib/math/base/special/rempio2":43,"@stdlib/math/base/utils/float64-get-high-word":65}],23:[function(require,module,exports){
+},{"@stdlib/math/base/special/kernel-cos":90,"@stdlib/math/base/special/kernel-sin":94,"@stdlib/math/base/special/rempio2":104,"@stdlib/number/float64/base/get-high-word":124}],68:[function(require,module,exports){
+/**
+* @license Apache-2.0
+*
+* Copyright (c) 2018 The Stdlib Authors.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*    http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
+
 'use strict';
 
 /**
@@ -896,10 +3511,10 @@ module.exports = cos;
 * var v = cos( 0.0 );
 * // returns 1.0
 *
-* v = cos( Math.PI/4.0 );
+* v = cos( 3.141592653589793/4.0 );
 * // returns ~0.707
 *
-* v = cos( -Math.PI/6.0 );
+* v = cos( -3.141592653589793/6.0 );
 * // returns ~0.866
 */
 
@@ -912,31 +3527,47 @@ var cos = require( './cos.js' );
 
 module.exports = cos;
 
-},{"./cos.js":22}],24:[function(require,module,exports){
-'use strict';
-
-/*
-* The following copyright, license, and long comment were part of the original implementation available as part of [FreeBSD]{@link https://svnweb.freebsd.org/base/release/9.3.0/lib/msun/src/e_exp.c?view=markup}.
+},{"./cos.js":67}],69:[function(require,module,exports){
+/**
+* @license Apache-2.0
 *
-* The implementation follows the original, but has been modified for JavaScript.
-*/
-
-/*
-* ====================================================
+* Copyright (c) 2018 The Stdlib Authors.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*    http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*
+*
+* ## Notice
+*
+* The following copyright, license, and long comment were part of the original implementation available as part of [FreeBSD]{@link https://svnweb.freebsd.org/base/release/9.3.0/lib/msun/src/e_exp.c}. The implementation follows the original, but has been modified for JavaScript.
+*
+* ```text
 * Copyright (C) 2004 by Sun Microsystems, Inc. All rights reserved.
 *
+* Developed at SunPro, a Sun Microsystems, Inc. business.
 * Permission to use, copy, modify, and distribute this
 * software is freely granted, provided that this notice
 * is preserved.
-* ====================================================
+* ```
 */
+
+'use strict';
 
 // MODULES //
 
 var isnan = require( '@stdlib/math/base/assert/is-nan' );
 var trunc = require( '@stdlib/math/base/special/trunc' );
-var NINF = require( '@stdlib/math/constants/float64-ninf' );
-var PINF = require( '@stdlib/math/constants/float64-pinf' );
+var NINF = require( '@stdlib/constants/math/float64-ninf' );
+var PINF = require( '@stdlib/constants/math/float64-pinf' );
 var expmulti = require( './expmulti.js' );
 
 
@@ -956,68 +3587,73 @@ var NEG_NEARZERO = -NEARZERO;
 /**
 * Evaluates the natural exponential function.
 *
-* #### Method
+* ## Method
 *
-* 1. We reduce \\( x \\) to an \\( r \\) so that \\( |r| \leq 0.5 \cdot \ln(2) \approx 0.34658 \\). Given \\( x \\), we find an \\( r \\) and integer \\( k \\) such that
+* 1.  We reduce \\( x \\) to an \\( r \\) so that \\( |r| \leq 0.5 \cdot \ln(2) \approx 0.34658 \\). Given \\( x \\), we find an \\( r \\) and integer \\( k \\) such that
 *
-*   ```tex
-*   \begin{align*}
-*   x &= k \cdot \ln(2) + r \\
-*   |r| &\leq 0.5 \cdot \ln(2)
-*   \end{align*}
-*   ```
+*     ```tex
+*     \begin{align*}
+*     x &= k \cdot \ln(2) + r \\
+*     |r| &\leq 0.5 \cdot \ln(2)
+*     \end{align*}
+*     ```
 *
-*   <!-- <note> -->
-*   \\( r \\) can be represented as \\( r = \mathrm{hi} - \mathrm{lo} \\) for better accuracy.
-*   <!-- </note> -->
+*     <!-- <note> -->
 *
-* 2. We approximate of \\( e^{r} \\) by a special rational function on the interval \\([0,0.34658]\\):
+*     \\( r \\) can be represented as \\( r = \mathrm{hi} - \mathrm{lo} \\) for better accuracy.
 *
-*   ```tex
-*   \begin{align*}
-*   R\left(r^2\right) &= r \cdot \frac{ e^{r}+1 }{ e^{r}-1 } \\
-*   &= 2 + \frac{r^2}{6} - \frac{r^4}{360} + \ldots
-*   \end{align*}
-*   ```
+*     <!-- </note> -->
 *
-*   We use a special Remes algorithm on \\([0,0.34658]\\) to generate a polynomial of degree \\(5\\) to approximate \\(R\\). The maximum error of this polynomial approximation is bounded by \\(2^{-59}\\). In other words,
+* 2.  We approximate of \\( e^{r} \\) by a special rational function on the interval \\(\[0,0.34658]\\):
 *
-*   ```tex
-*   R(z) \sim 2 + P_1 z + P_2 z^2 + P_3 z^3 + P_4 z^4 + P_5 z^5
-*   ```
+*     ```tex
+*     \begin{align*}
+*     R\left(r^2\right) &= r \cdot \frac{ e^{r}+1 }{ e^{r}-1 } \\
+*     &= 2 + \frac{r^2}{6} - \frac{r^4}{360} + \ldots
+*     \end{align*}
+*     ```
 *
-*   where \\( z = r^2 \\) and
+*     We use a special Remes algorithm on \\(\[0,0.34658]\\) to generate a polynomial of degree \\(5\\) to approximate \\(R\\). The maximum error of this polynomial approximation is bounded by \\(2^{-59}\\). In other words,
 *
-*   ```tex
-*   \left|  2 + P_1 z + \ldots + P_5 z^5  - R(z) \right| \leq 2^{-59}
-*   ```
+*     ```tex
+*     R(z) \sim 2 + P_1 z + P_2 z^2 + P_3 z^3 + P_4 z^4 + P_5 z^5
+*     ```
 *
-*   <!-- <note> -->
-*   The values of \\( P_1 \\) to \\( P_5 \\) are listed in the source code.
-*   <!-- </note> -->
-*   The computation of \\( e^{r} \\) thus becomes
+*     where \\( z = r^2 \\) and
 *
-*   ```tex
-*   \begin{align*}
-*   e^{r} &= 1 + \frac{2r}{R-r} \\
+*     ```tex
+*     \left|  2 + P_1 z + \ldots + P_5 z^5  - R(z) \right| \leq 2^{-59}
+*     ```
+*
+*     <!-- <note> -->
+*
+*     The values of \\( P_1 \\) to \\( P_5 \\) are listed in the source code.
+*
+*     <!-- </note> -->
+*
+*     The computation of \\( e^{r} \\) thus becomes
+*
+*     ```tex
+*     \begin{align*}
+*     e^{r} &= 1 + \frac{2r}{R-r} \\
 *           &= 1 + r + \frac{r \cdot R_1(r)}{2 - R_1(r)}\ \text{for better accuracy}
-*   \end{align*}
-*   ```
+*     \end{align*}
+*     ```
 *
-*   where
+*     where
 *
-*   ```tex
-*   R_1(r) = r - P_1\ r^2 + P_2\ r^4 + \ldots + P_5\ r^{10}
-*   ```
+*     ```tex
+*     R_1(r) = r - P_1\ r^2 + P_2\ r^4 + \ldots + P_5\ r^{10}
+*     ```
 *
-* 3. We scale back to obtain \\( e^{x} \\). From step 1, we have
+* 3.  We scale back to obtain \\( e^{x} \\). From step 1, we have
 *
-*   ```tex
-*   e^{x} = 2^k e^{r}
-*   ```
+*     ```tex
+*     e^{x} = 2^k e^{r}
+*     ```
 *
 *
-* #### Special Cases
+* ## Special Cases
 *
 * ```tex
 * \begin{align*}
@@ -1028,13 +3664,16 @@ var NEG_NEARZERO = -NEARZERO;
 * \end{align*}
 * ```
 *
-* #### Notes
+* ## Notes
 *
-* - According to an error analysis, the error is always less than \\(1\\) ulp (unit in the last place).
-* - For IEEE double,
-*   * if \\(x > 7.09782712893383973096\mbox{e+}02\\), then \\(e^{x}\\) overflows
-*   * if \\(x < -7.45133219101941108420\mbox{e+}02\\), then \\(e^{x}\\) underflows
-* - The hexadecimal values included in the source code are the intended ones for the used constants. Decimal values may be used, provided that the compiler will convert from decimal to binary accurately enough to produce the intended hexadecimal values.
+* -   According to an error analysis, the error is always less than \\(1\\) ulp (unit in the last place).
+*
+* -   For an IEEE double,
+*
+*     -   if \\(x > 7.09782712893383973096\mbox{e+}02\\), then \\(e^{x}\\) overflows
+*     -   if \\(x < -7.45133219101941108420\mbox{e+}02\\), then \\(e^{x}\\) underflows
+*
+* -   The hexadecimal values included in the source code are the intended ones for the used constants. Decimal values may be used, provided that the compiler will convert from decimal to binary accurately enough to produce the intended hexadecimal values.
 *
 *
 * @param {number} x - input value
@@ -1089,37 +3728,52 @@ function exp( x ) {
 	lo = k * LN2_LO;
 
 	return expmulti( hi, lo, k );
-} // end FUNCTION exp()
+}
 
 
 // EXPORTS //
 
 module.exports = exp;
 
-},{"./expmulti.js":25,"@stdlib/math/base/assert/is-nan":14,"@stdlib/math/base/special/trunc":53,"@stdlib/math/constants/float64-ninf":83,"@stdlib/math/constants/float64-pinf":85}],25:[function(require,module,exports){
+},{"./expmulti.js":70,"@stdlib/constants/math/float64-ninf":50,"@stdlib/constants/math/float64-pinf":52,"@stdlib/math/base/assert/is-nan":59,"@stdlib/math/base/special/trunc":114}],70:[function(require,module,exports){
+/**
+* @license Apache-2.0
+*
+* Copyright (c) 2018 The Stdlib Authors.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*    http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*
+*
+* ## Notice
+*
+* The following copyright, license, and long comment were part of the original implementation available as part of [FreeBSD]{@link https://svnweb.freebsd.org/base/release/9.3.0/lib/msun/src/e_exp.c}. The implementation follows the original, but has been modified for JavaScript.
+*
+* ```text
+* Copyright (C) 2004 by Sun Microsystems, Inc. All rights reserved.
+*
+* Developed at SunPro, a Sun Microsystems, Inc. business.
+* Permission to use, copy, modify, and distribute this
+* software is freely granted, provided that this notice
+* is preserved.
+* ```
+*/
+
 'use strict';
 
 // MODULES //
 
-var evalpoly = require( '@stdlib/math/base/tools/evalpoly' ).factory;
 var ldexp = require( '@stdlib/math/base/special/ldexp' );
-
-
-// VARIABLES //
-
-var P = [
-	1.66666666666666019037e-01,  /* 0x3FC55555; 0x5555553E */
-	-2.77777777770155933842e-03, /* 0xBF66C16C; 0x16BEBD93 */
-	6.61375632143793436117e-05, /* 0x3F11566A; 0xAF25DE2C */
-	-1.65339022054652515390e-06, /* 0xBEBBBD41; 0xC5D26BF1 */
-	4.13813679705723846039e-08 /* 0x3E663769; 0x72BEA4D0 */
-];
-
-
-// FUNCTIONS //
-
-// Compile a function for evaluating a polynomial based on the above coefficients...
-var polyvalP = evalpoly( P );
+var polyvalP = require( './polyval_p.js' );
 
 
 // MAIN //
@@ -1145,14 +3799,32 @@ function expmulti( hi, lo, k ) {
 	y = 1.0 - ( lo - ( (r*c)/(2.0-c) ) - hi);
 
 	return ldexp( y, k );
-} // end FUNCTION expmulti()
+}
 
 
 // EXPORTS //
 
 module.exports = expmulti;
 
-},{"@stdlib/math/base/special/ldexp":37,"@stdlib/math/base/tools/evalpoly":57}],26:[function(require,module,exports){
+},{"./polyval_p.js":72,"@stdlib/math/base/special/ldexp":96}],71:[function(require,module,exports){
+/**
+* @license Apache-2.0
+*
+* Copyright (c) 2018 The Stdlib Authors.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*    http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
+
 'use strict';
 
 /**
@@ -1185,35 +3857,101 @@ var exp = require( './exp.js' );
 
 module.exports = exp;
 
-},{"./exp.js":24}],27:[function(require,module,exports){
-'use strict';
-
-/*
-* The original C code, long comment, copyright, license, and constants are from [netlib]{@link http://www.netlib.org/fdlibm/s_expm1.c}.
+},{"./exp.js":69}],72:[function(require,module,exports){
+/**
+* @license Apache-2.0
 *
-* The implementation follows the original, but has been modified for JavaScript.
+* Copyright (c) 2018 The Stdlib Authors.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*    http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
 */
 
-/*
-* ====================================================
+/* This is a generated file. Do not edit directly. */
+'use strict';
+
+// MAIN //
+
+/**
+* Evaluates a polynomial.
+*
+* ## Notes
+*
+* -   The implementation uses [Horner's rule][horners-method] for efficient computation.
+*
+* [horners-method]: https://en.wikipedia.org/wiki/Horner%27s_method
+*
+*
+* @private
+* @param {number} x - value at which to evaluate the polynomial
+* @returns {number} evaluated polynomial
+*/
+function evalpoly( x ) {
+	if ( x === 0.0 ) {
+		return 0.16666666666666602;
+	}
+	return 0.16666666666666602 + (x * (-0.0027777777777015593 + (x * (0.00006613756321437934 + (x * (-0.0000016533902205465252 + (x * 4.1381367970572385e-8))))))); // eslint-disable-line max-len
+}
+
+
+// EXPORTS //
+
+module.exports = evalpoly;
+
+},{}],73:[function(require,module,exports){
+/**
+* @license Apache-2.0
+*
+* Copyright (c) 2018 The Stdlib Authors.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*    http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*
+*
+* ## Notice
+*
+* The following copyright, license, and long comment were part of the original implementation available as part of [FDLIBM]{@link http://www.netlib.org/fdlibm/s_expm1.c}. The implementation follows the original, but has been modified for JavaScript.
+*
+* ```text
 * Copyright (C) 2004 by Sun Microsystems, Inc. All rights reserved.
 *
+* Developed at SunPro, a Sun Microsystems, Inc. business.
 * Permission to use, copy, modify, and distribute this
 * software is freely granted, provided that this notice
 * is preserved.
-* ====================================================
+* ```
 */
+
+'use strict';
 
 // MODULES //
 
-var evalpoly = require( '@stdlib/math/base/tools/evalpoly' );
 var isnan = require( '@stdlib/math/base/assert/is-nan' );
-var highWord = require( '@stdlib/math/base/utils/float64-get-high-word' );
-var setHighWord = require( '@stdlib/math/base/utils/float64-set-high-word' );
-var PINF = require( '@stdlib/math/constants/float64-pinf' );
-var NINF = require( '@stdlib/math/constants/float64-ninf' );
-var BIAS = require( '@stdlib/math/constants/float64-exponent-bias' );
-var LN2_HALF = require( '@stdlib/math/constants/float64-half-ln-two' );
+var getHighWord = require( '@stdlib/number/float64/base/get-high-word' );
+var setHighWord = require( '@stdlib/number/float64/base/set-high-word' );
+var PINF = require( '@stdlib/constants/math/float64-pinf' );
+var NINF = require( '@stdlib/constants/math/float64-ninf' );
+var FLOAT64_EXPONENT_BIAS = require( '@stdlib/constants/math/float64-exponent-bias' );
+var HALF_LN2 = require( '@stdlib/constants/math/float64-half-ln-two' );
+var polyval = require( './polyval_q.js' );
 
 
 // VARIABLES //
@@ -1233,124 +3971,112 @@ var LN2x56 = 3.88162421113569373274e+01; // 0x4043687A 0x9F1AF2B1
 // ln(2) * 1.5:
 var LN2_HALFX3 = 1.03972077083991796413e+00; // 0x3FF0A2B2 0x3F3BAB73
 
-// Scaled polynomial coefficients:
-var Q = [
-	-3.33333333333331316428e-02, // 0xBFA11111 0x111110F4
-	1.58730158725481460165e-03,  // 0x3F5A01A0 0x19FE5585
-	-7.93650757867487942473e-05, // 0xBF14CE19 0x9EAADBB7
-	4.00821782732936239552e-06,  // 0x3ED0CFCA 0x86E65239
-	-2.01099218183624371326e-07 // 0xBE8AFDB7 0x6E09C32D
-];
-
-
-// FUNCTIONS //
-
-var polyval = evalpoly.factory( Q );
-
 
 // MAIN //
 
 /**
 * Computes `exp(x) - 1`.
 *
-* #### Method
+* ## Method
 *
-* 1. Given \\(x\\), we use argument reduction to find \\(r\\) and an integer \\(k\\) such that
+* 1.  Given \\(x\\), we use argument reduction to find \\(r\\) and an integer \\(k\\) such that
 *
-*    ```tex
-*    x = k \cdot \ln(2) + r
-*    ```
+*     ```tex
+*     x = k \cdot \ln(2) + r
+*     ```
 *
-*    where
+*     where
 *
-*    ```tex
-*    |r| \leq \frac{\ln(2)}{2} \approx 0.34658
-*    ```
+*     ```tex
+*     |r| \leq \frac{\ln(2)}{2} \approx 0.34658
+*     ```
 *
-*    <!-- <note> -->
-*    A correction term \\(c\\) will need to be computed to compensate for the error in \\(r\\) when rounded to a floating-point number.
-*    <!-- </note> -->
+*     <!-- <note> -->
 *
-* 2. To approximate \\(\operatorname{expm1}(r)\\), we use a special rational function on the interval \\([0,0.34658]\\). Since
+*     A correction term \\(c\\) will need to be computed to compensate for the error in \\(r\\) when rounded to a floating-point number.
 *
-*    ```tex
-*    r \frac{e^r + 1}{e^r - 1} = 2 + \frac{r^2}{6} - \frac{r^4}{360} + \ldots
-*    ```
+*     <!-- </note> -->
 *
-*    we define \\(\operatorname{R1}(r^2)\\) by
+* 2.  To approximate \\(\operatorname{expm1}(r)\\), we use a special rational function on the interval \\(\[0,0.34658]\\). Since
 *
-*    ```tex
-*    r \frac{e^r + 1}{e^r - 1} = 2 + \frac{r^2}{6} \operatorname{R1}(r^2)
-*    ```
+*     ```tex
+*     r \frac{e^r + 1}{e^r - 1} = 2 + \frac{r^2}{6} - \frac{r^4}{360} + \ldots
+*     ```
 *
-*    That is,
+*     we define \\(\operatorname{R1}(r^2)\\) by
 *
-*    ```tex
-*    \begin{align*}
-*    \operatorname{R1}(r^2) &= \frac{6}{r} \biggl(\frac{e^r+1}{e^r-1} - \frac{2}{r}\biggr) \\
-*    &= \frac{6}{r} \biggl( 1 + 2 \biggl(\frac{1}{e^r-1} - \frac{1}{r}\biggr)\biggr) \\
-*    &= 1 - \frac{r^2}{60} + \frac{r^4}{2520} - \frac{r^6}{100800} + \ldots
-*    \end{align*}
-*    ```
+*     ```tex
+*     r \frac{e^r + 1}{e^r - 1} = 2 + \frac{r^2}{6} \operatorname{R1}(r^2)
+*     ```
 *
-*    We use a special Remes algorithm on \\([0,0.347]\\) to generate a polynomial of degree \\(5\\) in \\(r^2\\) to approximate \\(\mathrm{R1}\\). The maximum error of this polynomial approximation is bounded by \\(2^{-61}\\). In other words,
+*     That is,
 *
-*    ```tex
-*    \operatorname{R1}(z) \approx 1 + \mathrm{Q1} \cdot z + \mathrm{Q2} \cdot z^2 + \mathrm{Q3} \cdot z^3 + \mathrm{Q4} \cdot z^4 + \mathrm{Q5} \cdot z^5
-*    ```
+*     ```tex
+*     \begin{align*}
+*     \operatorname{R1}(r^2) &= \frac{6}{r} \biggl(\frac{e^r+1}{e^r-1} - \frac{2}{r}\biggr) \\
+*     &= \frac{6}{r} \biggl( 1 + 2 \biggl(\frac{1}{e^r-1} - \frac{1}{r}\biggr)\biggr) \\
+*     &= 1 - \frac{r^2}{60} + \frac{r^4}{2520} - \frac{r^6}{100800} + \ldots
+*     \end{align*}
+*     ```
 *
-*    where
+*     We use a special Remes algorithm on \\(\[0,0.347]\\) to generate a polynomial of degree \\(5\\) in \\(r^2\\) to approximate \\(\mathrm{R1}\\). The maximum error of this polynomial approximation is bounded by \\(2^{-61}\\). In other words,
 *
-*    ```tex
-*    \begin{align*}
-*    \mathrm{Q1} &= -1.6666666666666567384\mbox{e-}2 \\
-*    \mathrm{Q2} &= 3.9682539681370365873\mbox{e-}4 \\
-*    \mathrm{Q3} &= -9.9206344733435987357\mbox{e-}6 \\
-*    \mathrm{Q4} &= 2.5051361420808517002\mbox{e-}7 \\
-*    \mathrm{Q5} &= -6.2843505682382617102\mbox{e-}9
-*    \end{align*}
-*    ```
+*     ```tex
+*     \operatorname{R1}(z) \approx 1 + \mathrm{Q1} \cdot z + \mathrm{Q2} \cdot z^2 + \mathrm{Q3} \cdot z^3 + \mathrm{Q4} \cdot z^4 + \mathrm{Q5} \cdot z^5
+*     ```
 *
-*    where \\(z = r^2\\) and the values of \\(\mathrm{Q1}\\) to \\(\mathrm{Q5}\\) are listed in the source. The error is bounded by
+*     where
 *
-*    ```tex
-*    \biggl| 1 + \mathrm{Q1} \cdot z + \ldots + \mathrm{Q5} \cdot z - \operatorname{R1}(z) \biggr| \leq 2^{-61}
-*    ```
+*     ```tex
+*     \begin{align*}
+*     \mathrm{Q1} &= -1.6666666666666567384\mbox{e-}2 \\
+*     \mathrm{Q2} &= 3.9682539681370365873\mbox{e-}4 \\
+*     \mathrm{Q3} &= -9.9206344733435987357\mbox{e-}6 \\
+*     \mathrm{Q4} &= 2.5051361420808517002\mbox{e-}7 \\
+*     \mathrm{Q5} &= -6.2843505682382617102\mbox{e-}9
+*     \end{align*}
+*     ```
 *
-*    \\(\operatorname{expm1}(r) = e^r - 1\\) is then computed by the following specific way which minimizes the accumulated rounding error
+*     where \\(z = r^2\\) and the values of \\(\mathrm{Q1}\\) to \\(\mathrm{Q5}\\) are listed in the source. The error is bounded by
 *
-*    ```tex
-*    \operatorname{expm1}(r) = r + \frac{r^2}{2} + \frac{r^3}{2} \biggl( \frac{3 - (\mathrm{R1} + \mathrm{R1} \cdot \frac{r}{2})}{6 - r ( 3 - \mathrm{R1} \cdot \frac{r}{2})} \biggr)
-*    ```
+*     ```tex
+*     \biggl| 1 + \mathrm{Q1} \cdot z + \ldots + \mathrm{Q5} \cdot z - \operatorname{R1}(z) \biggr| \leq 2^{-61}
+*     ```
 *
-*    To compensate for the error in the argument reduction, we use
+*     \\(\operatorname{expm1}(r) = e^r - 1\\) is then computed by the following specific way which minimizes the accumulated rounding error
 *
-*    ```tex
-*    \begin{align*}
-*    \operatorname{expm1}(r+c) &= \operatorname{expm1}(r) + c + \operatorname{expm1}(r) \cdot c \\
-*    &\approx \operatorname{expm1}(r) + c + rc
-*    \end{align*}
-*    ```
+*     ```tex
+*     \operatorname{expm1}(r) = r + \frac{r^2}{2} + \frac{r^3}{2} \biggl( \frac{3 - (\mathrm{R1} + \mathrm{R1} \cdot \frac{r}{2})}{6 - r ( 3 - \mathrm{R1} \cdot \frac{r}{2})} \biggr)
+*     ```
 *
-*    Thus, \\(c + rc\\) will be added in as the correction terms for \\(\operatorname{expm1}(r+c)\\). Now, we can rearrange the term to avoid optimization screw up.
+*     To compensate for the error in the argument reduction, we use
 *
-*    ```tex
-     \begin{align*}
-*    \operatorname{expm1}(r+c) &\approx r - \biggl( \biggl( r + \biggl( \frac{r^2}{2} \biggl( \frac{\mathrm{R1} - (3 - \mathrm{R1} \cdot \frac{r}{2})}{6 - r (3 - \mathrm{R1} \cdot \frac{r}{2})} \biggr) - c \biggr) - c \biggr) - \frac{r^2}{2} \biggr) \\
-*    &= r - \mathrm{E}
-*    \end{align*}
-*    ```
+*     ```tex
+*     \begin{align*}
+*     \operatorname{expm1}(r+c) &= \operatorname{expm1}(r) + c + \operatorname{expm1}(r) \cdot c \\
+*     &\approx \operatorname{expm1}(r) + c + rc
+*     \end{align*}
+*     ```
 *
-* 3. To scale back to obtain \\(\operatorname{expm1}(x)\\), we have (from step 1)
+*     Thus, \\(c + rc\\) will be added in as the correction terms for \\(\operatorname{expm1}(r+c)\\). Now, we can rearrange the term to avoid optimization screw up.
 *
-*    ```tex
-*    \operatorname{expm1}(x) = \begin{cases}
-*    2^k  (\operatorname{expm1}(r) + 1) - 1 \\
-*    2^k (\operatorname{expm1}(r) + (1-2^{-k}))
-*    \end{cases}
-*    ```
+*     ```tex
+*     \begin{align*}
+*     \operatorname{expm1}(r+c) &\approx r - \biggl( \biggl( r + \biggl( \frac{r^2}{2} \biggl( \frac{\mathrm{R1} - (3 - \mathrm{R1} \cdot \frac{r}{2})}{6 - r (3 - \mathrm{R1} \cdot \frac{r}{2})} \biggr) - c \biggr) - c \biggr) - \frac{r^2}{2} \biggr) \\
+*     &= r - \mathrm{E}
+*     \end{align*}
+*     ```
 *
-* #### Special Cases
+* 3.  To scale back to obtain \\(\operatorname{expm1}(x)\\), we have (from step 1)
+*
+*     ```tex
+*     \operatorname{expm1}(x) = \begin{cases}
+*     2^k  (\operatorname{expm1}(r) + 1) - 1 \\
+*     2^k (\operatorname{expm1}(r) + (1-2^{-k}))
+*     \end{cases}
+*     ```
+*
+* ## Special Cases
 *
 * ```tex
 * \begin{align*}
@@ -1361,27 +4087,36 @@ var polyval = evalpoly.factory( Q );
 * ```
 *
 *
-* #### Notes
+* ## Notes
 *
-* - For finite arguments, only \\(\operatorname{expm1}(0) = 0\\) is exact.
-* - To save one multiplication, we scale the coefficient \\(\mathrm{Qi}\\) to \\(\mathrm{Qi} \cdot {2^i}\\) and replace \\(z\\) by \\(\frac{x^2}{2}\\).
-* - To achieve maximum accuracy, we compute \\(\operatorname{expm1}(x)\\) by
-*   * if \\(x < -56 \cdot \ln(2)\\), return \\(-1.0\\) (raise inexact if \\(x\\) does not equal \\(\infty\\))
-*   * if \\(k = 0\\), return \\(r-\mathrm{E}\\)
-*   * if \\(k = -1\\), return \\(\frac{(r-\mathrm{E})-1}{2}\\)
-*   * if \\(k = 1\\),
-*     - if \\(r < -0.25\\), return \\(2((r+0.5)- \mathrm{E})\\)
-*     - else return \\(1+2(r-\mathrm{E})\\)
-*   * if \\(k < -2\\) or \\(k > 56\\), return \\(2^k(1-(\mathrm{E}-r)) - 1\\) (or \\(e^x-1\\))
-*   * if \\(k \leq 20\\), return \\(2^k((1-2^{-k})-(\mathrm{E}-r))\\)
-*   * else return \\(2^k(1-((\mathrm{E}+2^{-k})-r))\\)
-* - For IEEE 754 double, if \\(x > 7.09782712893383973096\mbox{e+}02\\), then \\(\operatorname{expm1}(x)\\) will overflow.
-* - The hexadecimal values listed in the source are the intended ones for the implementation constants. Decimal values may be used, provided that the compiler will convert from decimal to binary accurately enough to produce the intended hexadecimal values.
+* -   For finite arguments, only \\(\operatorname{expm1}(0) = 0\\) is exact.
 *
+* -   To save one multiplication, we scale the coefficient \\(\mathrm{Qi}\\) to \\(\mathrm{Qi} \cdot {2^i}\\) and replace \\(z\\) by \\(\frac{x^2}{2}\\).
 *
-* #### Accuracy
+* -   To achieve maximum accuracy, we compute \\(\operatorname{expm1}(x)\\) by
 *
-* According to an error analysis, the error is always less than \\(1\\) ulp (unit in the last place).
+*     -   if \\(x < -56 \cdot \ln(2)\\), return \\(-1.0\\) (raise inexact if \\(x\\) does not equal \\(\infty\\))
+*
+*     -   if \\(k = 0\\), return \\(r-\mathrm{E}\\)
+*
+*     -   if \\(k = -1\\), return \\(\frac{(r-\mathrm{E})-1}{2}\\)
+*
+*     -   if \\(k = 1\\),
+*
+*         -   if \\(r < -0.25\\), return \\(2((r+0.5)- \mathrm{E})\\)
+*         -   else return \\(1+2(r-\mathrm{E})\\)
+*
+*     -   if \\(k < -2\\) or \\(k > 56\\), return \\(2^k(1-(\mathrm{E}-r)) - 1\\) (or \\(e^x-1\\))
+*
+*     -   if \\(k \leq 20\\), return \\(2^k((1-2^{-k})-(\mathrm{E}-r))\\)
+*
+*     -   else return \\(2^k(1-((\mathrm{E}+2^{-k})-r))\\)
+
+* -   For IEEE 754 double, if \\(x > 7.09782712893383973096\mbox{e+}02\\), then \\(\operatorname{expm1}(x)\\) will overflow.
+*
+* -   The hexadecimal values listed in the source are the intended ones for the implementation constants. Decimal values may be used, provided that the compiler will convert from decimal to binary accurately enough to produce the intended hexadecimal values.
+*
+* -   According to an error analysis, the error is always less than \\(1\\) ulp (unit in the last place).
 *
 *
 * @param {number} x - input value
@@ -1393,7 +4128,7 @@ var polyval = evalpoly.factory( Q );
 *
 * @example
 * var v = expm1( -9.0 );
-* // returns ~-0.999
+* // returns ~-0.9999
 *
 * @example
 * var v = expm1( 0.0 );
@@ -1444,10 +4179,10 @@ function expm1( x ) {
 		}
 	}
 	// Extract the more significant bits from |x|:
-	hx = highWord( y );
+	hx = getHighWord( y )|0; // asm type annotation
 
 	// Argument reduction...
-	if ( y > LN2_HALF ) { // if |x| > 0.5*ln(2)
+	if ( y > HALF_LN2 ) { // if |x| > 0.5*ln(2)
 		if ( y < LN2_HALFX3 ) { // if |x| < 1.5*ln(2)
 			if ( sign ) {
 				hi = x + LN2_HI;
@@ -1464,7 +4199,7 @@ function expm1( x ) {
 			} else {
 				k = (LN2_INV*x) + 0.5;
 			}
-			k = k|0; // use a bitwise OR to cast `k` to an integer (see also asm.js type annotations: http://asmjs.org/spec/latest/#annotations)
+			k |= 0; // use a bitwise OR to cast `k` to an integer (see also asm.js type annotations: http://asmjs.org/spec/latest/#annotations)
 			t = k;
 			hi = x - (t*LN2_HI); // t*ln2_hi is exact here
 			lo = t * LN2_LO;
@@ -1505,7 +4240,7 @@ function expm1( x ) {
 		y = 1.0 - (e-x);
 
 		// Add k to y's exponent:
-		hi = highWord( y ) + (k<<20);
+		hi = (getHighWord( y ) + (k<<20))|0; // asm type annotation
 		y = setHighWord( y, hi );
 
 		return y - 1.0;
@@ -1513,27 +4248,44 @@ function expm1( x ) {
 	t = 1.0;
 	if ( k < 20 ) {
 		// 0x3ff00000 - (0x200000>>k) = 1072693248 - (0x200000>>k) => 0x200000 = 0 00000000010 00000000000000000000
-		hi = 1072693248 - (0x200000>>k);
+		hi = (1072693248 - (0x200000>>k))|0; // asm type annotation
 		t = setHighWord( t, hi ); // t=1-2^-k
 		y = t - (e-x);
 	} else {
-		hi = ( (BIAS-k)<<20 );
+		hi = ( (FLOAT64_EXPONENT_BIAS-k)<<20 )|0; // asm type annotation
 		t = setHighWord( t, hi ); // t=2^-k
 		y = x - (e+t);
 		y += 1.0;
 	}
 	// Add k to y's exponent:
-	hi = highWord( y ) + (k<<20);
-	y = setHighWord( y, hi );
-	return y;
-} // end FUNCTION expm1()
+	hi = (getHighWord( y ) + (k<<20))|0; // asm type annotation
+	return setHighWord( y, hi );
+}
 
 
 // EXPORTS //
 
 module.exports = expm1;
 
-},{"@stdlib/math/base/assert/is-nan":14,"@stdlib/math/base/tools/evalpoly":57,"@stdlib/math/base/utils/float64-get-high-word":65,"@stdlib/math/base/utils/float64-set-high-word":72,"@stdlib/math/constants/float64-exponent-bias":77,"@stdlib/math/constants/float64-half-ln-two":78,"@stdlib/math/constants/float64-ninf":83,"@stdlib/math/constants/float64-pinf":85}],28:[function(require,module,exports){
+},{"./polyval_q.js":75,"@stdlib/constants/math/float64-exponent-bias":44,"@stdlib/constants/math/float64-half-ln-two":45,"@stdlib/constants/math/float64-ninf":50,"@stdlib/constants/math/float64-pinf":52,"@stdlib/math/base/assert/is-nan":59,"@stdlib/number/float64/base/get-high-word":124,"@stdlib/number/float64/base/set-high-word":133}],74:[function(require,module,exports){
+/**
+* @license Apache-2.0
+*
+* Copyright (c) 2018 The Stdlib Authors.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*    http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
+
 'use strict';
 
 /**
@@ -1566,7 +4318,75 @@ var expm1 = require( './expm1.js' );
 
 module.exports = expm1;
 
-},{"./expm1.js":27}],29:[function(require,module,exports){
+},{"./expm1.js":73}],75:[function(require,module,exports){
+/**
+* @license Apache-2.0
+*
+* Copyright (c) 2018 The Stdlib Authors.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*    http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
+
+/* This is a generated file. Do not edit directly. */
+'use strict';
+
+// MAIN //
+
+/**
+* Evaluates a polynomial.
+*
+* ## Notes
+*
+* -   The implementation uses [Horner's rule][horners-method] for efficient computation.
+*
+* [horners-method]: https://en.wikipedia.org/wiki/Horner%27s_method
+*
+*
+* @private
+* @param {number} x - value at which to evaluate the polynomial
+* @returns {number} evaluated polynomial
+*/
+function evalpoly( x ) {
+	if ( x === 0.0 ) {
+		return -0.03333333333333313;
+	}
+	return -0.03333333333333313 + (x * (0.0015873015872548146 + (x * (-0.0000793650757867488 + (x * (0.000004008217827329362 + (x * -2.0109921818362437e-7))))))); // eslint-disable-line max-len
+}
+
+
+// EXPORTS //
+
+module.exports = evalpoly;
+
+},{}],76:[function(require,module,exports){
+/**
+* @license Apache-2.0
+*
+* Copyright (c) 2018 The Stdlib Authors.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*    http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
+
 'use strict';
 
 // TODO: implementation (?)
@@ -1593,14 +4413,32 @@ module.exports = expm1;
 * var v = floor( NaN );
 * // returns NaN
 */
-var floor = Math.floor;
+var floor = Math.floor; // eslint-disable-line stdlib/no-builtin-math
 
 
 // EXPORTS //
 
 module.exports = floor;
 
-},{}],30:[function(require,module,exports){
+},{}],77:[function(require,module,exports){
+/**
+* @license Apache-2.0
+*
+* Copyright (c) 2018 The Stdlib Authors.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*    http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
+
 'use strict';
 
 /**
@@ -1633,25 +4471,40 @@ var floor = require( './floor.js' );
 
 module.exports = floor;
 
-},{"./floor.js":29}],31:[function(require,module,exports){
-'use strict';
-
-/*
-* The original C code, long comment, copyright, license, and constants are from [FreeBSD]{@link https://svnweb.freebsd.org/base/release/9.3.0/lib/msun/src/e_lgamma_r.c?revision=268523&view=co}.
+},{"./floor.js":76}],78:[function(require,module,exports){
+/**
+* @license Apache-2.0
 *
-* The implementation follows the original, but has been modified for JavaScript.
-*/
-
-/*
-* ====================================================
+* Copyright (c) 2018 The Stdlib Authors.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*    http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*
+*
+* ## Notice
+*
+* The following copyright, license, and long comment were part of the original implementation available as part of [FreeBSD]{@link https://svnweb.freebsd.org/base/release/9.3.0/lib/msun/src/e_lgamma_r.c}. The implementation follows the original, but has been modified for JavaScript.
+*
+* ```text
 * Copyright (C) 1993 by Sun Microsystems, Inc. All rights reserved.
 *
 * Developed at SunPro, a Sun Microsystems, Inc. business.
 * Permission to use, copy, modify, and distribute this
 * software is freely granted, provided that this notice
 * is preserved.
-* ====================================================
+* ```
 */
+
+'use strict';
 
 // MODULES //
 
@@ -1661,93 +4514,32 @@ var abs = require( '@stdlib/math/base/special/abs' );
 var ln = require( '@stdlib/math/base/special/ln' );
 var trunc = require( '@stdlib/math/base/special/trunc' );
 var sinpi = require( '@stdlib/math/base/special/sinpi' );
-var evalpoly = require( '@stdlib/math/base/tools/evalpoly' ).factory;
-var PI = require( '@stdlib/math/constants/float64-pi' );
-var PINF = require( '@stdlib/math/constants/float64-pinf' );
+var PI = require( '@stdlib/constants/math/float64-pi' );
+var PINF = require( '@stdlib/constants/math/float64-pinf' );
+var polyvalA1 = require( './polyval_a1.js' );
+var polyvalA2 = require( './polyval_a2.js' );
+var polyvalR = require( './polyval_r.js' );
+var polyvalS = require( './polyval_s.js' );
+var polyvalT1 = require( './polyval_t1.js' );
+var polyvalT2 = require( './polyval_t2.js' );
+var polyvalT3 = require( './polyval_t3.js' );
+var polyvalU = require( './polyval_u.js' );
+var polyvalV = require( './polyval_v.js' );
+var polyvalW = require( './polyval_w.js' );
 
 
 // VARIABLES //
 
 var A1C = 7.72156649015328655494e-02; // 0x3FB3C467E37DB0C8
-var A1 = [
-	6.73523010531292681824e-02, // 0x3FB13E001A5562A7
-	7.38555086081402883957e-03, // 0x3F7E404FB68FEFE8
-	1.19270763183362067845e-03, // 0x3F538A94116F3F5D
-	2.20862790713908385557e-04, // 0x3F2CF2ECED10E54D
-	2.52144565451257326939e-05  // 0x3EFA7074428CFA52
-];
 var A2C = 3.22467033424113591611e-01; // 0x3FD4A34CC4A60FAD
-var A2 = [
-	2.05808084325167332806e-02, // 0x3F951322AC92547B
-	2.89051383673415629091e-03, // 0x3F67ADD8CCB7926B
-	5.10069792153511336608e-04, // 0x3F40B6C689B99C00
-	1.08011567247583939954e-04, // 0x3F1C5088987DFB07
-	4.48640949618915160150e-05  // 0x3F07858E90A45837
-];
 var RC = 1.0;
-var R = [
-	1.39200533467621045958e+00, // 0x3FF645A762C4AB74
-	7.21935547567138069525e-01, // 0x3FE71A1893D3DCDC
-	1.71933865632803078993e-01, // 0x3FC601EDCCFBDF27
-	1.86459191715652901344e-02, // 0x3F9317EA742ED475
-	7.77942496381893596434e-04, // 0x3F497DDACA41A95B
-	7.32668430744625636189e-06  // 0x3EDEBAF7A5B38140
-];
 var SC = -7.72156649015328655494e-02; // 0xBFB3C467E37DB0C8
-var S = [
-	2.14982415960608852501e-01,  // 0x3FCB848B36E20878
-	3.25778796408930981787e-01,  // 0x3FD4D98F4F139F59
-	1.46350472652464452805e-01,  // 0x3FC2BB9CBEE5F2F7
-	2.66422703033638609560e-02,  // 0x3F9B481C7E939961
-	1.84028451407337715652e-03,  // 0x3F5E26B67368F239
-	3.19475326584100867617e-05   // 0x3F00BFECDD17E945
-];
 var T1C = 4.83836122723810047042e-01; // 0x3FDEF72BC8EE38A2
-var T1 = [
-	-3.27885410759859649565e-02, // 0xBFA0C9A8DF35B713
-	6.10053870246291332635e-03,  // 0x3F78FCE0E370E344
-	-1.40346469989232843813e-03, // 0xBF56FE8EBF2D1AF1
-	3.15632070903625950361e-04   // 0x3F34AF6D6C0EBBF7
-];
 var T2C = -1.47587722994593911752e-01; // 0xBFC2E4278DC6C509
-var T2 = [
-	1.79706750811820387126e-02,  // 0x3F9266E7970AF9EC
-	-3.68452016781138256760e-03, // 0xBF6E2EFFB3E914D7
-	8.81081882437654011382e-04,  // 0x3F4CDF0CEF61A8E9
-	-3.12754168375120860518e-04  // 0xBF347F24ECC38C38
-];
 var T3C = 6.46249402391333854778e-02; // 0x3FB08B4294D5419B
-var T3 = [
-	-1.03142241298341437450e-02, // 0xBF851F9FBA91EC6A
-	2.25964780900612472250e-03,  // 0x3F6282D32E15C915
-	-5.38595305356740546715e-04, // 0xBF41A6109C73E0EC
-	3.35529192635519073543e-04   // 0x3F35FD3EE8C2D3F4
-];
 var UC = -7.72156649015328655494e-02; // 0xBFB3C467E37DB0C8
-var U = [
-	6.32827064025093366517e-01,  // 0x3FE4401E8B005DFF
-	1.45492250137234768737e+00,  // 0x3FF7475CD119BD6F
-	9.77717527963372745603e-01,  // 0x3FEF497644EA8450
-	2.28963728064692451092e-01,  // 0x3FCD4EAEF6010924
-	1.33810918536787660377e-02   // 0x3F8B678BBF2BAB09
-];
 var VC = 1.0;
-var V = [
-	2.45597793713041134822e+00, // 0x4003A5D7C2BD619C
-	2.12848976379893395361e+00, // 0x40010725A42B18F5
-	7.69285150456672783825e-01, // 0x3FE89DFBE45050AF
-	1.04222645593369134254e-01, // 0x3FBAAE55D6537C88
-	3.21709242282423911810e-03  // 0x3F6A5ABB57D0CF61
-];
 var WC = 4.18938533204672725052e-01; // 0x3FDACFE390C97D69
-var W = [
-	8.33333333333329678849e-02,  // 0x3FB555555555553B
-	-2.77777777728775536470e-03, // 0xBF66C16C16B02E5C
-	7.93650558643019558500e-04,  // 0x3F4A019F98CF38B6
-	-5.95187557450339963135e-04, // 0xBF4380CB8C0FE741
-	8.36339918996282139126e-04,  // 0x3F4B67BA4CDAD5D1
-	-1.63092934096575273989e-03  // 0xBF5AB89D0B9E43E4
-];
 var YMIN = 1.461632144968362245;
 var TWO52 = 4503599627370496; // 2**52
 var TWO58 = 288230376151711744; // 2**58
@@ -1757,145 +4549,131 @@ var TF = -1.21486290535849611461e-01; // 0xBFBF19B9BCC38A42
 var TT = -3.63867699703950536541e-18; // 0xBC50C7CAA48A971F => TT = -(tail of TF)
 
 
-// FUNCTIONS //
-
-// Compile functions to evaluate polynomials based on the above coefficients...
-var polyvalA1 = evalpoly( A1 );
-var polyvalA2 = evalpoly( A2 );
-var polyvalR = evalpoly( R );
-var polyvalS = evalpoly( S );
-var polyvalT1 = evalpoly( T1 );
-var polyvalT2 = evalpoly( T2 );
-var polyvalT3 = evalpoly( T3 );
-var polyvalU = evalpoly( U );
-var polyvalV = evalpoly( V );
-var polyvalW = evalpoly( W );
-
-
 // MAIN //
 
 /**
 * Evaluates the natural logarithm of the gamma function.
 *
-* #### Method
+* ## Method
 *
-* 1. Argument reduction for \\(0 < x \leq 8\\). Since \\(\Gamma(1+s) = s \Gamma(s)\\), for \\(x \in [0,8]\\), we may reduce \\(x\\) to a number in \\([1.5,2.5]\\) by
+* 1.  Argument reduction for \\(0 < x \leq 8\\). Since \\(\Gamma(1+s) = s \Gamma(s)\\), for \\(x \in \[0,8]\\), we may reduce \\(x\\) to a number in \\(\[1.5,2.5]\\) by
 *
-*   ```tex
-*   \operatorname{lgamma}(1+s) = \ln(s) + \operatorname{lgamma}(s)
-*   ```
+*     ```tex
+*     \operatorname{lgamma}(1+s) = \ln(s) + \operatorname{lgamma}(s)
+*     ```
 *
-*   For example,
+*     For example,
 *
-*   ```tex
-*   \begin{align}
-*   \operatorname{lgamma}(7.3) &= \ln(6.3) + \operatorname{lgamma}(6.3) \\
-*   &= \ln(6.3 \cdot 5.3) + \operatorname{lgamma}(5.3) \\
-*   &= \ln(6.3 \cdot 5.3 \cdot 4.3 \cdot 3.3 \cdot2.3) + \operatorname{lgamma}(2.3)
-*   \end{align}
-*   ```
+*     ```tex
+*     \begin{align*}
+*     \operatorname{lgamma}(7.3) &= \ln(6.3) + \operatorname{lgamma}(6.3) \\
+*     &= \ln(6.3 \cdot 5.3) + \operatorname{lgamma}(5.3) \\
+*     &= \ln(6.3 \cdot 5.3 \cdot 4.3 \cdot 3.3 \cdot2.3) + \operatorname{lgamma}(2.3)
+*     \end{align*}
+*     ```
 *
-* 2. Compute a polynomial approximation of \\(\mathrm{lgamma}\\) around its
-minimum (\\(\mathrm{ymin} = 1.461632144968362245\\)) to maintain monotonicity. On the interval \\([\mathrm{ymin} - 0.23, \mathrm{ymin} + 0.27]\\) (i.e., \\([1.23164,1.73163]\\)), we let \\(z = x - \mathrm{ymin}\\) and use
+* 2.  Compute a polynomial approximation of \\(\mathrm{lgamma}\\) around its minimum (\\(\mathrm{ymin} = 1.461632144968362245\\)) to maintain monotonicity. On the interval \\(\[\mathrm{ymin} - 0.23, \mathrm{ymin} + 0.27]\\) (i.e., \\(\[1.23164,1.73163]\\)), we let \\(z = x - \mathrm{ymin}\\) and use
 *
-*   ```tex
-*   \operatorname{lgamma}(x) = -1.214862905358496078218 + z^2 \cdot \operatorname{poly}(z)
-*   ```
+*     ```tex
+*     \operatorname{lgamma}(x) = -1.214862905358496078218 + z^2 \cdot \operatorname{poly}(z)
+*     ```
 *
-*   where \\(\operatorname{poly}(z)\\) is a \\(14\\) degree polynomial.
+*     where \\(\operatorname{poly}(z)\\) is a \\(14\\) degree polynomial.
 *
-* 3. Compute a rational approximation in the primary interval \\([2,3]\\). Let \\( s = x - 2.0 \\). We can thus use the approximation
+* 3.  Compute a rational approximation in the primary interval \\(\[2,3]\\). Let \\( s = x - 2.0 \\). We can thus use the approximation
 *
-*   ```tex
-*   \operatorname{lgamma}(x) = \frac{s}{2} + s\frac{\operatorname{P}(s)}{\operatorname{Q}(s)}
-*   ```
+*     ```tex
+*     \operatorname{lgamma}(x) = \frac{s}{2} + s\frac{\operatorname{P}(s)}{\operatorname{Q}(s)}
+*     ```
 *
-*   with accuracy
+*     with accuracy
 *
-*   ```tex
-*   \biggl|\frac{\mathrm{P}}{\mathrm{Q}} - \biggr(\operatorname{lgamma}(x)-\frac{s}{2}\biggl)\biggl| < 2^{-61.71}
-*   ```
+*     ```tex
+*     \biggl|\frac{\mathrm{P}}{\mathrm{Q}} - \biggr(\operatorname{lgamma}(x)-\frac{s}{2}\biggl)\biggl| < 2^{-61.71}
+*     ```
 *
-*   The algorithms are based on the observation
+*     The algorithms are based on the observation
 *
-*   ```tex
-*   \operatorname{lgamma}(2+s) = s(1 - \gamma) + \frac{\zeta(2) - 1}{2} s^2 - \frac{\zeta(3) - 1}{3} s^3 + \ldots
-*   ```
+*     ```tex
+*     \operatorname{lgamma}(2+s) = s(1 - \gamma) + \frac{\zeta(2) - 1}{2} s^2 - \frac{\zeta(3) - 1}{3} s^3 + \ldots
+*     ```
 *
-*   where \\(\zeta\\) is the zeta function and \\(\gamma = 0.5772156649...\\) is the Euler-Mascheroni constant, which is very close to \\(0.5\\).
+*     where \\(\zeta\\) is the zeta function and \\(\gamma = 0.5772156649...\\) is the Euler-Mascheroni constant, which is very close to \\(0.5\\).
 *
-* 3. For \\(x \geq 8\\),
+* 4.  For \\(x \geq 8\\),
 *
-*   ```tex
-*   \operatorname{lgamma}(x) \approx \biggl(x-\frac{1}{2}\biggr) \ln(x) - x + \frac{\ln(2\pi)}{2} + \frac{1}{12x} - \frac{1}{360x^3} + \ldots
-*   ```
+*     ```tex
+*     \operatorname{lgamma}(x) \approx \biggl(x-\frac{1}{2}\biggr) \ln(x) - x + \frac{\ln(2\pi)}{2} + \frac{1}{12x} - \frac{1}{360x^3} + \ldots
+*     ```
 *
-*   which can be expressed
+*     which can be expressed
 *
-*   ```tex
-*   \operatorname{lgamma}(x) \approx \biggl(x-\frac{1}{2}\biggr)(\ln(x)-1)-\frac{\ln(2\pi)-1}{2} + \ldots
-*   ```
+*     ```tex
+*     \operatorname{lgamma}(x) \approx \biggl(x-\frac{1}{2}\biggr)(\ln(x)-1)-\frac{\ln(2\pi)-1}{2} + \ldots
+*     ```
 *
-*   Let \\(z = \frac{1}{x}\\). We can then use the approximation
+*     Let \\(z = \frac{1}{x}\\). We can then use the approximation
 *
-*   ```tex
-*   f(z) = \operatorname{lgamma}(x) - \biggl(x-\frac{1}{2}\biggr)(\ln(x)-1)
-*   ```
+*     ```tex
+*     f(z) = \operatorname{lgamma}(x) - \biggl(x-\frac{1}{2}\biggr)(\ln(x)-1)
+*     ```
 *
-*   by
+*     by
 *
-*   ```tex
-*   w = w_0 + w_1 z + w_2 z^3 + w_3 z^5 + \ldots + w_6 z^{11}
-*   ```
+*     ```tex
+*     w = w_0 + w_1 z + w_2 z^3 + w_3 z^5 + \ldots + w_6 z^{11}
+*     ```
 
-*   where
+*     where
 *
-*   ```tex
-*   |w - f(z)| < 2^{-58.74}
-*   ```
+*     ```tex
+*     |w - f(z)| < 2^{-58.74}
+*     ```
 *
-* 4. For negative \\(x\\), since
+* 5.  For negative \\(x\\), since
 *
-*   ```tex
-*   -x \Gamma(-x) \Gamma(x) = \frac{\pi}{\sin(\pi x)}
-*   ```
+*     ```tex
+*     -x \Gamma(-x) \Gamma(x) = \frac{\pi}{\sin(\pi x)}
+*     ```
 *
-*   where \\(\Gamma\\) is the gamma function, we have
+*     where \\(\Gamma\\) is the gamma function, we have
 *
-*   ```tex
-*   \Gamma(x) = \frac{\pi}{\sin(\pi x)(-x)\Gamma(-x)}
-*   ```
+*     ```tex
+*     \Gamma(x) = \frac{\pi}{\sin(\pi x)(-x)\Gamma(-x)}
+*     ```
 *
-*   Since \\(\Gamma(-x)\\) is positive,
+*     Since \\(\Gamma(-x)\\) is positive,
 *
-*   ```tex
-*   \operatorname{sign}(\Gamma(x)) = \operatorname{sign}(\sin(\pi x))
-*   ```
+*     ```tex
+*     \operatorname{sign}(\Gamma(x)) = \operatorname{sign}(\sin(\pi x))
+*     ```
 *
-*   for \\(x < 0\\). Hence, for \\(x < 0\\),
+*     for \\(x < 0\\). Hence, for \\(x < 0\\),
 *
-*   ```tex
-*   \mathrm{signgam} = \operatorname{sign}(\sin(\pi x))
-*   ```
+*     ```tex
+*     \mathrm{signgam} = \operatorname{sign}(\sin(\pi x))
+*     ```
 *
-*   and
+*     and
 *
-*   ```tex
-*   \begin{align}
-*   \operatorname{lgamma}(x) &= \ln(|\Gamma(x)|) \\
-*   &= \ln\biggl(\frac{\pi}{|x \sin(\pi x)|}\biggr) - \operatorname{lgamma}(-x)
-*   \end{align}
-*   ```
+*     ```tex
+*     \begin{align*}
+*     \operatorname{lgamma}(x) &= \ln(|\Gamma(x)|) \\
+*     &= \ln\biggl(\frac{\pi}{|x \sin(\pi x)|}\biggr) - \operatorname{lgamma}(-x)
+*     \end{align*}
+*     ```
 *
-*   <!-- <note> -->
-*   Note that one should avoid computing \\(\pi (-x)\\) directly in the computation of \\(\sin(\pi (-x))\\).
-*   <!-- </note> -->
+*     <!-- <note> -->
+*
+*     Note that one should avoid computing \\(\pi (-x)\\) directly in the computation of \\(\sin(\pi (-x))\\).
+*
+*     <!-- </note> -->
 *
 *
-* #### Special Cases
+* ## Special Cases
 *
 * ```tex
-* \begin{align}
+* \begin{align*}
 * \operatorname{lgamma}(2+s) &\approx s (1-\gamma) & \mathrm{for\ tiny\ s} \\
 * \operatorname{lgamma}(x) &\approx -\ln(x) & \mathrm{for\ tiny\ x} \\
 * \operatorname{lgamma}(1) &= 0 & \\
@@ -1903,7 +4681,7 @@ minimum (\\(\mathrm{ymin} = 1.461632144968362245\\)) to maintain monotonicity. O
 * \operatorname{lgamma}(0) &= \infty & \\
 * \operatorname{lgamma}(\infty) &= \infty & \\
 * \operatorname{lgamma}(-\mathrm{integer}) &= \pm \infty
-* \end{align}
+* \end{align*}
 * ```
 *
 *
@@ -2095,14 +4873,32 @@ function gammaln( x ) {
 		r = nadj - r;
 	}
 	return r;
-} // end FUNCTION gammaln()
+}
 
 
 // EXPORTS //
 
 module.exports = gammaln;
 
-},{"@stdlib/math/base/assert/is-infinite":12,"@stdlib/math/base/assert/is-nan":14,"@stdlib/math/base/special/abs":17,"@stdlib/math/base/special/ln":39,"@stdlib/math/base/special/sinpi":51,"@stdlib/math/base/special/trunc":53,"@stdlib/math/base/tools/evalpoly":57,"@stdlib/math/constants/float64-pi":84,"@stdlib/math/constants/float64-pinf":85}],32:[function(require,module,exports){
+},{"./polyval_a1.js":80,"./polyval_a2.js":81,"./polyval_r.js":82,"./polyval_s.js":83,"./polyval_t1.js":84,"./polyval_t2.js":85,"./polyval_t3.js":86,"./polyval_u.js":87,"./polyval_v.js":88,"./polyval_w.js":89,"@stdlib/constants/math/float64-pi":51,"@stdlib/constants/math/float64-pinf":52,"@stdlib/math/base/assert/is-infinite":57,"@stdlib/math/base/assert/is-nan":59,"@stdlib/math/base/special/abs":62,"@stdlib/math/base/special/ln":98,"@stdlib/math/base/special/sinpi":112,"@stdlib/math/base/special/trunc":114}],79:[function(require,module,exports){
+/**
+* @license Apache-2.0
+*
+* Copyright (c) 2018 The Stdlib Authors.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*    http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
+
 'use strict';
 
 /**
@@ -2144,7 +4940,525 @@ var gammaln = require( './gammaln.js' );
 
 module.exports = gammaln;
 
-},{"./gammaln.js":31}],33:[function(require,module,exports){
+},{"./gammaln.js":78}],80:[function(require,module,exports){
+/**
+* @license Apache-2.0
+*
+* Copyright (c) 2018 The Stdlib Authors.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*    http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
+
+/* This is a generated file. Do not edit directly. */
+'use strict';
+
+// MAIN //
+
+/**
+* Evaluates a polynomial.
+*
+* ## Notes
+*
+* -   The implementation uses [Horner's rule][horners-method] for efficient computation.
+*
+* [horners-method]: https://en.wikipedia.org/wiki/Horner%27s_method
+*
+*
+* @private
+* @param {number} x - value at which to evaluate the polynomial
+* @returns {number} evaluated polynomial
+*/
+function evalpoly( x ) {
+	if ( x === 0.0 ) {
+		return 0.06735230105312927;
+	}
+	return 0.06735230105312927 + (x * (0.007385550860814029 + (x * (0.0011927076318336207 + (x * (0.00022086279071390839 + (x * 0.000025214456545125733))))))); // eslint-disable-line max-len
+}
+
+
+// EXPORTS //
+
+module.exports = evalpoly;
+
+},{}],81:[function(require,module,exports){
+/**
+* @license Apache-2.0
+*
+* Copyright (c) 2018 The Stdlib Authors.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*    http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
+
+/* This is a generated file. Do not edit directly. */
+'use strict';
+
+// MAIN //
+
+/**
+* Evaluates a polynomial.
+*
+* ## Notes
+*
+* -   The implementation uses [Horner's rule][horners-method] for efficient computation.
+*
+* [horners-method]: https://en.wikipedia.org/wiki/Horner%27s_method
+*
+*
+* @private
+* @param {number} x - value at which to evaluate the polynomial
+* @returns {number} evaluated polynomial
+*/
+function evalpoly( x ) {
+	if ( x === 0.0 ) {
+		return 0.020580808432516733;
+	}
+	return 0.020580808432516733 + (x * (0.0028905138367341563 + (x * (0.0005100697921535113 + (x * (0.00010801156724758394 + (x * 0.000044864094961891516))))))); // eslint-disable-line max-len
+}
+
+
+// EXPORTS //
+
+module.exports = evalpoly;
+
+},{}],82:[function(require,module,exports){
+/**
+* @license Apache-2.0
+*
+* Copyright (c) 2018 The Stdlib Authors.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*    http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
+
+/* This is a generated file. Do not edit directly. */
+'use strict';
+
+// MAIN //
+
+/**
+* Evaluates a polynomial.
+*
+* ## Notes
+*
+* -   The implementation uses [Horner's rule][horners-method] for efficient computation.
+*
+* [horners-method]: https://en.wikipedia.org/wiki/Horner%27s_method
+*
+*
+* @private
+* @param {number} x - value at which to evaluate the polynomial
+* @returns {number} evaluated polynomial
+*/
+function evalpoly( x ) {
+	if ( x === 0.0 ) {
+		return 1.3920053346762105;
+	}
+	return 1.3920053346762105 + (x * (0.7219355475671381 + (x * (0.17193386563280308 + (x * (0.01864591917156529 + (x * (0.0007779424963818936 + (x * 0.000007326684307446256))))))))); // eslint-disable-line max-len
+}
+
+
+// EXPORTS //
+
+module.exports = evalpoly;
+
+},{}],83:[function(require,module,exports){
+/**
+* @license Apache-2.0
+*
+* Copyright (c) 2018 The Stdlib Authors.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*    http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
+
+/* This is a generated file. Do not edit directly. */
+'use strict';
+
+// MAIN //
+
+/**
+* Evaluates a polynomial.
+*
+* ## Notes
+*
+* -   The implementation uses [Horner's rule][horners-method] for efficient computation.
+*
+* [horners-method]: https://en.wikipedia.org/wiki/Horner%27s_method
+*
+*
+* @private
+* @param {number} x - value at which to evaluate the polynomial
+* @returns {number} evaluated polynomial
+*/
+function evalpoly( x ) {
+	if ( x === 0.0 ) {
+		return 0.21498241596060885;
+	}
+	return 0.21498241596060885 + (x * (0.325778796408931 + (x * (0.14635047265246445 + (x * (0.02664227030336386 + (x * (0.0018402845140733772 + (x * 0.00003194753265841009))))))))); // eslint-disable-line max-len
+}
+
+
+// EXPORTS //
+
+module.exports = evalpoly;
+
+},{}],84:[function(require,module,exports){
+/**
+* @license Apache-2.0
+*
+* Copyright (c) 2018 The Stdlib Authors.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*    http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
+
+/* This is a generated file. Do not edit directly. */
+'use strict';
+
+// MAIN //
+
+/**
+* Evaluates a polynomial.
+*
+* ## Notes
+*
+* -   The implementation uses [Horner's rule][horners-method] for efficient computation.
+*
+* [horners-method]: https://en.wikipedia.org/wiki/Horner%27s_method
+*
+*
+* @private
+* @param {number} x - value at which to evaluate the polynomial
+* @returns {number} evaluated polynomial
+*/
+function evalpoly( x ) {
+	if ( x === 0.0 ) {
+		return -0.032788541075985965;
+	}
+	return -0.032788541075985965 + (x * (0.006100538702462913 + (x * (-0.0014034646998923284 + (x * 0.00031563207090362595))))); // eslint-disable-line max-len
+}
+
+
+// EXPORTS //
+
+module.exports = evalpoly;
+
+},{}],85:[function(require,module,exports){
+/**
+* @license Apache-2.0
+*
+* Copyright (c) 2018 The Stdlib Authors.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*    http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
+
+/* This is a generated file. Do not edit directly. */
+'use strict';
+
+// MAIN //
+
+/**
+* Evaluates a polynomial.
+*
+* ## Notes
+*
+* -   The implementation uses [Horner's rule][horners-method] for efficient computation.
+*
+* [horners-method]: https://en.wikipedia.org/wiki/Horner%27s_method
+*
+*
+* @private
+* @param {number} x - value at which to evaluate the polynomial
+* @returns {number} evaluated polynomial
+*/
+function evalpoly( x ) {
+	if ( x === 0.0 ) {
+		return 0.01797067508118204;
+	}
+	return 0.01797067508118204 + (x * (-0.0036845201678113826 + (x * (0.000881081882437654 + (x * -0.00031275416837512086))))); // eslint-disable-line max-len
+}
+
+
+// EXPORTS //
+
+module.exports = evalpoly;
+
+},{}],86:[function(require,module,exports){
+/**
+* @license Apache-2.0
+*
+* Copyright (c) 2018 The Stdlib Authors.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*    http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
+
+/* This is a generated file. Do not edit directly. */
+'use strict';
+
+// MAIN //
+
+/**
+* Evaluates a polynomial.
+*
+* ## Notes
+*
+* -   The implementation uses [Horner's rule][horners-method] for efficient computation.
+*
+* [horners-method]: https://en.wikipedia.org/wiki/Horner%27s_method
+*
+*
+* @private
+* @param {number} x - value at which to evaluate the polynomial
+* @returns {number} evaluated polynomial
+*/
+function evalpoly( x ) {
+	if ( x === 0.0 ) {
+		return -0.010314224129834144;
+	}
+	return -0.010314224129834144 + (x * (0.0022596478090061247 + (x * (-0.0005385953053567405 + (x * 0.0003355291926355191))))); // eslint-disable-line max-len
+}
+
+
+// EXPORTS //
+
+module.exports = evalpoly;
+
+},{}],87:[function(require,module,exports){
+/**
+* @license Apache-2.0
+*
+* Copyright (c) 2018 The Stdlib Authors.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*    http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
+
+/* This is a generated file. Do not edit directly. */
+'use strict';
+
+// MAIN //
+
+/**
+* Evaluates a polynomial.
+*
+* ## Notes
+*
+* -   The implementation uses [Horner's rule][horners-method] for efficient computation.
+*
+* [horners-method]: https://en.wikipedia.org/wiki/Horner%27s_method
+*
+*
+* @private
+* @param {number} x - value at which to evaluate the polynomial
+* @returns {number} evaluated polynomial
+*/
+function evalpoly( x ) {
+	if ( x === 0.0 ) {
+		return 0.6328270640250934;
+	}
+	return 0.6328270640250934 + (x * (1.4549225013723477 + (x * (0.9777175279633727 + (x * (0.22896372806469245 + (x * 0.013381091853678766))))))); // eslint-disable-line max-len
+}
+
+
+// EXPORTS //
+
+module.exports = evalpoly;
+
+},{}],88:[function(require,module,exports){
+/**
+* @license Apache-2.0
+*
+* Copyright (c) 2018 The Stdlib Authors.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*    http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
+
+/* This is a generated file. Do not edit directly. */
+'use strict';
+
+// MAIN //
+
+/**
+* Evaluates a polynomial.
+*
+* ## Notes
+*
+* -   The implementation uses [Horner's rule][horners-method] for efficient computation.
+*
+* [horners-method]: https://en.wikipedia.org/wiki/Horner%27s_method
+*
+*
+* @private
+* @param {number} x - value at which to evaluate the polynomial
+* @returns {number} evaluated polynomial
+*/
+function evalpoly( x ) {
+	if ( x === 0.0 ) {
+		return 2.4559779371304113;
+	}
+	return 2.4559779371304113 + (x * (2.128489763798934 + (x * (0.7692851504566728 + (x * (0.10422264559336913 + (x * 0.003217092422824239))))))); // eslint-disable-line max-len
+}
+
+
+// EXPORTS //
+
+module.exports = evalpoly;
+
+},{}],89:[function(require,module,exports){
+/**
+* @license Apache-2.0
+*
+* Copyright (c) 2018 The Stdlib Authors.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*    http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
+
+/* This is a generated file. Do not edit directly. */
+'use strict';
+
+// MAIN //
+
+/**
+* Evaluates a polynomial.
+*
+* ## Notes
+*
+* -   The implementation uses [Horner's rule][horners-method] for efficient computation.
+*
+* [horners-method]: https://en.wikipedia.org/wiki/Horner%27s_method
+*
+*
+* @private
+* @param {number} x - value at which to evaluate the polynomial
+* @returns {number} evaluated polynomial
+*/
+function evalpoly( x ) {
+	if ( x === 0.0 ) {
+		return 0.08333333333333297;
+	}
+	return 0.08333333333333297 + (x * (-0.0027777777772877554 + (x * (0.0007936505586430196 + (x * (-0.00059518755745034 + (x * (0.0008363399189962821 + (x * -0.0016309293409657527))))))))); // eslint-disable-line max-len
+}
+
+
+// EXPORTS //
+
+module.exports = evalpoly;
+
+},{}],90:[function(require,module,exports){
+/**
+* @license Apache-2.0
+*
+* Copyright (c) 2018 The Stdlib Authors.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*    http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
+
 'use strict';
 
 /**
@@ -2158,7 +5472,7 @@ module.exports = gammaln;
 * var v = kernelCos( 0.0, 0.0 );
 * // returns ~1.0
 *
-* v = kernelCos( Math.PI/6.0, 0.0 );
+* v = kernelCos( 3.141592653589793/6.0, 0.0 );
 * // returns ~0.866
 *
 * v = kernelCos( 0.785, -1.144e-17 );
@@ -2177,100 +5491,95 @@ var kernelCos = require( './kernel_cos.js' );
 
 module.exports = kernelCos;
 
-},{"./kernel_cos.js":34}],34:[function(require,module,exports){
-'use strict';
-
-/*
-* The following copyright, license, and long comment were part of the original implementation available as part of [FreeBSD]{@link https://svnweb.freebsd.org/base/release/9.3.0/lib/msun/src/k_cos.c?view=co}.
+},{"./kernel_cos.js":91}],91:[function(require,module,exports){
+/**
+* @license Apache-2.0
 *
-* The implementation follows the original, but has been modified for JavaScript.
-*/
-
-/*
-* ====================================================
+* Copyright (c) 2018 The Stdlib Authors.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*    http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*
+*
+* ## Notice
+*
+* The following copyright, license, and long comment were part of the original implementation available as part of [FreeBSD]{@link https://svnweb.freebsd.org/base/release/9.3.0/lib/msun/src/k_cos.c}. The implementation follows the original, but has been modified for JavaScript.
+*
+* ```text
 * Copyright (C) 1993 by Sun Microsystems, Inc. All rights reserved.
 *
-* Developed at SunSoft, a Sun Microsystems, Inc. business.
+* Developed at SunPro, a Sun Microsystems, Inc. business.
 * Permission to use, copy, modify, and distribute this
 * software is freely granted, provided that this notice
 * is preserved.
-* ====================================================
+* ```
 */
+
+'use strict';
 
 // MODULES //
 
-var evalpoly = require( '@stdlib/math/base/tools/evalpoly' ).factory;
-
-
-// VARIABLES //
-
-var C13 = [
-	4.16666666666666019037e-02,  // 0x3FA55555, 0x5555554C
-	-1.38888888888741095749e-03, // 0xBF56C16C, 0x16C15177
-	2.48015872894767294178e-05   // 0x3EFA01A0, 0x19CB1590
-];
-var C46 = [
-	-2.75573143513906633035e-07, // 0xBE927E4F, 0x809C52AD
-	2.08757232129817482790e-09,  // 0x3E21EE9E, 0xBDB4B1C4
-	-1.13596475577881948265e-11  // 0xBDA8FAE9, 0xBE8838D4
-];
-
-
-// FUNCTIONS //
-
-// Create polynomial functions based on above coefficients...
-var polyval13 = evalpoly( C13 );
-var polyval46 = evalpoly( C46 );
+var polyval13 = require( './polyval_c13.js' );
+var polyval46 = require( './polyval_c46.js' );
 
 
 // MAIN //
 
 /**
-* Computes the cosine on \\( [-\pi/4, \pi/4] \\), where \\( \pi/4 \approx 0.785398164 \\).
+* Computes the cosine on \\( \[-\pi/4, \pi/4] \\), where \\( \pi/4 \approx 0.785398164 \\).
 *
 * ## Method
 *
-* * Since \\( \cos(-x) = \cos(x) \\), we need only to consider positive \\(x\\).
+* -   Since \\( \cos(-x) = \cos(x) \\), we need only to consider positive \\(x\\).
 *
-* * If \\( x < 2^{-27} \\), return \\(1\\) which is inexact if \\( x \ne 0 \\).
+* -   If \\( x < 2^{-27} \\), return \\(1\\) which is inexact if \\( x \ne 0 \\).
 *
-* * \\( cos(x) \\) is approximated by a polynomial of degree \\(14\\) on \\( [0,\pi/4] \\).
+* -   \\( cos(x) \\) is approximated by a polynomial of degree \\(14\\) on \\( \[0,\pi/4] \\).
 *
-*   ```tex
-*   \cos(x) \approx 1 - \frac{x \cdot x}{2} + C_1 \cdot x^4 + \ldots + C_6 \cdot x^{14}
-*   ```
+*     ```tex
+*     \cos(x) \approx 1 - \frac{x \cdot x}{2} + C_1 \cdot x^4 + \ldots + C_6 \cdot x^{14}
+*     ```
 *
-*   where the Remez error is
+*     where the Remez error is
 *
-*   ```tex
-*   \left| \cos(x) - \left( 1 - \frac{x^2}{2} + C_1x^4 + C_2x^6 + C_3x^8 + C_4x^{10} + C_5x^{12} + C_6x^{15} \right) \right| \le 2^{-58}
-*   ```
+*     ```tex
+*     \left| \cos(x) - \left( 1 - \frac{x^2}{2} + C_1x^4 + C_2x^6 + C_3x^8 + C_4x^{10} + C_5x^{12} + C_6x^{15} \right) \right| \le 2^{-58}
+*     ```
 *
-* * Let \\( C_1x^4 + C_2x^6 + C_3x^8 + C_4x^{10} + C_5x^{12} + C_6x^{14} \\), then
+* -   Let \\( C_1x^4 + C_2x^6 + C_3x^8 + C_4x^{10} + C_5x^{12} + C_6x^{14} \\), then
 *
-*   ```tex
-*   \cos(x) \approx 1 - \frac{x \cdot x}{2} + r
-*   ```
+*     ```tex
+*     \cos(x) \approx 1 - \frac{x \cdot x}{2} + r
+*     ```
 *
-*   Since
+*     Since
 *
-*   ```tex
-*   \cos(x+y) \approx \cos(x) - \sin(x) \cdot y \approx \cos(x) - x \cdot y
-*   ```
+*     ```tex
+*     \cos(x+y) \approx \cos(x) - \sin(x) \cdot y \approx \cos(x) - x \cdot y
+*     ```
 
-*   a correction term is necessary in \\( \cos(x) \\). Hence,
+*     a correction term is necessary in \\( \cos(x) \\). Hence,
 *
-*   ```tex
-*   \cos(x+y) = 1 - \left( \frac{x \cdot x}{2} - (r - x \cdot y) \right)
-*   ```
+*     ```tex
+*     \cos(x+y) = 1 - \left( \frac{x \cdot x}{2} - (r - x \cdot y) \right)
+*     ```
 *
-*   For better accuracy, rearrange to
+*     For better accuracy, rearrange to
 *
-*   ```tex
-*   \cos(x+y) \approx w + \left( t + ( r - x \cdot y ) \right)
-*   ```
+*     ```tex
+*     \cos(x+y) \approx w + \left( t + ( r - x \cdot y ) \right)
+*     ```
 *
-*   where \\( w = 1 - \frac{x \cdot x}{2} \\) and \\( t \\) is a tiny correction term (\\( 1 - \frac{x \cdot x}{2} = w + t \\) exactly in infinite precision). The exactness of \\(w + t\\) in infinite precision depends on \\(w\\) and \\(t\\) having the same precision as \\(x\\).
+*     where \\( w = 1 - \frac{x \cdot x}{2} \\) and \\( t \\) is a tiny correction term (\\( 1 - \frac{x \cdot x}{2} = w + t \\) exactly in infinite precision). The exactness of \\(w + t\\) in infinite precision depends on \\(w\\) and \\(t\\) having the same precision as \\(x\\).
 *
 *
 * @param {number} x - input value (in radians, assumed to be bounded by ~pi/4 in magnitude)
@@ -2282,7 +5591,7 @@ var polyval46 = evalpoly( C46 );
 * // returns ~1.0
 *
 * @example
-* var v = kernelCos( Math.PI/6.0, 0.0 );
+* var v = kernelCos( 3.141592653589793/6.0, 0.0 );
 * // returns ~0.866
 *
 * @example
@@ -2306,14 +5615,132 @@ function kernelCos( x, y ) {
 	hz = 0.5 * z;
 	w = 1.0 - hz;
 	return w + ( ((1.0-w) - hz) + ((z*r) - (x*y)) );
-} // end FUNCTION kernelCos()
+}
 
 
 // EXPORTS //
 
 module.exports = kernelCos;
 
-},{"@stdlib/math/base/tools/evalpoly":57}],35:[function(require,module,exports){
+},{"./polyval_c13.js":92,"./polyval_c46.js":93}],92:[function(require,module,exports){
+/**
+* @license Apache-2.0
+*
+* Copyright (c) 2018 The Stdlib Authors.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*    http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
+
+/* This is a generated file. Do not edit directly. */
+'use strict';
+
+// MAIN //
+
+/**
+* Evaluates a polynomial.
+*
+* ## Notes
+*
+* -   The implementation uses [Horner's rule][horners-method] for efficient computation.
+*
+* [horners-method]: https://en.wikipedia.org/wiki/Horner%27s_method
+*
+*
+* @private
+* @param {number} x - value at which to evaluate the polynomial
+* @returns {number} evaluated polynomial
+*/
+function evalpoly( x ) {
+	if ( x === 0.0 ) {
+		return 0.0416666666666666;
+	}
+	return 0.0416666666666666 + (x * (-0.001388888888887411 + (x * 0.00002480158728947673))); // eslint-disable-line max-len
+}
+
+
+// EXPORTS //
+
+module.exports = evalpoly;
+
+},{}],93:[function(require,module,exports){
+/**
+* @license Apache-2.0
+*
+* Copyright (c) 2018 The Stdlib Authors.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*    http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
+
+/* This is a generated file. Do not edit directly. */
+'use strict';
+
+// MAIN //
+
+/**
+* Evaluates a polynomial.
+*
+* ## Notes
+*
+* -   The implementation uses [Horner's rule][horners-method] for efficient computation.
+*
+* [horners-method]: https://en.wikipedia.org/wiki/Horner%27s_method
+*
+*
+* @private
+* @param {number} x - value at which to evaluate the polynomial
+* @returns {number} evaluated polynomial
+*/
+function evalpoly( x ) {
+	if ( x === 0.0 ) {
+		return -2.7557314351390663e-7;
+	}
+	return -2.7557314351390663e-7 + (x * (2.087572321298175e-9 + (x * -1.1359647557788195e-11))); // eslint-disable-line max-len
+}
+
+
+// EXPORTS //
+
+module.exports = evalpoly;
+
+},{}],94:[function(require,module,exports){
+/**
+* @license Apache-2.0
+*
+* Copyright (c) 2018 The Stdlib Authors.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*    http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
+
 'use strict';
 
 /**
@@ -2327,7 +5754,7 @@ module.exports = kernelCos;
 * var v = kernelSin( 0.0, 0.0 );
 * // returns ~0.0
 *
-* v = kernelSin( Math.PI/6.0, 0.0 );
+* v = kernelSin( 3.141592653589793/6.0, 0.0 );
 * // returns ~0.5
 *
 * v = kernelSin( 0.619, 9.279e-18 );
@@ -2352,25 +5779,40 @@ var kernelSin = require( './kernel_sin.js' );
 
 module.exports = kernelSin;
 
-},{"./kernel_sin.js":36}],36:[function(require,module,exports){
-'use strict';
-
-/*
-* The following copyright, license, and long comment were part of the original implementation available as part of [FreeBSD]{@link https://svnweb.freebsd.org/base/release/9.3.0/lib/msun/src/k_sin.c?view=co}.
+},{"./kernel_sin.js":95}],95:[function(require,module,exports){
+/**
+* @license Apache-2.0
 *
-* The implementation follows the original, but has been modified for JavaScript.
-*/
-
-/*
-* ====================================================
+* Copyright (c) 2018 The Stdlib Authors.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*    http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*
+*
+* ## Notice
+*
+* The following copyright, license, and long comment were part of the original implementation available as part of [FreeBSD]{@link https://svnweb.freebsd.org/base/release/9.3.0/lib/msun/src/k_sin.c}. The implementation follows the original, but has been modified for JavaScript.
+*
+* ```text
 * Copyright (C) 1993 by Sun Microsystems, Inc. All rights reserved.
 *
-* Developed at SunSoft, a Sun Microsystems, Inc. business.
+* Developed at SunPro, a Sun Microsystems, Inc. business.
 * Permission to use, copy, modify, and distribute this
 * software is freely granted, provided that this notice
 * is preserved.
-* ====================================================
+* ```
 */
+
+'use strict';
 
 // VARIABLES //
 
@@ -2385,43 +5827,43 @@ var S6 = 1.58969099521155010221e-10;  // 0x3DE5D93A, 0x5ACFD57C
 // MAIN //
 
 /**
-* Computes the sine on \\( \approx [-\pi/4, \pi/4] \\) (except on \\(-0\\)), where \\( \pi/4 \approx 0.7854 \\).
+* Computes the sine on \\( \approx \[-\pi/4, \pi/4] \\) (except on \\(-0\\)), where \\( \pi/4 \approx 0.7854 \\).
 *
 * ## Method
 *
-* * Since \\( \sin(-x) = -\sin(x) \\), we need only to consider positive \\(x\\).
+* -   Since \\( \sin(-x) = -\sin(x) \\), we need only to consider positive \\(x\\).
 *
-* * Callers must return \\( \sin(-0) = -0 \\) without calling here since our odd polynomial is not evaluated in a way that preserves \\(-0\\). Callers may do the optimization \\( \sin(x) \approx x \\) for tiny \\(x\\).
+* -   Callers must return \\( \sin(-0) = -0 \\) without calling here since our odd polynomial is not evaluated in a way that preserves \\(-0\\). Callers may do the optimization \\( \sin(x) \approx x \\) for tiny \\(x\\).
 *
-* * \\( \sin(x) \\) is approximated by a polynomial of degree \\(13\\) on \\( \left[0,\tfrac{pi}{4}\right] \\)
+* -   \\( \sin(x) \\) is approximated by a polynomial of degree \\(13\\) on \\( \left\[0,\tfrac{pi}{4}\right] \\)
 *
-*   ```tex
-*   \sin(x) \approx x + S_1 \cdot x^3 + \ldots + S_6 \cdot x^{13}
-*   ```
+*     ```tex
+*     \sin(x) \approx x + S_1 \cdot x^3 + \ldots + S_6 \cdot x^{13}
+*     ```
 *
-*   where
+*     where
 *
-*   ```tex
-*   \left| \frac{\sin(x)}{x} \left( 1 + S_1 \cdot x + S_2 \cdot x + S_3 \cdot x + S_4 \cdot x + S_5 \cdot x + S_6 \cdot x \right) \right| \le 2^{-58}
-*   ```
+*     ```tex
+*     \left| \frac{\sin(x)}{x} \left( 1 + S_1 \cdot x + S_2 \cdot x + S_3 \cdot x + S_4 \cdot x + S_5 \cdot x + S_6 \cdot x \right) \right| \le 2^{-58}
+*     ```
 *
-* * We have
+* -   We have
 *
-*   ```tex
-*   \sin(x+y) = \sin(x) + \sin'(x') \cdot y \approx \sin(x) + (1-x*x/2) \cdot y
-*   ```
+*     ```tex
+*     \sin(x+y) = \sin(x) + \sin'(x') \cdot y \approx \sin(x) + (1-x*x/2) \cdot y
+*     ```
 *
-*   For better accuracy, let
+*     For better accuracy, let
 *
-*   ```tex
-*   r = x^3 * \left( S_2 + x^2 \cdot \left( S_3 + x^2 * \left( S_4 + x^2 \cdot ( S_5+x^2 \cdot S_6 ) \right) \right) \right)
-*   ```
+*     ```tex
+*     r = x^3 * \left( S_2 + x^2 \cdot \left( S_3 + x^2 * \left( S_4 + x^2 \cdot ( S_5+x^2 \cdot S_6 ) \right) \right) \right)
+*     ```
 *
-*   then
+*     then
 *
-*   ```tex
-*   \sin(x) = x + \left( S_1 \cdot x + ( x \cdot (r-y/2) + y ) \right)
-*   ```
+*     ```tex
+*     \sin(x) = x + \left( S_1 \cdot x + ( x \cdot (r-y/2) + y ) \right)
+*     ```
 *
 *
 * @param {number} x - input value (in radians, assumed to be bounded by `~pi/4` in magnitude)
@@ -2433,12 +5875,12 @@ var S6 = 1.58969099521155010221e-10;  // 0x3DE5D93A, 0x5ACFD57C
 * // returns ~0.0
 *
 * @example
-* var v = kernelSin( Math.PI/6.0, 0.0 );
+* var v = kernelSin( 3.141592653589793/6.0, 0.0 );
 * // returns ~0.5
 *
 * @example
 * var v = kernelSin( 0.619, 9.279e-18 );
-* // returns ~0.581
+* // returns ~0.58
 *
 * @example
 * var v = kernelSin( NaN, 0.0 );
@@ -2466,14 +5908,32 @@ function kernelSin( x, y ) {
 		return x + (v * (S1 + (z*r)));
 	}
 	return x - (((z*((0.5*y) - (v*r))) - y) - (v*S1));
-} // end FUNCTION kernelSin()
+}
 
 
 // EXPORTS //
 
 module.exports = kernelSin;
 
-},{}],37:[function(require,module,exports){
+},{}],96:[function(require,module,exports){
+/**
+* @license Apache-2.0
+*
+* Copyright (c) 2018 The Stdlib Authors.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*    http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
+
 'use strict';
 
 /**
@@ -2515,7 +5975,25 @@ var ldexp = require( './ldexp.js' );
 
 module.exports = ldexp;
 
-},{"./ldexp.js":38}],38:[function(require,module,exports){
+},{"./ldexp.js":97}],97:[function(require,module,exports){
+/**
+* @license Apache-2.0
+*
+* Copyright (c) 2018 The Stdlib Authors.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*    http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
+
 'use strict';
 
 // NOTES //
@@ -2527,19 +6005,19 @@ module.exports = ldexp;
 
 // MODULES //
 
-var PINF = require( '@stdlib/math/constants/float64-pinf' );
-var NINF = require( '@stdlib/math/constants/float64-ninf' );
-var BIAS = require( '@stdlib/math/constants/float64-exponent-bias' );
-var MAX_EXPONENT = require( '@stdlib/math/constants/float64-max-base2-exponent' );
-var MAX_SUBNORMAL_EXPONENT = require( '@stdlib/math/constants/float64-max-base2-exponent-subnormal' );
-var MIN_SUBNORMAL_EXPONENT = require( '@stdlib/math/constants/float64-min-base2-exponent-subnormal' );
+var PINF = require( '@stdlib/constants/math/float64-pinf' );
+var NINF = require( '@stdlib/constants/math/float64-ninf' );
+var BIAS = require( '@stdlib/constants/math/float64-exponent-bias' );
+var MAX_EXPONENT = require( '@stdlib/constants/math/float64-max-base2-exponent' );
+var MAX_SUBNORMAL_EXPONENT = require( '@stdlib/constants/math/float64-max-base2-exponent-subnormal' );
+var MIN_SUBNORMAL_EXPONENT = require( '@stdlib/constants/math/float64-min-base2-exponent-subnormal' );
 var isnan = require( '@stdlib/math/base/assert/is-nan' );
 var isInfinite = require( '@stdlib/math/base/assert/is-infinite' );
 var copysign = require( '@stdlib/math/base/special/copysign' );
-var normalize = require( '@stdlib/math/base/utils/float64-normalize' );
-var floatExp = require( '@stdlib/math/base/utils/float64-exponent' );
-var toWords = require( '@stdlib/math/base/utils/float64-to-words' );
-var fromWords = require( '@stdlib/math/base/utils/float64-from-words' );
+var normalize = require( '@stdlib/number/float64/base/normalize' );
+var floatExp = require( '@stdlib/number/float64/base/exponent' );
+var toWords = require( '@stdlib/number/float64/base/to-words' );
+var fromWords = require( '@stdlib/number/float64/base/from-words' );
 
 
 // VARIABLES //
@@ -2547,8 +6025,14 @@ var fromWords = require( '@stdlib/math/base/utils/float64-from-words' );
 // 1/(1<<52) = 1/(2**52) = 1/4503599627370496
 var TWO52_INV = 2.220446049250313e-16;
 
-// Exponent all 0s: 1 00000000000 11111111111111111111
-var CLEAR_EXP_MASK = 0x800fffff; // 2148532223
+// Exponent all 0s: 1 00000000000 11111111111111111111 => 2148532223
+var CLEAR_EXP_MASK = 0x800fffff>>>0; // asm type annotation
+
+// Normalization workspace:
+var FRAC = [ 0.0, 0.0 ]; // WARNING: not thread safe
+
+// High/low words workspace:
+var WORDS = [ 0, 0 ]; // WARNING: not thread safe
 
 
 // MAIN //
@@ -2590,8 +6074,6 @@ var CLEAR_EXP_MASK = 0x800fffff; // 2148532223
 */
 function ldexp( frac, exp ) {
 	var high;
-	var tmp;
-	var w;
 	var m;
 	if (
 		frac === 0.0 || // handles +-0
@@ -2601,9 +6083,9 @@ function ldexp( frac, exp ) {
 		return frac;
 	}
 	// Normalize the input fraction:
-	tmp = normalize( frac );
-	frac = tmp[ 0 ];
-	exp += tmp[ 1 ];
+	normalize( FRAC, frac );
+	frac = FRAC[ 0 ];
+	exp += FRAC[ 1 ];
 
 	// Extract the exponent from `frac` and add it to `exp`:
 	exp += floatExp( frac );
@@ -2626,8 +6108,8 @@ function ldexp( frac, exp ) {
 		m = 1.0;
 	}
 	// Split the fraction into higher and lower order words:
-	w = toWords( frac );
-	high = w[ 0 ];
+	toWords( WORDS, frac );
+	high = WORDS[ 0 ];
 
 	// Clear the exponent bits within the higher order word:
 	high &= CLEAR_EXP_MASK;
@@ -2636,15 +6118,33 @@ function ldexp( frac, exp ) {
 	high |= ((exp+BIAS) << 20);
 
 	// Create a new floating-point number:
-	return m * fromWords( high, w[ 1 ] );
-} // end FUNCTION ldexp()
+	return m * fromWords( high, WORDS[ 1 ] );
+}
 
 
 // EXPORTS //
 
 module.exports = ldexp;
 
-},{"@stdlib/math/base/assert/is-infinite":12,"@stdlib/math/base/assert/is-nan":14,"@stdlib/math/base/special/copysign":21,"@stdlib/math/base/utils/float64-exponent":59,"@stdlib/math/base/utils/float64-from-words":61,"@stdlib/math/base/utils/float64-normalize":69,"@stdlib/math/base/utils/float64-to-words":74,"@stdlib/math/constants/float64-exponent-bias":77,"@stdlib/math/constants/float64-max-base2-exponent":81,"@stdlib/math/constants/float64-max-base2-exponent-subnormal":80,"@stdlib/math/constants/float64-min-base2-exponent-subnormal":82,"@stdlib/math/constants/float64-ninf":83,"@stdlib/math/constants/float64-pinf":85}],39:[function(require,module,exports){
+},{"@stdlib/constants/math/float64-exponent-bias":44,"@stdlib/constants/math/float64-max-base2-exponent":48,"@stdlib/constants/math/float64-max-base2-exponent-subnormal":47,"@stdlib/constants/math/float64-min-base2-exponent-subnormal":49,"@stdlib/constants/math/float64-ninf":50,"@stdlib/constants/math/float64-pinf":52,"@stdlib/math/base/assert/is-infinite":57,"@stdlib/math/base/assert/is-nan":59,"@stdlib/math/base/special/copysign":66,"@stdlib/number/float64/base/exponent":118,"@stdlib/number/float64/base/from-words":120,"@stdlib/number/float64/base/normalize":129,"@stdlib/number/float64/base/to-words":135}],98:[function(require,module,exports){
+/**
+* @license Apache-2.0
+*
+* Copyright (c) 2018 The Stdlib Authors.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*    http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
+
 'use strict';
 
 /**
@@ -2680,72 +6180,70 @@ var ln = require( './ln.js' );
 
 module.exports = ln;
 
-},{"./ln.js":40}],40:[function(require,module,exports){
-'use strict';
-
-/*
-* The following copyright, license, and long comment were part of the original implementation available as part of [FreeBSD]{@link https://svnweb.freebsd.org/base/release/9.3.0/lib/msun/src/e_log.c?view=markup}.
+},{"./ln.js":99}],99:[function(require,module,exports){
+/**
+* @license Apache-2.0
 *
-* The implementation follows the original, but has been modified for JavaScript.
-*/
-
-/*
-* ====================================================
+* Copyright (c) 2018 The Stdlib Authors.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*    http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*
+*
+* ## Notice
+*
+* The following copyright and license were part of the original implementation available as part of [FreeBSD]{@link https://svnweb.freebsd.org/base/release/9.3.0/lib/msun/src/e_log.c}. The implementation follows the original, but has been modified for JavaScript.
+*
+* ```text
 * Copyright (C) 1993 by Sun Microsystems, Inc. All rights reserved.
 *
-* Developed at SunSoft, a Sun Microsystems, Inc. business.
+* Developed at SunPro, a Sun Microsystems, Inc. business.
 * Permission to use, copy, modify, and distribute this
 * software is freely granted, provided that this notice
 * is preserved.
-* ====================================================
+* ```
 */
+
+'use strict';
 
 // MODULES //
 
-var getHighWord = require( '@stdlib/math/base/utils/float64-get-high-word' );
-var setHighWord = require( '@stdlib/math/base/utils/float64-set-high-word' );
-var evalpoly = require( '@stdlib/math/base/tools/evalpoly' ).factory;
-var toWords = require( '@stdlib/math/base/utils/float64-to-words' );
+var getHighWord = require( '@stdlib/number/float64/base/get-high-word' );
+var setHighWord = require( '@stdlib/number/float64/base/set-high-word' );
 var isnan = require( '@stdlib/math/base/assert/is-nan' );
-var BIAS = require( '@stdlib/math/constants/float64-exponent-bias' );
-var NINF = require( '@stdlib/math/constants/float64-ninf' );
+var BIAS = require( '@stdlib/constants/math/float64-exponent-bias' );
+var NINF = require( '@stdlib/constants/math/float64-ninf' );
+var polyvalP = require( './polyval_p.js' );
+var polyvalQ = require( './polyval_q.js' );
 
 
 // VARIABLES //
 
-var LN2_HI = 6.93147180369123816490e-01; // 3fe62e42 fee00000
-var LN2_LO = 1.90821492927058770002e-10; // 3dea39ef 35793c76
-var TWO54 = 1.80143985094819840000e+16; // 0x43500000, 0x00000000
-var P = [
-	3.999999999940941908e-01,  // 3FD99999 9997FA04
-	2.222219843214978396e-01,  // 3FCC71C5 1D8E78AF
-	1.531383769920937332e-01  // 3FC39A09 D078C69F
-];
-var Q = [
-	6.666666666666735130e-01, // 3FE55555 55555593
-	2.857142874366239149e-01, // 3FD24924 94229359
-	1.818357216161805012e-01, // 3FC74664 96CB03DE
-	1.479819860511658591e-01 // 3FC2F112 DF3E5244
-];
+var LN2_HI = 6.93147180369123816490e-01; // 3FE62E42 FEE00000
+var LN2_LO = 1.90821492927058770002e-10; // 3DEA39EF 35793C76
+var TWO54 = 1.80143985094819840000e+16;  // 0x43500000, 0x00000000
+var ONE_THIRD = 0.33333333333333333;
 
 // 0x000fffff = 1048575 => 0 00000000000 11111111111111111111
-var HIGH_SIGNIFICAND_MASK = 0x000fffff;
+var HIGH_SIGNIFICAND_MASK = 0x000fffff|0; // asm type annotation
 
 // 0x7ff00000 = 2146435072 => 0 11111111111 00000000000000000000 => biased exponent: 2047 = 1023+1023 => 2^1023
-var HIGH_MAX_NORMAL_EXP = 0x7ff00000;
+var HIGH_MAX_NORMAL_EXP = 0x7ff00000|0; // asm type annotation
 
 // 0x00100000 = 1048576 => 0 00000000001 00000000000000000000 => biased exponent: 1 = -1022+1023 => 2^-1022
-var HIGH_MIN_NORMAL_EXP = 0x00100000;
+var HIGH_MIN_NORMAL_EXP = 0x00100000|0; // asm type annotation
 
 // 0x3ff00000 = 1072693248 => 0 01111111111 00000000000000000000 => biased exponent: 1023 = 0+1023 => 2^0 = 1
-var HIGH_BIASED_EXP_0 = 0x3ff00000;
-
-
-// FUNCTIONS //
-
-// Compile functions to evaluate polynomial functions based on the above coefficients...
-var polyvalP = evalpoly( P );
-var polyvalQ = evalpoly( Q );
+var HIGH_BIASED_EXP_0 = 0x3ff00000|0; // asm type annotation
 
 
 // MAIN //
@@ -2777,12 +6275,11 @@ var polyvalQ = evalpoly( Q );
 * // returns NaN
 */
 function ln( x ) {
-	var words;
 	var hfsq;
 	var hx;
-	var k;
 	var t2;
 	var t1;
+	var k;
 	var R;
 	var f;
 	var i;
@@ -2797,72 +6294,187 @@ function ln( x ) {
 	if ( isnan( x ) || x < 0.0 ) {
 		return NaN;
 	}
-
-	words = toWords( x );
-	hx = words[ 0 ];
-
-	k = 0;
+	hx = getHighWord( x );
+	k = 0|0; // asm type annotation
 	if ( hx < HIGH_MIN_NORMAL_EXP ) {
 		// Case: 0 < x < 2**-1022
-		k -= 54;
+		k -= 54|0; // asm type annotation
 
-		// Subnormal number, scale up x:
+		// Subnormal number, scale up `x`:
 		x *= TWO54;
 		hx = getHighWord( x );
 	}
 	if ( hx >= HIGH_MAX_NORMAL_EXP ) {
 		return x + x;
 	}
-	k += ( hx>>20 ) - BIAS;
+	k += ( ( hx>>20 ) - BIAS )|0; // asm type annotation
 	hx &= HIGH_SIGNIFICAND_MASK;
-	i = (hx+0x95f64) & 0x100000;
+	i = ( (hx+0x95f64) & 0x100000 )|0; // asm type annotation
 
-	// Normalize x or x/2...
+	// Normalize `x` or `x/2`...
 	x = setHighWord( x, hx|(i^HIGH_BIASED_EXP_0) );
-	k += ( i>>20 );
+	k += ( i>>20 )|0; // asm type annotation
 	f = x - 1.0;
 	if ( (HIGH_SIGNIFICAND_MASK&(2+hx)) < 3 ) {
 		// Case: -2**-20 <= f < 2**-20
 		if ( f === 0.0 ) {
-			if ( k === 0.0 ) {
+			if ( k === 0 ) {
 				return 0.0;
 			}
 			return (k * LN2_HI) + (k * LN2_LO);
 		}
-		R = f * f * ( 0.5 - (0.33333333333333333*f) );
-		if ( k === 0.0 ) {
+		R = f * f * ( 0.5 - (ONE_THIRD*f) );
+		if ( k === 0 ) {
 			return f - R;
 		}
 		return (k * LN2_HI) - ( (R-(k*LN2_LO)) - f );
 	}
-	s = f / (2.0 + f );
+	s = f / (2.0 + f);
 	z = s * s;
-	i = hx - 0x6147a;
+	i = ( hx - 0x6147a )|0; // asm type annotation
 	w = z * z;
-	j = 0x6b851 - hx;
+	j = ( 0x6b851 - hx )|0; // asm type annotation
 	t1 = w * polyvalP( w );
 	t2 = z * polyvalQ( w );
 	i |= j;
 	R = t2 + t1;
 	if ( i > 0 ) {
 		hfsq = 0.5 * f * f;
-		if ( k === 0.0 ) {
+		if ( k === 0 ) {
 			return f - ( hfsq - (s * (hfsq+R)) );
 		}
 		return (k * LN2_HI) - ( hfsq - ((s*(hfsq+R))+(k*LN2_LO)) - f );
 	}
 	if ( k === 0 ) {
-		return f - ( s * ( f - R ) );
+		return f - (s*(f-R));
 	}
 	return (k * LN2_HI) - ( ( (s*(f-R)) - (k*LN2_LO) ) - f );
-} // end FUNCTION ln()
+}
 
 
 // EXPORTS //
 
 module.exports = ln;
 
-},{"@stdlib/math/base/assert/is-nan":14,"@stdlib/math/base/tools/evalpoly":57,"@stdlib/math/base/utils/float64-get-high-word":65,"@stdlib/math/base/utils/float64-set-high-word":72,"@stdlib/math/base/utils/float64-to-words":74,"@stdlib/math/constants/float64-exponent-bias":77,"@stdlib/math/constants/float64-ninf":83}],41:[function(require,module,exports){
+},{"./polyval_p.js":100,"./polyval_q.js":101,"@stdlib/constants/math/float64-exponent-bias":44,"@stdlib/constants/math/float64-ninf":50,"@stdlib/math/base/assert/is-nan":59,"@stdlib/number/float64/base/get-high-word":124,"@stdlib/number/float64/base/set-high-word":133}],100:[function(require,module,exports){
+/**
+* @license Apache-2.0
+*
+* Copyright (c) 2018 The Stdlib Authors.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*    http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
+
+/* This is a generated file. Do not edit directly. */
+'use strict';
+
+// MAIN //
+
+/**
+* Evaluates a polynomial.
+*
+* ## Notes
+*
+* -   The implementation uses [Horner's rule][horners-method] for efficient computation.
+*
+* [horners-method]: https://en.wikipedia.org/wiki/Horner%27s_method
+*
+*
+* @private
+* @param {number} x - value at which to evaluate the polynomial
+* @returns {number} evaluated polynomial
+*/
+function evalpoly( x ) {
+	if ( x === 0.0 ) {
+		return 0.3999999999940942;
+	}
+	return 0.3999999999940942 + (x * (0.22222198432149784 + (x * 0.15313837699209373))); // eslint-disable-line max-len
+}
+
+
+// EXPORTS //
+
+module.exports = evalpoly;
+
+},{}],101:[function(require,module,exports){
+/**
+* @license Apache-2.0
+*
+* Copyright (c) 2018 The Stdlib Authors.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*    http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
+
+/* This is a generated file. Do not edit directly. */
+'use strict';
+
+// MAIN //
+
+/**
+* Evaluates a polynomial.
+*
+* ## Notes
+*
+* -   The implementation uses [Horner's rule][horners-method] for efficient computation.
+*
+* [horners-method]: https://en.wikipedia.org/wiki/Horner%27s_method
+*
+*
+* @private
+* @param {number} x - value at which to evaluate the polynomial
+* @returns {number} evaluated polynomial
+*/
+function evalpoly( x ) {
+	if ( x === 0.0 ) {
+		return 0.6666666666666735;
+	}
+	return 0.6666666666666735 + (x * (0.2857142874366239 + (x * (0.1818357216161805 + (x * 0.14798198605116586))))); // eslint-disable-line max-len
+}
+
+
+// EXPORTS //
+
+module.exports = evalpoly;
+
+},{}],102:[function(require,module,exports){
+/**
+* @license Apache-2.0
+*
+* Copyright (c) 2018 The Stdlib Authors.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*    http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
+
 'use strict';
 
 /**
@@ -2892,7 +6504,25 @@ var log = require( './log.js' );
 
 module.exports = log;
 
-},{"./log.js":42}],42:[function(require,module,exports){
+},{"./log.js":103}],103:[function(require,module,exports){
+/**
+* @license Apache-2.0
+*
+* Copyright (c) 2018 The Stdlib Authors.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*    http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
+
 'use strict';
 
 // MODULES //
@@ -2939,14 +6569,32 @@ var ln = require( '@stdlib/math/base/special/ln' );
 */
 function log( x, b ) {
 	return ln( x ) / ln( b );
-} // end FUNCTION log()
+}
 
 
 // EXPORTS //
 
 module.exports = log;
 
-},{"@stdlib/math/base/special/ln":39}],43:[function(require,module,exports){
+},{"@stdlib/math/base/special/ln":98}],104:[function(require,module,exports){
+/**
+* @license Apache-2.0
+*
+* Copyright (c) 2018 The Stdlib Authors.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*    http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
+
 'use strict';
 
 /**
@@ -2977,25 +6625,42 @@ var rempio2 = require( './rempio2.js' );
 
 module.exports = rempio2;
 
-},{"./rempio2.js":45}],44:[function(require,module,exports){
-'use strict';
-
-/*
-* The following copyright, license, and long comment were part of the original implementation available as part of [FreeBSD]{@link https://svnweb.freebsd.org/base/release/9.3.0/lib/msun/src/k_rem_pio2.c?view=co}.
+},{"./rempio2.js":106}],105:[function(require,module,exports){
+/**
+* @license Apache-2.0
 *
-* The implementation follows the original, but has been modified for JavaScript.
-*/
-
-/*
-* ====================================================
+* Copyright (c) 2018 The Stdlib Authors.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*    http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*
+*
+* ## Notice
+*
+* The following copyright and license were part of the original implementation available as part of [FreeBSD]{@link https://svnweb.freebsd.org/base/release/9.3.0/lib/msun/src/k_rem_pio2.c}. The implementation follows the original, but has been modified for JavaScript.
+*
+* ```text
 * Copyright (C) 1993 by Sun Microsystems, Inc. All rights reserved.
 *
-* Developed at SunSoft, a Sun Microsystems, Inc. business.
+* Developed at SunPro, a Sun Microsystems, Inc. business.
 * Permission to use, copy, modify, and distribute this
 * software is freely granted, provided that this notice
 * is preserved.
-* ====================================================
+* ```
 */
+
+/* eslint-disable array-element-newline */
+
+'use strict';
 
 // MODULES //
 
@@ -3067,7 +6732,7 @@ function zero( arr ) {
 		arr[ i ] = 0.0;
 	}
 	return arr;
-} // end FUNCTION zero()
+}
 
 /**
 * Performs the computation for `kernelRempio2()`.
@@ -3240,7 +6905,7 @@ function compute( x, y, jz, q, q0, jk, jv, jx, f ) {
 		y[ 1 ] = -fw;
 	}
 	return ( n & 7 );
-} // end FUNCTION compute()
+}
 
 
 // MAIN //
@@ -3250,7 +6915,7 @@ function compute( x, y, jz, q, q0, jk, jv, jx, f ) {
 *
 * ## Method
 *
-* * The method is to compute the integer (`mod 8`) and fraction parts of `2x/π` without doing the full multiplication. In general, we skip the part of the product that is known to be a huge integer (more accurately, equals `0 mod 8` ). Thus, the number of operations is independent of the exponent of the input.
+* -   The method is to compute the integer (`mod 8`) and fraction parts of `2x/π` without doing the full multiplication. In general, we skip the part of the product that is known to be a huge integer (more accurately, equals `0 mod 8` ). Thus, the number of operations is independent of the exponent of the input.
 *
 * @private
 * @param {PositiveNumber} x - input value
@@ -3302,40 +6967,55 @@ function kernelRempio2( x, y, e0, nx ) {
 	}
 	jz = jk;
 	return compute( x, y, jz, Q, q0, jk, jv, jx, F );
-} // end FUNCTION kernelRempio2()
+}
 
 
 // EXPORTS //
 
 module.exports = kernelRempio2;
 
-},{"@stdlib/math/base/special/floor":30,"@stdlib/math/base/special/ldexp":37}],45:[function(require,module,exports){
-'use strict';
-
-/*
-* The following copyright, license, and long comment were part of the original implementation available as part of [FreeBSD]{@link https://svnweb.freebsd.org/base/release/9.3.0/lib/msun/src/e_rem_pio2.c?view=co}.
+},{"@stdlib/math/base/special/floor":77,"@stdlib/math/base/special/ldexp":96}],106:[function(require,module,exports){
+/**
+* @license Apache-2.0
 *
-* The implementation follows the original, but has been modified for JavaScript.
-*/
-
-/*
-* ====================================================
+* Copyright (c) 2018 The Stdlib Authors.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*    http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*
+*
+* ## Notice
+*
+* The following copyright and license were part of the original implementation available as part of [FreeBSD]{@link https://svnweb.freebsd.org/base/release/9.3.0/lib/msun/src/e_rem_pio2.c}. The implementation follows the original, but has been modified for JavaScript.
+*
+* ```text
 * Copyright (C) 1993 by Sun Microsystems, Inc. All rights reserved.
 *
-* Developed at SunSoft, a Sun Microsystems, Inc. business.
+* Developed at SunPro, a Sun Microsystems, Inc. business.
 * Permission to use, copy, modify, and distribute this
 * software is freely granted, provided that this notice
 * is preserved.
-* ====================================================
 *
 * Optimized by Bruce D. Evans.
+* ```
 */
+
+'use strict';
 
 // MODULES //
 
-var getHighWord = require( '@stdlib/math/base/utils/float64-get-high-word' );
-var getLowWord = require( '@stdlib/math/base/utils/float64-get-low-word' );
-var fromWords = require( '@stdlib/math/base/utils/float64-from-words' );
+var getHighWord = require( '@stdlib/number/float64/base/get-high-word' );
+var getLowWord = require( '@stdlib/number/float64/base/get-low-word' );
+var fromWords = require( '@stdlib/number/float64/base/from-words' );
 var rempio2Kernel = require( './kernel_rempio2.js' );
 var rempio2Medium = require( './rempio2_medium.js' );
 
@@ -3355,44 +7035,44 @@ var THREE_PIO2_1T = 3.0 * PIO2_1T;
 var FOUR_PIO2_1T = 4.0 * PIO2_1T;
 
 // Absolute value mask: 0x7fffffff = 2147483647 => 01111111111111111111111111111111
-var ABS_MASK = 0x7fffffff;
+var ABS_MASK = 0x7fffffff|0; // asm type annotation
 
 // Exponent mask: 0x7ff00000 = 2146435072 => 01111111111100000000000000000000
-var EXPONENT_MASK = 0x7ff00000;
+var EXPONENT_MASK = 0x7ff00000|0; // asm type annotation
 
 // High word significand mask: 0xfffff = 1048575 => 00000000000011111111111111111111
-var SIGNIFICAND_MASK = 0xfffff;
+var SIGNIFICAND_MASK = 0xfffff|0; // asm type annotation
 
 // High word significand for π and π/2: 0x921fb = 598523 => 00000000000010010010000111111011
-var PI_HIGH_WORD_SIGNIFICAND = 0x921fb;
+var PI_HIGH_WORD_SIGNIFICAND = 0x921fb|0; // asm type annotation
 
 // High word for π/4: 0x3fe921fb = 1072243195 => 00111111111010010010000111111011
-var PIO4_HIGH_WORD = 0x3fe921fb;
+var PIO4_HIGH_WORD = 0x3fe921fb|0; // asm type annotation
 
 // High word for 3π/4: 0x4002d97c = 1073928572 => 01000000000000101101100101111100
-var THREE_PIO4_HIGH_WORD = 0x4002d97c;
+var THREE_PIO4_HIGH_WORD = 0x4002d97c|0; // asm type annotation
 
 // High word for 5π/4: 0x400f6a7a = 1074752122 => 01000000000011110110101001111010
-var FIVE_PIO4_HIGH_WORD = 0x400f6a7a;
+var FIVE_PIO4_HIGH_WORD = 0x400f6a7a|0; // asm type annotation
 
 // High word for 6π/4: 0x4012d97c = 1074977148 => 01000000000100101101100101111100
-var THREE_PIO2_HIGH_WORD = 0x4012d97c;
+var THREE_PIO2_HIGH_WORD = 0x4012d97c|0; // asm type annotation
 
 // High word for 7π/4: 0x4015fdbc = 1075183036 => 01000000000101011111110110111100
-var SEVEN_PIO4_HIGH_WORD = 0x4015fdbc;
+var SEVEN_PIO4_HIGH_WORD = 0x4015fdbc|0; // asm type annotation
 
 // High word for 8π/4: 0x401921fb = 1075388923 => 01000000000110010010000111111011
-var TWO_PI_HIGH_WORD = 0x401921fb;
+var TWO_PI_HIGH_WORD = 0x401921fb|0; // asm type annotation
 
 // High word for 9π/4: 0x401c463b = 1075594811 => 01000000000111000100011000111011
-var NINE_PIO4_HIGH_WORD = 0x401c463b;
+var NINE_PIO4_HIGH_WORD = 0x401c463b|0; // asm type annotation
 
 // 2^20*π/2 = 1647099.3291652855 => 0100000100111001001000011111101101010100010001000010110100011000 => high word => 0x413921fb = 1094263291 => 01000001001110010010000111111011
-var MEDIUM = 0x413921fb;
+var MEDIUM = 0x413921fb|0; // asm type annotation
 
-// Arrays for storing temporary values (note that, in C, this would not be thread-safe):
-var TX = new Array( 3 );
-var TY = new Array( 2 );
+// Arrays for storing temporary values:
+var TX = new Array( 3 ); // WARNING: not thread safe
+var TY = new Array( 2 ); // WARNING: not thread safe
 
 
 // MAIN //
@@ -3402,7 +7082,7 @@ var TY = new Array( 2 );
 *
 * ## Notes
 *
-* * Returns `n` and stores the remainder `r` as two numbers `y[0]` and `y[1]`, such that `y[0]+y[1] = r`.
+* -   Returns `n` and stores the remainder `r` as two numbers `y[0]` and `y[1]`, such that `y[0]+y[1] = r`.
 *
 *
 * @param {number} x - input value
@@ -3442,7 +7122,7 @@ function rempio2( x, y ) {
 	var z;
 
 	hx = getHighWord( x );
-	ix = hx & ABS_MASK;
+	ix = (hx & ABS_MASK)|0; // asm type annotation
 
 	// Case: |x| ~<= π/4 (no need for reduction)
 	if ( ix <= PIO4_HIGH_WORD ) {
@@ -3548,37 +7228,52 @@ function rempio2( x, y ) {
 	y[ 0 ] = TY[ 0 ];
 	y[ 1 ] = TY[ 1 ];
 	return n;
-} // end FUNCTION rempio2()
+}
 
 
 // EXPORTS //
 
 module.exports = rempio2;
 
-},{"./kernel_rempio2.js":44,"./rempio2_medium.js":46,"@stdlib/math/base/utils/float64-from-words":61,"@stdlib/math/base/utils/float64-get-high-word":65,"@stdlib/math/base/utils/float64-get-low-word":67}],46:[function(require,module,exports){
-'use strict';
-
-/*
-* The following copyright and license were part of the original implementation available as part of [FreeBSD]{@link https://svnweb.freebsd.org/base/release/9.3.0/lib/msun/src/k_rem_pio2.c?view=co}.
+},{"./kernel_rempio2.js":105,"./rempio2_medium.js":107,"@stdlib/number/float64/base/from-words":120,"@stdlib/number/float64/base/get-high-word":124,"@stdlib/number/float64/base/get-low-word":126}],107:[function(require,module,exports){
+/**
+* @license Apache-2.0
 *
-* The implementation follows the original, but has been modified for JavaScript.
-*/
-
-/*
-* ====================================================
+* Copyright (c) 2018 The Stdlib Authors.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*    http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*
+*
+* ## Notice
+*
+* The following copyright and license were part of the original implementation available as part of [FreeBSD]{@link https://svnweb.freebsd.org/base/release/9.3.0/lib/msun/src/k_rem_pio2.c}. The implementation follows the original, but has been modified for JavaScript.
+*
+* ```text
 * Copyright (C) 1993 by Sun Microsystems, Inc. All rights reserved.
 *
-* Developed at SunSoft, a Sun Microsystems, Inc. business.
+* Developed at SunPro, a Sun Microsystems, Inc. business.
 * Permission to use, copy, modify, and distribute this
 * software is freely granted, provided that this notice
 * is preserved.
-* ====================================================
+* ```
 */
+
+'use strict';
 
 // MODULES //
 
 var round = require( '@stdlib/math/base/special/round' );
-var getHighWord = require( '@stdlib/math/base/utils/float64-get-high-word' );
+var getHighWord = require( '@stdlib/number/float64/base/get-high-word' );
 
 
 // VARIABLES //
@@ -3605,7 +7300,7 @@ var PIO2_3 = 2.02226624871116645580e-21;  // 0x3BA3198A, 0x2E000000
 var PIO2_3T = 8.47842766036889956997e-32; // 0x397B839A, 0x252049C1
 
 // Exponent mask (2047 => 0x7ff):
-var EXPONENT_MASK = 0x7ff;
+var EXPONENT_MASK = 0x7ff|0; // asm type annotation
 
 
 // MAIN //
@@ -3633,7 +7328,7 @@ function rempio2Medium( x, ix, y ) {
 	w = n * PIO2_1T;
 
 	// First rounding (good to 85 bits)...
-	j = ix >> 20;
+	j = (ix >> 20)|0; // asm type annotation
 	y[ 0 ] = r - w;
 	high = getHighWord( y[0] );
 	i = j - ( (high >> 20) & EXPONENT_MASK );
@@ -3659,14 +7354,32 @@ function rempio2Medium( x, ix, y ) {
 	}
 	y[ 1 ] = (r - y[0]) - w;
 	return n;
-} // end FUNCTION rempio2Medium()
+}
 
 
 // EXPORTS //
 
 module.exports = rempio2Medium;
 
-},{"@stdlib/math/base/special/round":47,"@stdlib/math/base/utils/float64-get-high-word":65}],47:[function(require,module,exports){
+},{"@stdlib/math/base/special/round":108,"@stdlib/number/float64/base/get-high-word":124}],108:[function(require,module,exports){
+/**
+* @license Apache-2.0
+*
+* Copyright (c) 2018 The Stdlib Authors.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*    http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
+
 'use strict';
 
 // TODO: implementation
@@ -3722,7 +7435,25 @@ var round = require( './round.js' );
 
 module.exports = round;
 
-},{"./round.js":48}],48:[function(require,module,exports){
+},{"./round.js":109}],109:[function(require,module,exports){
+/**
+* @license Apache-2.0
+*
+* Copyright (c) 2018 The Stdlib Authors.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*    http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
+
 'use strict';
 
 // TODO: implementation
@@ -3777,14 +7508,32 @@ module.exports = round;
 * var v = round( NaN );
 * // returns NaN
 */
-var round = Math.round;
+var round = Math.round; // eslint-disable-line stdlib/no-builtin-math
 
 
 // EXPORTS //
 
 module.exports = round;
 
-},{}],49:[function(require,module,exports){
+},{}],110:[function(require,module,exports){
+/**
+* @license Apache-2.0
+*
+* Copyright (c) 2018 The Stdlib Authors.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*    http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
+
 'use strict';
 
 /**
@@ -3798,10 +7547,10 @@ module.exports = round;
 * var v = sin( 0.0 );
 * // returns ~0.0
 *
-* v = sin( Math.PI/2.0 );
+* v = sin( 3.141592653589793/2.0 );
 * // returns ~1.0
 *
-* v = sin( -Math.PI/6.0 );
+* v = sin( -3.141592653589793/6.0 );
 * // returns ~-0.5
 *
 * v = sin( NaN );
@@ -3817,29 +7566,44 @@ var sin = require( './sin.js' );
 
 module.exports = sin;
 
-},{"./sin.js":50}],50:[function(require,module,exports){
-'use strict';
-
-/*
-* The following copyright, license, and long comment were part of the original implementation available as part of [FreeBSD]{@link https://svnweb.freebsd.org/base/release/9.3.0/lib/msun/src/s_sin.c?view=log}.
+},{"./sin.js":111}],111:[function(require,module,exports){
+/**
+* @license Apache-2.0
 *
-* The implementation follows the original, but has been modified for JavaScript.
-*/
-
-/*
-* ====================================================
+* Copyright (c) 2018 The Stdlib Authors.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*    http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*
+*
+* ## Notice
+*
+* The following copyright, license, and long comment were part of the original implementation available as part of [FreeBSD]{@link https://svnweb.freebsd.org/base/release/9.3.0/lib/msun/src/s_sin.c}. The implementation follows the original, but has been modified for JavaScript.
+*
+* ```text
 * Copyright (C) 1993 by Sun Microsystems, Inc. All rights reserved.
 *
 * Developed at SunPro, a Sun Microsystems, Inc. business.
 * Permission to use, copy, modify, and distribute this
 * software is freely granted, provided that this notice
 * is preserved.
-* ====================================================
+* ```
 */
+
+'use strict';
 
 // MODULES //
 
-var getHighWord = require( '@stdlib/math/base/utils/float64-get-high-word' );
+var getHighWord = require( '@stdlib/number/float64/base/get-high-word' );
 var kernelCos = require( '@stdlib/math/base/special/kernel-cos' );
 var kernelSin = require( '@stdlib/math/base/special/kernel-sin' );
 var rempio2 = require( '@stdlib/math/base/special/rempio2' );
@@ -3848,19 +7612,19 @@ var rempio2 = require( '@stdlib/math/base/special/rempio2' );
 // VARIABLES //
 
 // Absolute value mask: 0x7fffffff = 2147483647 => 01111111111111111111111111111111
-var ABS_MASK = 0x7fffffff;
+var ABS_MASK = 0x7fffffff|0; // asm type annotation
 
 // Exponent mask: 0x7ff00000 = 2146435072 => 01111111111100000000000000000000
-var EXPONENT_MASK = 0x7ff00000;
+var EXPONENT_MASK = 0x7ff00000|0; // asm type annotation
 
 // High word for PI/4: 0x3fe921fb = 1072243195 => 00111111111010010010000111111011
-var PIO4_HIGH_WORD = 0x3fe921fb;
+var PIO4_HIGH_WORD = 0x3fe921fb|0; // asm type annotation
 
 // 2^-26 = 1.4901161193847656e-8 => 0011111001010000000000000000000000000000000000000000000000000000 => high word => 00111110010100000000000000000000 => 0x3e500000 = 1045430272
-var SMALL_HIGH_WORD = 0x3e500000;
+var SMALL_HIGH_WORD = 0x3e500000|0; // asm type annotation
 
-// Array for storing remainder elements: (note that, in c, this is not thread safe)
-var Y = [ 0.0, 0.0 ];
+// Array for storing remainder elements:
+var Y = [ 0.0, 0.0 ]; // WARNING: not thread safe
 
 
 // MAIN //
@@ -3870,18 +7634,18 @@ var Y = [ 0.0, 0.0 ];
 *
 * ## Method
 *
-* * Let \\(S\\), \\(C\\), and \\(T\\) denote the \\(\sin\\), \\(\cos\\), and \\(\tan\\), respectively, on \\([-\pi/4, +\pi/4]\\).
+* -   Let \\(S\\), \\(C\\), and \\(T\\) denote the \\(\sin\\), \\(\cos\\), and \\(\tan\\), respectively, on \\(\[-\pi/4, +\pi/4\]\\).
 *
-* * Reduce the argument \\(x\\) to \\(y1+y2 = x-k\pi/2\\) in \\([-\pi/4, +\pi/4]\\), and let \\(n = k \mod 4\\).
+* -   Reduce the argument \\(x\\) to \\(y1+y2 = x-k\pi/2\\) in \\(\[-\pi/4, +\pi/4\]\\), and let \\(n = k \mod 4\\).
 *
-* * We have
+* -   We have
 *
-*   | n   |  sin(x)  |  cos(x)  |  tan(x)  |
-*   |:---:|:--------:|:--------:|:--------:|
-*   |  0  |     S    |     C    |    T     |
-*   |  1  |     C    |    -S    |   -1/T   |
-*   |  2  |    -S    |    -C    |    T     |
-*   |  3  |    -C    |     S    |   -1/T   |
+*     | n | sin(x) | cos(x) | tan(x) |
+*     | - | ------ | ------ | ------ |
+*     | 0 |   S    |   C    |    T   |
+*     | 1 |   C    |  -S    |  -1/T  |
+*     | 2 |  -S    |  -C    |    T   |
+*     | 3 |  -C    |   S    |  -1/T  |
 *
 *
 * @param {number} x - input value (in radians)
@@ -3892,11 +7656,11 @@ var Y = [ 0.0, 0.0 ];
 * // returns ~0.0
 *
 * @example
-* var v = sin( Math.PI/2.0 );
+* var v = sin( 3.141592653589793/2.0 );
 * // returns ~1.0
 *
 * @example
-* var v = sin( -Math.PI/6.0 );
+* var v = sin( -3.141592653589793/6.0 );
 * // returns ~-0.5
 *
 * @example
@@ -3934,14 +7698,32 @@ function sin( x ) {
 	default:
 		return -kernelCos( Y[ 0 ], Y[ 1 ] );
 	}
-} // end FUNCTION sin()
+}
 
 
 // EXPORTS //
 
 module.exports = sin;
 
-},{"@stdlib/math/base/special/kernel-cos":33,"@stdlib/math/base/special/kernel-sin":35,"@stdlib/math/base/special/rempio2":43,"@stdlib/math/base/utils/float64-get-high-word":65}],51:[function(require,module,exports){
+},{"@stdlib/math/base/special/kernel-cos":90,"@stdlib/math/base/special/kernel-sin":94,"@stdlib/math/base/special/rempio2":104,"@stdlib/number/float64/base/get-high-word":124}],112:[function(require,module,exports){
+/**
+* @license Apache-2.0
+*
+* Copyright (c) 2018 The Stdlib Authors.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*    http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
+
 'use strict';
 
 /**
@@ -3974,7 +7756,25 @@ var sinpi = require( './sinpi.js' );
 
 module.exports = sinpi;
 
-},{"./sinpi.js":52}],52:[function(require,module,exports){
+},{"./sinpi.js":113}],113:[function(require,module,exports){
+/**
+* @license Apache-2.0
+*
+* Copyright (c) 2018 The Stdlib Authors.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*    http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
+
 'use strict';
 
 /*
@@ -3994,7 +7794,7 @@ var cos = require( '@stdlib/math/base/special/cos' );
 var sin = require( '@stdlib/math/base/special/sin' );
 var abs = require( '@stdlib/math/base/special/abs' );
 var copysign = require( '@stdlib/math/base/special/copysign' );
-var PI = require( '@stdlib/math/constants/float64-pi' );
+var PI = require( '@stdlib/constants/math/float64-pi' );
 
 
 // MAIN //
@@ -4051,19 +7851,37 @@ function sinpi( x ) {
 		return sin( PI*r );
 	}
 	if ( ar < 1.75 ) {
-		ar = ar - 1.5;
+		ar -= 1.5;
 		return -copysign( cos( PI*ar ), r );
 	}
-	r = r - copysign( 2.0, r );
+	r -= copysign( 2.0, r );
 	return sin( PI*r );
-} // end FUNCTION sinpi()
+}
 
 
 // EXPORTS //
 
 module.exports = sinpi;
 
-},{"@stdlib/math/base/assert/is-infinite":12,"@stdlib/math/base/assert/is-nan":14,"@stdlib/math/base/special/abs":17,"@stdlib/math/base/special/copysign":21,"@stdlib/math/base/special/cos":23,"@stdlib/math/base/special/sin":49,"@stdlib/math/constants/float64-pi":84}],53:[function(require,module,exports){
+},{"@stdlib/constants/math/float64-pi":51,"@stdlib/math/base/assert/is-infinite":57,"@stdlib/math/base/assert/is-nan":59,"@stdlib/math/base/special/abs":62,"@stdlib/math/base/special/copysign":66,"@stdlib/math/base/special/cos":68,"@stdlib/math/base/special/sin":110}],114:[function(require,module,exports){
+/**
+* @license Apache-2.0
+*
+* Copyright (c) 2018 The Stdlib Authors.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*    http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
+
 'use strict';
 
 /**
@@ -4105,7 +7923,25 @@ var trunc = require( './trunc.js' );
 
 module.exports = trunc;
 
-},{"./trunc.js":54}],54:[function(require,module,exports){
+},{"./trunc.js":115}],115:[function(require,module,exports){
+/**
+* @license Apache-2.0
+*
+* Copyright (c) 2018 The Stdlib Authors.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*    http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
+
 'use strict';
 
 // MODULES //
@@ -4155,221 +7991,157 @@ function trunc( x ) {
 		return ceil( x );
 	}
 	return floor( x );
-} // end FUNCTION trunc()
+}
 
 
 // EXPORTS //
 
 module.exports = trunc;
 
-},{"@stdlib/math/base/special/ceil":19,"@stdlib/math/base/special/floor":30}],55:[function(require,module,exports){
-'use strict';
-
-// MAIN //
-
+},{"@stdlib/math/base/special/ceil":64,"@stdlib/math/base/special/floor":77}],116:[function(require,module,exports){
 /**
-* Evaluates a polynomial.
+* @license Apache-2.0
 *
-* #### Notes
+* Copyright (c) 2018 The Stdlib Authors.
 *
-* * The implementation uses [Horner's rule]{@link http://en.wikipedia.org/wiki/Horner's_method} for efficient computation.
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
 *
+*    http://www.apache.org/licenses/LICENSE-2.0
 *
-* @param {NumericArray} c - polynomial coefficients sorted in ascending degree
-* @param {number} x - value at which to evaluate the polynomial
-* @returns {number} evaluated polynomial
-*
-* @example
-* var v = evalpoly( [3.0,2.0,1.0], 10.0 ); // 3*10^0 + 2*10^1 + 1*10^2
-* // returns 123.0
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
 */
-function evalpoly( c, x ) {
-	var p;
-	var i;
 
-	i = c.length;
-	if ( i < 2 || x === 0.0 ) {
-		if ( i === 0 ) {
-			return 0.0;
-		}
-		return c[ 0 ];
-	}
-	i -= 1;
-	p = ( c[ i ] * x ) + c[ i-1 ];
-	i -= 2;
-	while ( i >= 0 ) {
-		p = ( p * x ) + c[ i ];
-		i -= 1;
-	}
-	return p;
-} // end FUNCTION evalpoly()
-
-
-// EXPORTS //
-
-module.exports = evalpoly;
-
-},{}],56:[function(require,module,exports){
-'use strict';
-
-// MODULES //
-
-var evalpoly = require( './evalpoly.js' );
-
-
-// MAIN //
-
-/**
-* Generates a function for evaluating a polynomial.
-*
-* #### Notes
-*
-* * The compiled function uses [Horner's rule]{@link http://en.wikipedia.org/wiki/Horner's_method} for efficient computation.
-*
-*
-* @param {NumericArray} c - polynomial coefficients sorted in ascending degree
-* @returns {Function} function for evaluating a polynomial
-*
-* @example
-* var polyval = evalpoly.factory( [3.0,2.0,1.0] );
-*
-* var v = polyval( 10.0 ); // => 3*10^0 + 2*10^1 + 1*10^2
-* // returns 123.0
-*
-* v = polyval( 5.0 ); // => 3*5^0 + 2*5^1 + 1*5^2
-* // returns 38.0
-*/
-function factory( c ) {
-	var f;
-	var n;
-	var m;
-	var i;
-
-	// Avoid exceeding the maximum stack size on V8 :(. Note that the choice of `500` was empirically determined...
-	if ( c.length > 500 ) {
-		return polyval;
-	}
-	// Code generation. Start with the function definition...
-	f = 'return function evalpoly(x){';
-
-	// Create the function body...
-	n = c.length;
-
-	// If no coefficients, the function always returns 0...
-	if ( n === 0 ) {
-		f += 'return 0.0;';
-	}
-	// If only one coefficient, the function always returns that coefficient...
-	else if ( n === 1 ) {
-		f += 'return ' + c[ 0 ] + ';';
-	}
-	// If more than one coefficient, apply Horner's method...
-	else {
-		// If `x == 0`, return the first coefficient...
-		f += 'if(x===0.0){return ' + c[ 0 ] + ';}';
-
-		// Otherwise, evaluate the polynomial...
-		f += 'return ' + c[ 0 ];
-		m = n - 1;
-		for ( i = 1; i < n; i++ ) {
-			f += '+x*';
-			if ( i < m ) {
-				f += '(';
-			}
-			f += c[ i ];
-		}
-		// Close all the parentheses...
-		for ( i = 0; i < m-1; i++ ) {
-			f += ')';
-		}
-		f += ';';
-	}
-	// Close the function:
-	f += '}';
-
-	// Add a source directive for debugging:
-	f += '//# sourceURL=evalpoly.factory.js';
-
-	// Create the function in the global scope:
-	return ( new Function( f ) )(); // eslint-disable-line no-new-func
-
-	/*
-	* returns
-	*    function evalpoly( x ) {
-	*        if ( x === 0.0 ) {
-	*            return c[ 0 ];
-	*        }
-	*        return c[0]+x*(c[1]+x*(c[2]+x*(c[3]+...+x*(c[n-2]+x*c[n-1]))));
-	*    }
-	*/
-
-	/**
-	* Evaluates a polynomial.
-	*
-	* @private
-	* @param {number} x - value at which to evaluate a polynomial
-	* @returns {number} evaluated polynomial
-	*/
-	function polyval( x ) {
-		return evalpoly( c, x );
-	} // end FUNCTON polyval()
-} // end FUNCTION factory()
-
-
-// EXPORTS //
-
-module.exports = factory;
-
-},{"./evalpoly.js":55}],57:[function(require,module,exports){
 'use strict';
 
 /**
-* Evaluate a polynomial.
+* Constructor which returns a `Number` object.
 *
-* @module @stdlib/math/base/tools/evalpoly
-*
-* @example
-* var evalpoly = require( '@stdlib/math/base/tools/evalpoly' );
-*
-* var v = evalpoly( [3.0,2.0,1.0], 10.0 ); // 3*10^0 + 2*10^1 + 1*10^2
-* // returns 123.0
+* @module @stdlib/number/ctor
 *
 * @example
-* var evalpoly = require( '@stdlib/math/base/tools/evalpoly' );
+* var Number = require( '@stdlib/number/ctor' );
 *
-* var polyval = evalpoly.factory( [3.0,2.0,1.0] );
-*
-* var v = polyval( 10.0 ); // => 3*10^0 + 2*10^1 + 1*10^2
-* // returns 123.0
-*
-* v = polyval( 5.0 ); // => 3*5^0 + 2*5^1 + 1*5^2
-* // returns 38.0
+* var v = new Number( 10.0 );
+* // returns <Number>
 */
 
 // MODULES //
 
-var setReadOnly = require( '@stdlib/utils/define-read-only-property' );
-var evalpoly = require( './evalpoly.js' );
-var factory = require( './factory.js' );
-
-
-// MAIN //
-
-setReadOnly( evalpoly, 'factory', factory );
+var Number = require( './number.js' );
 
 
 // EXPORTS //
 
-module.exports = evalpoly;
+module.exports = Number;
 
-},{"./evalpoly.js":55,"./factory.js":56,"@stdlib/utils/define-read-only-property":95}],58:[function(require,module,exports){
+},{"./number.js":117}],117:[function(require,module,exports){
+/**
+* @license Apache-2.0
+*
+* Copyright (c) 2018 The Stdlib Authors.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*    http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
+
+'use strict';
+
+// EXPORTS //
+
+module.exports = Number; // eslint-disable-line stdlib/require-globals
+
+},{}],118:[function(require,module,exports){
+/**
+* @license Apache-2.0
+*
+* Copyright (c) 2018 The Stdlib Authors.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*    http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
+
+'use strict';
+
+/**
+* Return an integer corresponding to the unbiased exponent of a double-precision floating-point number.
+*
+* @module @stdlib/number/float64/base/exponent
+*
+* @example
+* var exponent = require( '@stdlib/number/float64/base/exponent' );
+*
+* var exp = exponent( 3.14e-307 ); // => 2**-1019 ~ 1e-307
+* // returns -1019
+*
+* exp = exponent( -3.14 );
+* // returns 1
+*
+* exp = exponent( 0.0 );
+* // returns -1023
+*
+* exp = exponent( NaN );
+* // returns 1024
+*/
+
+// MODULES //
+
+var exponent = require( './main.js' );
+
+
+// EXPORTS //
+
+module.exports = exponent;
+
+},{"./main.js":119}],119:[function(require,module,exports){
+/**
+* @license Apache-2.0
+*
+* Copyright (c) 2018 The Stdlib Authors.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*    http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
+
 'use strict';
 
 // MODULES //
 
-var getHighWord = require( '@stdlib/math/base/utils/float64-get-high-word' );
-var EXP_MASK = require( '@stdlib/math/constants/float64-high-word-exponent-mask' );
-var BIAS = require( '@stdlib/math/constants/float64-exponent-bias' );
+var getHighWord = require( '@stdlib/number/float64/base/get-high-word' );
+var EXP_MASK = require( '@stdlib/constants/math/float64-high-word-exponent-mask' );
+var BIAS = require( '@stdlib/constants/math/float64-exponent-bias' );
 
 
 // MAIN //
@@ -4383,12 +8155,15 @@ var BIAS = require( '@stdlib/math/constants/float64-exponent-bias' );
 * @example
 * var exp = exponent( 3.14e-307 ); // => 2**-1019 ~ 1e-307
 * // returns -1019
+*
 * @example
 * var exp = exponent( -3.14 );
 * // returns 1
+*
 * @example
 * var exp = exponent( 0.0 );
-* // returns 0
+* // returns -1023
+*
 * @example
 * var exp = exponent( NaN );
 * // returns 1024
@@ -4401,162 +8176,48 @@ function exponent( x ) {
 	high = ( high & EXP_MASK ) >>> 20;
 
 	// Remove the bias and return:
-	return high - BIAS;
-} // end FUNCTION exponent()
+	return (high - BIAS)|0; // asm type annotation
+}
 
 
 // EXPORTS //
 
 module.exports = exponent;
 
-},{"@stdlib/math/base/utils/float64-get-high-word":65,"@stdlib/math/constants/float64-exponent-bias":77,"@stdlib/math/constants/float64-high-word-exponent-mask":79}],59:[function(require,module,exports){
-'use strict';
-
+},{"@stdlib/constants/math/float64-exponent-bias":44,"@stdlib/constants/math/float64-high-word-exponent-mask":46,"@stdlib/number/float64/base/get-high-word":124}],120:[function(require,module,exports){
 /**
-* Return an integer corresponding to the unbiased exponent of a double-precision floating-point number.
+* @license Apache-2.0
 *
-* @module @stdlib/math/base/utils/float64-exponent
+* Copyright (c) 2018 The Stdlib Authors.
 *
-* @example
-* var exponent = require( '@stdlib/math/base/utils/float64-exponent );
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
 *
-* var exp = exponent( 3.14e-307 ); // => 2**-1019 ~ 1e-307
-* // returns -1019
+*    http://www.apache.org/licenses/LICENSE-2.0
 *
-* exp = exponent( -3.14 );
-* // returns 1
-*
-* exp = exponent( 0.0 );
-* // returns 0
-*
-* exp = exponent( NaN );
-* // returns 1024
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
 */
 
-// MODULES //
-
-var exponent = require( './exponent.js' );
-
-
-// EXPORTS //
-
-module.exports = exponent;
-
-},{"./exponent.js":58}],60:[function(require,module,exports){
-'use strict';
-
-// MODULES //
-
-var Uint32Array = require( '@stdlib/types/array/uint32' );
-var Float64Array = require( '@stdlib/types/array/float64' );
-var indices = require( './indices.js' );
-
-
-// VARIABLES //
-
-var FLOAT64_VIEW = new Float64Array( 1 );
-var UINT32_VIEW = new Uint32Array( FLOAT64_VIEW.buffer );
-
-var HIGH = indices.HIGH;
-var LOW = indices.LOW;
-
-
-// MAIN //
-
-/**
-* Creates a double-precision floating-point number from a higher order word (unsigned 32-bit integer) and a lower order word (unsigned 32-bit integer).
-*
-* #### Notes
-*
-* ``` text
-* float64 (64 bits)
-* f := fraction (significand/mantissa) (52 bits)
-* e := exponent (11 bits)
-* s := sign bit (1 bit)
-*
-* |-------- -------- -------- -------- -------- -------- -------- --------|
-* |                                Float64                                |
-* |-------- -------- -------- -------- -------- -------- -------- --------|
-* |              Uint32               |               Uint32              |
-* |-------- -------- -------- -------- -------- -------- -------- --------|
-* ```
-*
-* If little endian (more significant bits last):
-*
-* ``` text
-*                         <-- lower      higher -->
-* |   f7       f6       f5       f4       f3       f2    e2 | f1 |s|  e1  |
-* ```
-*
-* If big endian (more significant bits first):
-*
-* ``` text
-*                         <-- higher      lower -->
-* |s| e1    e2 | f1     f2       f3       f4       f5        f6      f7   |
-* ```
-*
-*
-* In which Uint32 should we place the higher order bits? If little endian, the second; if big endian, the first.
-*
-*
-* #### References
-*
-* * [Open Group]{@link http://pubs.opengroup.org/onlinepubs/9629399/chap14.htm}
-*
-*
-* @param {uinteger32} high - higher order word (unsigned 32-bit integer)
-* @param {uinteger32} low - lower order word (unsigned 32-bit integer)
-* @returns {number} floating-point number
-*
-* @example
-* var v = fromWords( 1774486211, 2479577218 );
-* // returns 3.14e201
-* @example
-* var v = fromWords( 3221823995, 1413754136 );
-* // returns 3.141592653589793
-* @example
-* var v = fromWords( 0, 0 );
-* // returns 0.0
-* @example
-* var v = fromWords( 2147483648, 0 );
-* // returns -0.0
-* @example
-* var v = fromWords( 2146959360, 0 );
-* // returns NaN
-* @example
-* var v = fromWords( 2146435072, 0 );
-* // returns Infinity
-* @example
-* var v = fromWords( 4293918720, 0 );
-* // returns -Infinity
-*/
-function fromWords( high, low ) {
-	UINT32_VIEW[ HIGH ] = high;
-	UINT32_VIEW[ LOW ] = low;
-	return FLOAT64_VIEW[ 0 ];
-} // end FUNCTION fromWords()
-
-
-// EXPORTS //
-
-module.exports = fromWords;
-
-},{"./indices.js":62,"@stdlib/types/array/float64":89,"@stdlib/types/array/uint32":91}],61:[function(require,module,exports){
 'use strict';
 
 /**
 * Create a double-precision floating-point number from a higher order word (unsigned 32-bit integer) and a lower order word (unsigned 32-bit integer).
 *
-* @module @stdlib/math/base/utils/float64-from-words
+* @module @stdlib/number/float64/base/from-words
 *
 * @example
-* var fromWords = require( '@stdlib/math/base/utils/float64-from-words' );
+* var fromWords = require( '@stdlib/number/float64/base/from-words' );
 *
 * var v = fromWords( 1774486211, 2479577218 );
 * // returns 3.14e201
 *
 * v = fromWords( 3221823995, 1413754136 );
-* // returns 3.141592653589793
+* // returns -3.141592653589793
 *
 * v = fromWords( 0, 0 );
 * // returns 0.0
@@ -4576,14 +8237,32 @@ module.exports = fromWords;
 
 // MODULES //
 
-var fromWords = require( './from_words.js' );
+var fromWords = require( './main.js' );
 
 
 // EXPORTS //
 
 module.exports = fromWords;
 
-},{"./from_words.js":60}],62:[function(require,module,exports){
+},{"./main.js":122}],121:[function(require,module,exports){
+/**
+* @license Apache-2.0
+*
+* Copyright (c) 2018 The Stdlib Authors.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*    http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
+
 'use strict';
 
 // MODULES //
@@ -4593,6 +8272,7 @@ var isLittleEndian = require( '@stdlib/assert/is-little-endian' );
 
 // MAIN //
 
+var indices;
 var HIGH;
 var LOW;
 
@@ -4603,23 +8283,42 @@ if ( isLittleEndian === true ) {
 	HIGH = 0; // first index
 	LOW = 1; // second index
 }
-
-
-// EXPORTS //
-
-module.exports = {
+indices = {
 	'HIGH': HIGH,
 	'LOW': LOW
 };
 
-},{"@stdlib/assert/is-little-endian":8}],63:[function(require,module,exports){
+
+// EXPORTS //
+
+module.exports = indices;
+
+},{"@stdlib/assert/is-little-endian":36}],122:[function(require,module,exports){
+/**
+* @license Apache-2.0
+*
+* Copyright (c) 2018 The Stdlib Authors.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*    http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
+
 'use strict';
 
 // MODULES //
 
-var Uint32Array = require( '@stdlib/types/array/uint32' );
-var Float64Array = require( '@stdlib/types/array/float64' );
-var HIGH = require( './high.js' );
+var Uint32Array = require( '@stdlib/array/uint32' );
+var Float64Array = require( '@stdlib/array/float64' );
+var indices = require( './indices.js' );
 
 
 // VARIABLES //
@@ -4627,15 +8326,18 @@ var HIGH = require( './high.js' );
 var FLOAT64_VIEW = new Float64Array( 1 );
 var UINT32_VIEW = new Uint32Array( FLOAT64_VIEW.buffer );
 
+var HIGH = indices.HIGH;
+var LOW = indices.LOW;
+
 
 // MAIN //
 
 /**
-* Returns an unsigned 32-bit integer corresponding to the more significant 32 bits of a double-precision floating-point number.
+* Creates a double-precision floating-point number from a higher order word (unsigned 32-bit integer) and a lower order word (unsigned 32-bit integer).
 *
-* #### Notes
+* ## Notes
 *
-* ``` text
+* ```text
 * float64 (64 bits)
 * f := fraction (significand/mantissa) (52 bits)
 * e := exponent (11 bits)
@@ -4650,44 +8352,90 @@ var UINT32_VIEW = new Uint32Array( FLOAT64_VIEW.buffer );
 *
 * If little endian (more significant bits last):
 *
-* ``` text
+* ```text
 *                         <-- lower      higher -->
 * |   f7       f6       f5       f4       f3       f2    e2 | f1 |s|  e1  |
 * ```
 *
 * If big endian (more significant bits first):
 *
-* ``` text
+* ```text
 *                         <-- higher      lower -->
 * |s| e1    e2 | f1     f2       f3       f4       f5        f6      f7   |
 * ```
 *
-* In which Uint32 can we find the higher order bits? If little endian, the second; if big endian, the first.
+*
+* In which Uint32 should we place the higher order bits? If little endian, the second; if big endian, the first.
 *
 *
-* #### References
+* ## References
 *
-* * [Open Group]{@link http://pubs.opengroup.org/onlinepubs/9629399/chap14.htm}
+* -   [Open Group][1]
 *
+* [1]: http://pubs.opengroup.org/onlinepubs/9629399/chap14.htm
 *
-* @param {number} x - input value
-* @returns {uinteger32} higher order word
+* @param {uinteger32} high - higher order word (unsigned 32-bit integer)
+* @param {uinteger32} low - lower order word (unsigned 32-bit integer)
+* @returns {number} floating-point number
 *
 * @example
-* var w = getHighWord( 3.14e201 ); // => 01101001110001001000001011000011
-* // returns 1774486211
+* var v = fromWords( 1774486211, 2479577218 );
+* // returns 3.14e201
+*
+* @example
+* var v = fromWords( 3221823995, 1413754136 );
+* // returns -3.141592653589793
+*
+* @example
+* var v = fromWords( 0, 0 );
+* // returns 0.0
+*
+* @example
+* var v = fromWords( 2147483648, 0 );
+* // returns -0.0
+*
+* @example
+* var v = fromWords( 2146959360, 0 );
+* // returns NaN
+*
+* @example
+* var v = fromWords( 2146435072, 0 );
+* // returns Infinity
+*
+* @example
+* var v = fromWords( 4293918720, 0 );
+* // returns -Infinity
 */
-function getHighWord( x ) {
-	FLOAT64_VIEW[ 0 ] = x;
-	return UINT32_VIEW[ HIGH ];
-} // end FUNCTION getHighWord()
+function fromWords( high, low ) {
+	UINT32_VIEW[ HIGH ] = high;
+	UINT32_VIEW[ LOW ] = low;
+	return FLOAT64_VIEW[ 0 ];
+}
 
 
 // EXPORTS //
 
-module.exports = getHighWord;
+module.exports = fromWords;
 
-},{"./high.js":64,"@stdlib/types/array/float64":89,"@stdlib/types/array/uint32":91}],64:[function(require,module,exports){
+},{"./indices.js":121,"@stdlib/array/float64":4,"@stdlib/array/uint32":9}],123:[function(require,module,exports){
+/**
+* @license Apache-2.0
+*
+* Copyright (c) 2018 The Stdlib Authors.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*    http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
+
 'use strict';
 
 // MODULES //
@@ -4709,16 +8457,34 @@ if ( isLittleEndian === true ) {
 
 module.exports = HIGH;
 
-},{"@stdlib/assert/is-little-endian":8}],65:[function(require,module,exports){
+},{"@stdlib/assert/is-little-endian":36}],124:[function(require,module,exports){
+/**
+* @license Apache-2.0
+*
+* Copyright (c) 2018 The Stdlib Authors.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*    http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
+
 'use strict';
 
 /**
 * Return an unsigned 32-bit integer corresponding to the more significant 32 bits of a double-precision floating-point number.
 *
-* @module @stdlib/math/base/utils/float64-get-high-word
+* @module @stdlib/number/float64/base/get-high-word
 *
 * @example
-* var getHighWord = require( '@stdlib/math/base/utils/float64-get-high-word' );
+* var getHighWord = require( '@stdlib/number/float64/base/get-high-word' );
 *
 * var w = getHighWord( 3.14e201 ); // => 01101001110001001000001011000011
 * // returns 1774486211
@@ -4726,21 +8492,39 @@ module.exports = HIGH;
 
 // MODULES //
 
-var getHighWord = require( './get_high_word.js' );
+var getHighWord = require( './main.js' );
 
 
 // EXPORTS //
 
 module.exports = getHighWord;
 
-},{"./get_high_word.js":63}],66:[function(require,module,exports){
+},{"./main.js":125}],125:[function(require,module,exports){
+/**
+* @license Apache-2.0
+*
+* Copyright (c) 2018 The Stdlib Authors.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*    http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
+
 'use strict';
 
 // MODULES //
 
-var Uint32Array = require( '@stdlib/types/array/uint32' );
-var Float64Array = require( '@stdlib/types/array/float64' );
-var LOW = require( './low.js' );
+var Uint32Array = require( '@stdlib/array/uint32' );
+var Float64Array = require( '@stdlib/array/float64' );
+var HIGH = require( './high.js' );
 
 
 // VARIABLES //
@@ -4752,11 +8536,11 @@ var UINT32_VIEW = new Uint32Array( FLOAT64_VIEW.buffer );
 // MAIN //
 
 /**
-* Returns a 32-bit unsigned integer corresponding to the less significant 32 bits of a double-precision floating-point number.
+* Returns an unsigned 32-bit integer corresponding to the more significant 32 bits of a double-precision floating-point number.
 *
-* #### Notes
+* ## Notes
 *
-* ``` text
+* ```text
 * float64 (64 bits)
 * f := fraction (significand/mantissa) (52 bits)
 * e := exponent (11 bits)
@@ -4771,53 +8555,72 @@ var UINT32_VIEW = new Uint32Array( FLOAT64_VIEW.buffer );
 *
 * If little endian (more significant bits last):
 *
-* ``` text
+* ```text
 *                         <-- lower      higher -->
 * |   f7       f6       f5       f4       f3       f2    e2 | f1 |s|  e1  |
 * ```
 *
 * If big endian (more significant bits first):
 *
-* ``` text
+* ```text
 *                         <-- higher      lower -->
 * |s| e1    e2 | f1     f2       f3       f4       f5        f6      f7   |
 * ```
 *
-* In which Uint32 can we find the lower order bits? If little endian, the first; if big endian, the second.
+* In which Uint32 can we find the higher order bits? If little endian, the second; if big endian, the first.
 *
 *
-* #### References
+* ## References
 *
-* * [Open Group]{@link http://pubs.opengroup.org/onlinepubs/9629399/chap14.htm}
+* -   [Open Group][1]
 *
+* [1]: http://pubs.opengroup.org/onlinepubs/9629399/chap14.htm
 *
 * @param {number} x - input value
-* @returns {uinteger32} lower order word
+* @returns {uinteger32} higher order word
 *
 * @example
-* var w = getLowWord( 3.14e201 ); // => 10010011110010110101100010000010
-* // returns 2479577218
+* var w = getHighWord( 3.14e201 ); // => 01101001110001001000001011000011
+* // returns 1774486211
 */
-function getLowWord( x ) {
+function getHighWord( x ) {
 	FLOAT64_VIEW[ 0 ] = x;
-	return UINT32_VIEW[ LOW ];
-} // end FUNCTION getLowWord()
+	return UINT32_VIEW[ HIGH ];
+}
 
 
 // EXPORTS //
 
-module.exports = getLowWord;
+module.exports = getHighWord;
 
-},{"./low.js":68,"@stdlib/types/array/float64":89,"@stdlib/types/array/uint32":91}],67:[function(require,module,exports){
+},{"./high.js":123,"@stdlib/array/float64":4,"@stdlib/array/uint32":9}],126:[function(require,module,exports){
+/**
+* @license Apache-2.0
+*
+* Copyright (c) 2018 The Stdlib Authors.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*    http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
+
 'use strict';
 
 /**
-* Returns an unsigned 32-bit integer corresponding to the less significant 32 bits of a double-precision floating-point number.
+* Return an unsigned 32-bit integer corresponding to the less significant 32 bits of a double-precision floating-point number.
 *
-* @module @stdlib/math/base/utils/float64-get-low-word
+* @module @stdlib/number/float64/base/get-low-word
 *
 * @example
-* var getLowWord = require( '@stdlib/math/base/utils/float64-get-low-word' );
+* var getLowWord = require( '@stdlib/number/float64/base/get-low-word' );
 *
 * var w = getLowWord( 3.14e201 ); // => 10010011110010110101100010000010
 * // returns 2479577218
@@ -4825,14 +8628,32 @@ module.exports = getLowWord;
 
 // MODULES //
 
-var getLowWord = require( './get_low_word.js' );
+var getLowWord = require( './main.js' );
 
 
 // EXPORTS //
 
 module.exports = getLowWord;
 
-},{"./get_low_word.js":66}],68:[function(require,module,exports){
+},{"./main.js":128}],127:[function(require,module,exports){
+/**
+* @license Apache-2.0
+*
+* Copyright (c) 2018 The Stdlib Authors.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*    http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
+
 'use strict';
 
 // MODULES //
@@ -4854,16 +8675,128 @@ if ( isLittleEndian === true ) {
 
 module.exports = LOW;
 
-},{"@stdlib/assert/is-little-endian":8}],69:[function(require,module,exports){
+},{"@stdlib/assert/is-little-endian":36}],128:[function(require,module,exports){
+/**
+* @license Apache-2.0
+*
+* Copyright (c) 2018 The Stdlib Authors.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*    http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
+
+'use strict';
+
+// MODULES //
+
+var Uint32Array = require( '@stdlib/array/uint32' );
+var Float64Array = require( '@stdlib/array/float64' );
+var LOW = require( './low.js' );
+
+
+// VARIABLES //
+
+var FLOAT64_VIEW = new Float64Array( 1 );
+var UINT32_VIEW = new Uint32Array( FLOAT64_VIEW.buffer );
+
+
+// MAIN //
+
+/**
+* Returns a 32-bit unsigned integer corresponding to the less significant 32 bits of a double-precision floating-point number.
+*
+* ## Notes
+*
+* ```text
+* float64 (64 bits)
+* f := fraction (significand/mantissa) (52 bits)
+* e := exponent (11 bits)
+* s := sign bit (1 bit)
+*
+* |-------- -------- -------- -------- -------- -------- -------- --------|
+* |                                Float64                                |
+* |-------- -------- -------- -------- -------- -------- -------- --------|
+* |              Uint32               |               Uint32              |
+* |-------- -------- -------- -------- -------- -------- -------- --------|
+* ```
+*
+* If little endian (more significant bits last):
+*
+* ```text
+*                         <-- lower      higher -->
+* |   f7       f6       f5       f4       f3       f2    e2 | f1 |s|  e1  |
+* ```
+*
+* If big endian (more significant bits first):
+*
+* ```text
+*                         <-- higher      lower -->
+* |s| e1    e2 | f1     f2       f3       f4       f5        f6      f7   |
+* ```
+*
+* In which Uint32 can we find the lower order bits? If little endian, the first; if big endian, the second.
+*
+*
+* ## References
+*
+* -   [Open Group][1]
+*
+* [1]: http://pubs.opengroup.org/onlinepubs/9629399/chap14.htm
+*
+* @param {number} x - input value
+* @returns {uinteger32} lower order word
+*
+* @example
+* var w = getLowWord( 3.14e201 ); // => 10010011110010110101100010000010
+* // returns 2479577218
+*/
+function getLowWord( x ) {
+	FLOAT64_VIEW[ 0 ] = x;
+	return UINT32_VIEW[ LOW ];
+}
+
+
+// EXPORTS //
+
+module.exports = getLowWord;
+
+},{"./low.js":127,"@stdlib/array/float64":4,"@stdlib/array/uint32":9}],129:[function(require,module,exports){
+/**
+* @license Apache-2.0
+*
+* Copyright (c) 2018 The Stdlib Authors.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*    http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
+
 'use strict';
 
 /**
-* Returns a normal number `y` and exponent `exp` satisfying \\(x = y \cdot 2^\mathrm{exp}\\).
+* Return a normal number `y` and exponent `exp` satisfying \\(x = y \cdot 2^\mathrm{exp}\\).
 *
-* @module @stdlib/math/base/utils/float64-normalize
+* @module @stdlib/number/float64/base/normalize
 *
 * @example
-* var normalize = require( '@stdlib/math/base/utils/float64-normalize' );
+* var normalize = require( '@stdlib/number/float64/base/normalize' );
 * var pow = require( '@stdlib/math/base/special/pow' );
 *
 * var out = normalize( 3.14e-319 );
@@ -4874,23 +8807,140 @@ module.exports = LOW;
 *
 * var bool = ( y*pow(2.0,exp) === 3.14e-319 );
 * // returns true
+*
+* @example
+* var Float64Array = require( '@stdlib/array/float64' );
+* var normalize = require( '@stdlib/number/float64/base/normalize' );
+*
+* var out = new Float64Array( 2 );
+*
+* var v = normalize( out, 3.14e-319 );
+* // returns <Float64Array>[ 1.4141234400356668e-303, -52 ]
+*
+* var bool = ( v === out );
+* // returns true
 */
 
 // MODULES //
 
-var normalize = require( './normalize.js' );
+var normalize = require( './main.js' );
 
 
 // EXPORTS //
 
 module.exports = normalize;
 
-},{"./normalize.js":70}],70:[function(require,module,exports){
+},{"./main.js":130}],130:[function(require,module,exports){
+/**
+* @license Apache-2.0
+*
+* Copyright (c) 2018 The Stdlib Authors.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*    http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
+
 'use strict';
 
 // MODULES //
 
-var FLOAT64_SMALLEST_NORMAL = require( '@stdlib/math/constants/float64-smallest-normal' );
+var fcn = require( './normalize.js' );
+
+
+// MAIN //
+
+/**
+* Returns a normal number `y` and exponent `exp` satisfying \\(x = y \cdot 2^\mathrm{exp}\\).
+*
+* @param {(Array|TypedArray|Object)} [out] - output array
+* @param {number} x - input value
+* @returns {(Array|TypedArray|Object)} output array
+*
+* @example
+* var pow = require( '@stdlib/math/base/special/pow' );
+*
+* var out = normalize( new Array( 2 ), 3.14e-319 );
+* // returns [ 1.4141234400356668e-303, -52 ]
+*
+* var y = out[ 0 ];
+* var exp = out[ 1 ];
+*
+* var bool = ( y*pow(2.0,exp) === 3.14e-319 );
+* // returns true
+*
+* @example
+* var Float64Array = require( '@stdlib/array/float64' );
+* var pow = require( '@stdlib/math/base/special/pow' );
+*
+* var out = new Float64Array( 2 );
+*
+* var v = normalize( out, 3.14e-319 );
+* // returns <Float64Array>[ 1.4141234400356668e-303, -52 ]
+*
+* var bool = ( v === out );
+* // returns true
+*
+* @example
+* var out = normalize( new Array( 2 ), 0.0 );
+* // returns [ 0.0, 0 ]
+*
+* @example
+* var out = normalize( new Array( 2 ), Infinity );
+* // returns [ Infinity, 0 ]
+*
+* @example
+* var out = normalize( new Array( 2 ), -Infinity );
+* // returns [ -Infinity, 0 ]
+*
+* @example
+* var out = normalize( new Array( 2 ), NaN );
+* // returns [ NaN, 0 ]
+*/
+function normalize( out, x ) {
+	if ( arguments.length === 1 ) {
+		return fcn( [ 0.0, 0 ], out );
+	}
+	return fcn( out, x );
+}
+
+
+// EXPORTS //
+
+module.exports = normalize;
+
+},{"./normalize.js":131}],131:[function(require,module,exports){
+/**
+* @license Apache-2.0
+*
+* Copyright (c) 2018 The Stdlib Authors.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*    http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
+
+'use strict';
+
+// MODULES //
+
+var FLOAT64_SMALLEST_NORMAL = require( '@stdlib/constants/math/float64-smallest-normal' );
 var isInfinite = require( '@stdlib/math/base/assert/is-infinite' );
 var isnan = require( '@stdlib/math/base/assert/is-nan' );
 var abs = require( '@stdlib/math/base/special/abs' );
@@ -4907,13 +8957,15 @@ var SCALAR = 4503599627370496;
 /**
 * Returns a normal number `y` and exponent `exp` satisfying \\(x = y \cdot 2^\mathrm{exp}\\).
 *
+* @private
+* @param {(Array|TypedArray|Object)} out - output array
 * @param {number} x - input value
-* @returns {NumberArray} a two-element array containing `y` and `exp`
+* @returns {(Array|TypedArray|Object)} output array
 *
 * @example
 * var pow = require( '@stdlib/math/base/special/pow' );
 *
-* var out = normalize( 3.14e-319 );
+* var out = normalize( new Array( 2 ), 3.14e-319 );
 * // returns [ 1.4141234400356668e-303, -52 ]
 *
 * var y = out[ 0 ];
@@ -4923,48 +8975,72 @@ var SCALAR = 4503599627370496;
 * // returns true
 *
 * @example
-* var out = normalize( 0 );
+* var out = normalize( new Array( 2 ), 0.0 );
 * // returns [ 0.0, 0 ];
 *
 * @example
-* var out = normalize( Infinity );
+* var out = normalize( new Array( 2 ), Infinity );
 * // returns [ Infinity, 0 ]
 *
 * @example
-* var out = normalize( -Infinity );
+* var out = normalize( new Array( 2 ), -Infinity );
 * // returns [ -Infinity, 0 ]
 *
 * @example
-* var out = normalize( NaN );
+* var out = normalize( new Array( 2 ), NaN );
 * // returns [ NaN, 0 ]
 */
-function normalize( x ) {
+function normalize( out, x ) {
 	if ( isnan( x ) || isInfinite( x ) ) {
-		return [ x, 0 ];
+		out[ 0 ] = x;
+		out[ 1 ] = 0;
+		return out;
 	}
 	if ( x !== 0.0 && abs( x ) < FLOAT64_SMALLEST_NORMAL ) {
-		return [ x*SCALAR, -52 ];
+		out[ 0 ] = x * SCALAR;
+		out[ 1 ] = -52;
+		return out;
 	}
-	return [ x, 0 ];
-} // end FUNCTION normalize()
+	out[ 0 ] = x;
+	out[ 1 ] = 0;
+	return out;
+}
 
 
 // EXPORTS //
 
 module.exports = normalize;
 
-},{"@stdlib/math/base/assert/is-infinite":12,"@stdlib/math/base/assert/is-nan":14,"@stdlib/math/base/special/abs":17,"@stdlib/math/constants/float64-smallest-normal":86}],71:[function(require,module,exports){
-arguments[4][64][0].apply(exports,arguments)
-},{"@stdlib/assert/is-little-endian":8,"dup":64}],72:[function(require,module,exports){
+},{"@stdlib/constants/math/float64-smallest-normal":53,"@stdlib/math/base/assert/is-infinite":57,"@stdlib/math/base/assert/is-nan":59,"@stdlib/math/base/special/abs":62}],132:[function(require,module,exports){
+arguments[4][123][0].apply(exports,arguments)
+},{"@stdlib/assert/is-little-endian":36,"dup":123}],133:[function(require,module,exports){
+/**
+* @license Apache-2.0
+*
+* Copyright (c) 2018 The Stdlib Authors.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*    http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
+
 'use strict';
 
 /**
 * Set the more significant 32 bits of a double-precision floating-point number.
 *
-* @module @stdlib/math/base/utils/float64-set-high-word
+* @module @stdlib/number/float64/base/set-high-word
 *
 * @example
-* var setHighWord = require( '@stdlib/math/base/utils/float64-set-high-word' );
+* var setHighWord = require( '@stdlib/number/float64/base/set-high-word' );
 *
 * var high = 5 >>> 0; // => 0 00000000000 00000000000000000101
 *
@@ -4972,8 +9048,8 @@ arguments[4][64][0].apply(exports,arguments)
 * // returns 1.18350528745e-313
 *
 * @example
-* var setHighWord = require( '@stdlib/math/base/utils/float64-set-high-word' );
-* var PINF = require( '@stdlib/math/constants/float64-pinf' ); //  => 0 11111111111 00000000000000000000 00000000000000000000000000000000
+* var setHighWord = require( '@stdlib/number/float64/base/set-high-word' );
+* var PINF = require( '@stdlib/constants/math/float64-pinf' ); //  => 0 11111111111 00000000000000000000 00000000000000000000000000000000
 *
 * var high = 1072693248 >>> 0; // => 0 01111111111 00000000000000000000
 *
@@ -4984,20 +9060,38 @@ arguments[4][64][0].apply(exports,arguments)
 
 // MODULES //
 
-var setHighWord = require( './set_high_word.js' );
+var setHighWord = require( './main.js' );
 
 
 // EXPORTS //
 
 module.exports = setHighWord;
 
-},{"./set_high_word.js":73}],73:[function(require,module,exports){
+},{"./main.js":134}],134:[function(require,module,exports){
+/**
+* @license Apache-2.0
+*
+* Copyright (c) 2018 The Stdlib Authors.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*    http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
+
 'use strict';
 
 // MODULES //
 
-var Uint32Array = require( '@stdlib/types/array/uint32' );
-var Float64Array = require( '@stdlib/types/array/float64' );
+var Uint32Array = require( '@stdlib/array/uint32' );
+var Float64Array = require( '@stdlib/array/float64' );
 var HIGH = require( './high.js' );
 
 
@@ -5012,9 +9106,9 @@ var UINT32_VIEW = new Uint32Array( FLOAT64_VIEW.buffer );
 /**
 * Sets the more significant 32 bits of a double-precision floating-point number.
 *
-* #### Notes
+* ## Notes
 *
-* ``` text
+* ```text
 * float64 (64 bits)
 * f := fraction (significand/mantissa) (52 bits)
 * e := exponent (11 bits)
@@ -5029,14 +9123,14 @@ var UINT32_VIEW = new Uint32Array( FLOAT64_VIEW.buffer );
 *
 * If little endian (more significant bits last):
 *
-* ``` text
+* ```text
 *                         <-- lower      higher -->
 * |   f7       f6       f5       f4       f3       f2    e2 | f1 |s|  e1  |
 * ```
 *
 * If big endian (more significant bits first):
 *
-* ``` text
+* ```text
 *                         <-- higher      lower -->
 * |s| e1    e2 | f1     f2       f3       f4       f5        f6      f7   |
 * ```
@@ -5044,10 +9138,11 @@ var UINT32_VIEW = new Uint32Array( FLOAT64_VIEW.buffer );
 * In which Uint32 can we find the higher order bits? If little endian, the second; if big endian, the first.
 *
 *
-* #### References
+* ## References
 *
-* * [Open Group]{@link http://pubs.opengroup.org/onlinepubs/9629399/chap14.htm}
+* -   [Open Group][1]
 *
+* [1]: http://pubs.opengroup.org/onlinepubs/9629399/chap14.htm
 *
 * @param {number} x - double
 * @param {uinteger32} high - unsigned 32-bit integer to replace the higher order word of `x`
@@ -5060,58 +9155,168 @@ var UINT32_VIEW = new Uint32Array( FLOAT64_VIEW.buffer );
 * // returns 1.18350528745e-313
 *
 * @example
-* var PINF = require( '@stdlib/math/constants/float64-pinf' ); // => 0 11111111111 00000000000000000000 00000000000000000000000000000000
+* var PINF = require( '@stdlib/constants/math/float64-pinf' ); // => 0 11111111111 00000000000000000000 00000000000000000000000000000000
 *
 * var high = 1072693248 >>> 0; // => 0 01111111111 00000000000000000000
 *
 * // Set the higher order bits of `+infinity` to return `1`:
-* var y = setHighWord( PINF, high ); => 0 01111111111 0000000000000000000000000000000000000000000000000000
+* var y = setHighWord( PINF, high ); // => 0 01111111111 0000000000000000000000000000000000000000000000000000
 * // returns 1.0
 */
 function setHighWord( x, high ) {
 	FLOAT64_VIEW[ 0 ] = x;
 	UINT32_VIEW[ HIGH ] = ( high >>> 0 ); // identity bit shift to ensure integer
 	return FLOAT64_VIEW[ 0 ];
-} // end FUNCTION setHighWord()
+}
 
 
 // EXPORTS //
 
 module.exports = setHighWord;
 
-},{"./high.js":71,"@stdlib/types/array/float64":89,"@stdlib/types/array/uint32":91}],74:[function(require,module,exports){
+},{"./high.js":132,"@stdlib/array/float64":4,"@stdlib/array/uint32":9}],135:[function(require,module,exports){
+/**
+* @license Apache-2.0
+*
+* Copyright (c) 2018 The Stdlib Authors.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*    http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
+
 'use strict';
 
 /**
 * Split a floating-point number into a higher order word (unsigned 32-bit integer) and a lower order word (unsigned 32-bit integer).
 *
-* @module @stdlib/math/base/utils/float64-to-words
+* @module @stdlib/number/float64/base/to-words
 *
 * @example
-* var toWords = require( '@stdlib/math/base/utils/float64-to-words' );
+* var toWords = require( '@stdlib/number/float64/base/to-words' );
 *
 * var w = toWords( 3.14e201 );
 * // returns [ 1774486211, 2479577218 ]
+*
+* @example
+* var Uint32Array = require( '@stdlib/array/uint32' );
+* var toWords = require( '@stdlib/number/float64/base/to-words' );
+*
+* var out = new Uint32Array( 2 );
+*
+* var w = toWords( out, 3.14e201 );
+* // returns <Uint32Array>[ 1774486211, 2479577218 ]
+*
+* var bool = ( w === out );
+* // returns true
 */
 
 // MODULES //
 
-var toWords = require( './to_words.js' );
+var toWords = require( './main.js' );
 
 
 // EXPORTS //
 
 module.exports = toWords;
 
-},{"./to_words.js":76}],75:[function(require,module,exports){
-arguments[4][62][0].apply(exports,arguments)
-},{"@stdlib/assert/is-little-endian":8,"dup":62}],76:[function(require,module,exports){
+},{"./main.js":137}],136:[function(require,module,exports){
+arguments[4][121][0].apply(exports,arguments)
+},{"@stdlib/assert/is-little-endian":36,"dup":121}],137:[function(require,module,exports){
+/**
+* @license Apache-2.0
+*
+* Copyright (c) 2018 The Stdlib Authors.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*    http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
+
 'use strict';
 
 // MODULES //
 
-var Uint32Array = require( '@stdlib/types/array/uint32' );
-var Float64Array = require( '@stdlib/types/array/float64' );
+var fcn = require( './to_words.js' );
+
+
+// MAIN //
+
+/**
+* Splits a floating-point number into a higher order word (unsigned 32-bit integer) and a lower order word (unsigned 32-bit integer).
+*
+* @param {(Array|TypedArray|Object)} [out] - output array
+* @param {number} x - input value
+* @returns {(Array|TypedArray|Object)} output array
+*
+* @example
+* var w = toWords( 3.14e201 );
+* // returns [ 1774486211, 2479577218 ]
+*
+* @example
+* var Uint32Array = require( '@stdlib/array/uint32' );
+*
+* var out = new Uint32Array( 2 );
+*
+* var w = toWords( out, 3.14e201 );
+* // returns <Uint32Array>[ 1774486211, 2479577218 ]
+*
+* var bool = ( w === out );
+* // returns true
+*/
+function toWords( out, x ) {
+	if ( arguments.length === 1 ) {
+		return fcn( [ 0, 0 ], out );
+	}
+	return fcn( out, x );
+}
+
+
+// EXPORTS //
+
+module.exports = toWords;
+
+},{"./to_words.js":138}],138:[function(require,module,exports){
+/**
+* @license Apache-2.0
+*
+* Copyright (c) 2018 The Stdlib Authors.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*    http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
+
+'use strict';
+
+// MODULES //
+
+var Uint32Array = require( '@stdlib/array/uint32' );
+var Float64Array = require( '@stdlib/array/float64' );
 var indices = require( './indices.js' );
 
 
@@ -5129,9 +9334,9 @@ var LOW = indices.LOW;
 /**
 * Splits a floating-point number into a higher order word (unsigned 32-bit integer) and a lower order word (unsigned 32-bit integer).
 *
-* #### Notes
+* ## Notes
 *
-* ``` text
+* ```text
 * float64 (64 bits)
 * f := fraction (significand/mantissa) (52 bits)
 * e := exponent (11 bits)
@@ -5146,14 +9351,14 @@ var LOW = indices.LOW;
 *
 * If little endian (more significant bits last):
 *
-* ``` text
+* ```text
 *                         <-- lower      higher -->
 * |   f7       f6       f5       f4       f3       f2    e2 | f1 |s|  e1  |
 * ```
 *
 * If big endian (more significant bits first):
 *
-* ``` text
+* ```text
 *                         <-- higher      lower -->
 * |s| e1    e2 | f1     f2       f3       f4       f5        f6      f7   |
 * ```
@@ -5161,884 +9366,64 @@ var LOW = indices.LOW;
 * In which Uint32 can we find the higher order bits? If little endian, the second; if big endian, the first.
 *
 *
-* #### References
+* ## References
 *
-* [Open Group]{@link http://pubs.opengroup.org/onlinepubs/9629399/chap14.htm}
+* -   [Open Group][1]
+*
+* [1]: http://pubs.opengroup.org/onlinepubs/9629399/chap14.htm
 *
 *
+* @private
+* @param {(Array|TypedArray|Object)} out - output array
 * @param {number} x - input value
-* @returns {NumberArray} two-element array containing a higher order word and a lower order word
+* @returns {(Array|TypedArray|Object)} output array
 *
 * @example
-* var w = toWords( 3.14e201 );
-* // returns [ 1774486211, 2479577218 ]
+* var Uint32Array = require( '@stdlib/array/uint32' );
+*
+* var out = new Uint32Array( 2 );
+*
+* var w = toWords( out, 3.14e201 );
+* // returns <Uint32Array>[ 1774486211, 2479577218 ]
+*
+* var bool = ( w === out );
+* // returns true
 */
-function toWords( x ) {
+function toWords( out, x ) {
 	FLOAT64_VIEW[ 0 ] = x;
-	return [ UINT32_VIEW[ HIGH ], UINT32_VIEW[ LOW ] ];
-} // end FUNCTION toWords()
+	out[ 0 ] = UINT32_VIEW[ HIGH ];
+	out[ 1 ] = UINT32_VIEW[ LOW ];
+	return out;
+}
 
 
 // EXPORTS //
 
 module.exports = toWords;
 
-},{"./indices.js":75,"@stdlib/types/array/float64":89,"@stdlib/types/array/uint32":91}],77:[function(require,module,exports){
+},{"./indices.js":136,"@stdlib/array/float64":4,"@stdlib/array/uint32":9}],139:[function(require,module,exports){
+/**
+* @license Apache-2.0
+*
+* Copyright (c) 2018 The Stdlib Authors.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*    http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
+
 'use strict';
 
 /**
-* The bias of a double-precision floating-point number's exponent.
-*
-* @module @stdlib/math/constants/float64-exponent-bias
-* @type {integer32}
-*
-* @example
-* var FLOAT64_EXPONENT_BIAS = require( '@stdlib/math/constants/float64-exponent-bias' );
-* // returns 1023
-*/
-
-
-// MAIN //
-
-/**
-* The bias of a double-precision floating-point number's exponent. The bias can be computed via
-*
-* ``` tex
-* \mathrm{bias} = 2^{k-1} - 1
-* ```
-*
-* where \\(k\\) is the number of bits in the exponent; here, \\(k = 11\\).
-*
-* @constant
-* @type {integer32}
-* @default 1023
-* @see [IEEE 754]{@link https://en.wikipedia.org/wiki/IEEE_754-1985}
-*/
-var FLOAT64_EXPONENT_BIAS = 1023|0; // asm type annotation
-
-
-// EXPORTS //
-
-module.exports = FLOAT64_EXPONENT_BIAS;
-
-},{}],78:[function(require,module,exports){
-'use strict';
-
-/**
-* One half times the natural logarithm of 2.
-*
-* @module @stdlib/math/constants/float64-half-ln-two
-* @type {number}
-*
-* @example
-* var HALF_LN2 = require( '@stdlib/math/constants/float64-half_ln2' );
-* // returns 3.46573590279972654709e-01
-*/
-
-
-// MAIN //
-
-/**
-* One half times the natural logarithm of 2.
-*
-* ``` tex
-* \frac{\ln 2}{2}
-* ```
-*
-* @constant
-* @type {number}
-* @default 3.46573590279972654709e-01
-*/
-var HALF_LN2 = 3.46573590279972654709e-01; // 0x3FD62E42 0xFEFA39EF
-
-
-// EXPORTS //
-
-module.exports = HALF_LN2;
-
-},{}],79:[function(require,module,exports){
-'use strict';
-
-/**
-* High word mask for the exponent of a double-precision floating-point number.
-*
-* @module @stdlib/math/constants/float64-high-word-exponent-mask
-* @type {uinteger32}
-*
-* @example
-* var FLOAT64_HIGH_WORD_EXPONENT_MASK = require( '@stdlib/math/constants/float64-high-word-exponent-mask' );
-* // returns 2146435072
-*/
-
-
-// MAIN //
-
-/**
-* The high word mask for the exponent of a double-precision floating-point number is an unsigned 32-bit integer with the value \\( 2146435072 \\), which corresponds to the bit sequence
-*
-* ``` binarystring
-* 0 11111111111 00000000000000000000
-* ```
-*
-* @constant
-* @type {uinteger32}
-* @default 0x7ff00000
-* @see [IEEE 754]{@link https://en.wikipedia.org/wiki/IEEE_754-1985}
-*/
-var FLOAT64_HIGH_WORD_EXPONENT_MASK = 0x7ff00000;
-
-
-// EXPORTS //
-
-module.exports = FLOAT64_HIGH_WORD_EXPONENT_MASK;
-
-},{}],80:[function(require,module,exports){
-'use strict';
-
-/**
-* The maximum biased base 2 exponent for a subnormal double-precision floating-point number.
-*
-* @module @stdlib/math/constants/float64-max-base2-exponent-subnormal
-* @type {integer32}
-*
-* @example
-* var FLOAT64_MAX_BASE2_EXPONENT_SUBNORMAL = require( '@stdlib/math/constants/float64-max-base2-exponent-subnormal' );
-* // returns -1023
-*/
-
-
-// MAIN //
-
-/**
-* The maximum biased base 2 exponent for a subnormal double-precision floating-point number.
-*
-* ``` text
-* 00000000000 => 0 - BIAS = -1023
-* ```
-*
-* where `BIAS = 1023`.
-*
-* @constant
-* @type {integer32}
-* @default -1023
-* @see [IEEE 754]{@link https://en.wikipedia.org/wiki/IEEE_754-1985}
-*/
-var FLOAT64_MAX_BASE2_EXPONENT_SUBNORMAL = -1023|0; // asm type annotation
-
-
-// EXPORTS //
-
-module.exports = FLOAT64_MAX_BASE2_EXPONENT_SUBNORMAL;
-
-},{}],81:[function(require,module,exports){
-'use strict';
-
-/**
-* The maximum biased base 2 exponent for a double-precision floating-point number.
-*
-* @module @stdlib/math/constants/float64-max-base2-exponent
-* @type {integer32}
-*
-* @example
-* var FLOAT64_MAX_BASE2_EXPONENT = require( '@stdlib/math/constants/float64-max-base2-exponent' );
-* // returns 1023
-*/
-
-
-// MAIN //
-
-/**
-* The maximum biased base 2 exponent for a double-precision floating-point number.
-*
-* ``` text
-* 11111111110 => 2046 - BIAS = 1023
-* ```
-*
-* where `BIAS = 1023`.
-*
-* @constant
-* @type {integer32}
-* @default 1023
-* @see [IEEE 754]{@link https://en.wikipedia.org/wiki/IEEE_754-1985}
-*/
-var FLOAT64_MAX_BASE2_EXPONENT = 1023|0; // asm type annotation
-
-
-// EXPORTS //
-
-module.exports = FLOAT64_MAX_BASE2_EXPONENT;
-
-},{}],82:[function(require,module,exports){
-'use strict';
-
-/**
-* The minimum biased base 2 exponent for a subnormal double-precision floating-point number.
-*
-* @module @stdlib/math/constants/float64-min-base2-exponent-subnormal
-* @type {integer32}
-*
-* @example
-* var FLOAT64_MIN_BASE2_EXPONENT_SUBNORMAL = require( '@stdlib/math/constants/float64-min-base2-exponent-subnormal' );
-* // returns -1074
-*/
-
-
-// MAIN //
-
-/**
-* The minimum biased base 2 exponent for a subnormal double-precision floating-point number.
-*
-* ``` text
-* -(BIAS+(52-1)) = -(1023+51) = -1074
-* ```
-*
-* where `BIAS = 1023` and `52` is the number of digits in the significand.
-*
-* @constant
-* @type {integer32}
-* @default -1074
-* @see [IEEE 754]{@link https://en.wikipedia.org/wiki/IEEE_754-1985}
-*/
-var FLOAT64_MIN_BASE2_EXPONENT_SUBNORMAL = -1074|0; // asm type annotation
-
-
-// EXPORTS //
-
-module.exports = FLOAT64_MIN_BASE2_EXPONENT_SUBNORMAL;
-
-},{}],83:[function(require,module,exports){
-'use strict';
-
-/**
-* Double-precision floating-point negative infinity.
-*
-* @module @stdlib/math/constants/float64-ninf
-* @type {number}
-*
-* @example
-* var FLOAT64_NINF = require( '@stdlib/math/constants/float64-ninf' );
-* // returns -Infinity
-*/
-
-
-// MAIN //
-
-/**
-* Double-precision floating-point negative infinity has the bit sequence
-*
-* ``` binarystring
-* 1 11111111111 00000000000000000000 00000000000000000000000000000000
-* ```
-*
-* @constant
-* @type {number}
-* @default Number.NEGATIVE_INFINITY
-* @see [IEEE 754]{@link https://en.wikipedia.org/wiki/IEEE_754-1985}
-*/
-var FLOAT64_NINF = Number.NEGATIVE_INFINITY;
-
-
-// EXPORTS //
-
-module.exports = FLOAT64_NINF;
-
-},{}],84:[function(require,module,exports){
-'use strict';
-
-/**
-* The mathematical constant `π`.
-*
-* @module @stdlib/math/constants/float64-pi
-* @type {number}
-*
-* @example
-* var PI = require( '@stdlib/math/constants/float64-pi' );
-* // returns 3.141592653589793
-*/
-
-
-// MAIN //
-
-/**
-* The mathematical constant `π`.
-*
-* @constant
-* @type {number}
-* @default 3.141592653589793
-* @see [Wikipedia]{@link https://en.wikipedia.org/wiki/Pi}
-*/
-var PI = 3.1415926535897932384626433832795028841971693993751058209749445923078164062862089986280348253421170679; // eslint-disable-line max-len
-
-
-// EXPORTS //
-
-module.exports = PI;
-
-},{}],85:[function(require,module,exports){
-'use strict';
-
-/**
-* Double-precision floating-point positive infinity.
-*
-* @module @stdlib/math/constants/float64-pinf
-* @type {number}
-*
-* @example
-* var FLOAT64_PINF = require( '@stdlib/math/constants/float64-pinf' );
-* // returns Infinity
-*/
-
-
-// MAIN //
-
-/**
-* Double-precision floating-point positive infinity has the bit sequence
-*
-* ``` binarystring
-* 0 11111111111 00000000000000000000 00000000000000000000000000000000
-* ```
-*
-* @constant
-* @type {number}
-* @default Number.POSITIVE_INFINITY
-* @see [IEEE 754]{@link https://en.wikipedia.org/wiki/IEEE_754-1985}
-*/
-var FLOAT64_PINF = Number.POSITIVE_INFINITY;
-
-
-// EXPORTS //
-
-module.exports = FLOAT64_PINF;
-
-},{}],86:[function(require,module,exports){
-'use strict';
-
-/**
-* Smallest positive double-precision floating-point normal number.
-*
-* @module @stdlib/math/constants/float64-smallest-normal
-* @type {number}
-*
-* @example
-* var FLOAT64_SMALLEST_NORMAL = require( '@stdlib/math/constants/float64-smallest-normal' );
-* // returns 2.2250738585072014e-308
-*/
-
-
-// MAIN //
-
-/**
-* The smallest positive double-precision floating-point normal number has the value
-*
-* ``` tex
-* \frac{1}{2^{1023-1}}
-* ```
-*
-* which corresponds to the bit sequence
-*
-* ``` binarystring
-* 0 00000000001 00000000000000000000 00000000000000000000000000000000
-* ```
-*
-* @constant
-* @type {number}
-* @default 2.2250738585072014e-308
-* @see [IEEE 754]{@link https://en.wikipedia.org/wiki/IEEE_754-1985}
-*/
-var FLOAT64_SMALLEST_NORMAL = 2.2250738585072014e-308;
-
-
-// EXPORTS //
-
-module.exports = FLOAT64_SMALLEST_NORMAL;
-
-},{}],87:[function(require,module,exports){
-'use strict';
-
-/**
-* Maximum unsigned 32-bit integer.
-*
-* @module @stdlib/math/constants/uint32-max
-* @type {uinteger32}
-*
-* @example
-* var UINT32_MAX = require( '@stdlib/math/constants/uint32-max' );
-* // returns 4294967295
-*/
-
-
-// MAIN //
-
-/**
-* The maximum unsigned 32-bit integer is given by
-*
-* ``` tex
-* 2^{32} - 1
-* ```
-*
-* which corresponds to the bit sequence
-*
-* ``` binarystring
-* 11111111111111111111111111111111
-* ```
-*
-* @constant
-* @type {uinteger32}
-* @default 4294967295
-*/
-var UINT32_MAX = 4294967295;
-
-
-// EXPORTS //
-
-module.exports = UINT32_MAX;
-
-},{}],88:[function(require,module,exports){
-'use strict';
-
-// EXPORTS //
-
-module.exports = Float64Array;
-
-},{}],89:[function(require,module,exports){
-'use strict';
-
-/**
-* Typed array constructor which returns a typed array representing an array of double-precision floating-point numbers in the platform byte order.
-*
-* @module @stdlib/types/array/float64
-*
-* @example
-* var ctor = require( '@stdlib/types/array/float64' );
-*
-* var arr = new ctor( 10 );
-* // returns <Float64Array>
-*/
-
-// MODULES //
-
-var hasFloat64ArraySupport = require( '@stdlib/utils/detect-float64array-support' );
-
-
-// MAIN //
-
-var ctor;
-if ( hasFloat64ArraySupport() ) {
-	ctor = require( './float64array.js' );
-} else {
-	ctor = require( './polyfill.js' );
-}
-
-
-// EXPORTS //
-
-module.exports = ctor;
-
-},{"./float64array.js":88,"./polyfill.js":90,"@stdlib/utils/detect-float64array-support":98}],90:[function(require,module,exports){
-'use strict';
-
-// TODO: write polyfill
-
-// MAIN //
-
-/**
-* Typed array which represents an array of double-precision floating-point numbers in the platform byte order.
-*
-* @throws {Error} not implemented
-*/
-function polyfill() {
-	throw new Error( 'not implemented' );
-} // end FUNCTION polyfill()
-
-
-// EXPORTS //
-
-module.exports = polyfill;
-
-},{}],91:[function(require,module,exports){
-'use strict';
-
-/**
-* Typed array constructor which returns a typed array representing an array of 32-bit unsigned integers in the platform byte order.
-*
-* @module @stdlib/types/array/uint32
-*
-* @example
-* var ctor = require( '@stdlib/types/array/uint32' );
-*
-* var arr = new ctor( 10 );
-* // returns <Uint32Array>
-*/
-
-// MODULES //
-
-var hasUint32ArraySupport = require( '@stdlib/utils/detect-uint32array-support' );
-
-
-// MAIN //
-
-var ctor;
-if ( hasUint32ArraySupport() ) {
-	ctor = require( './uint32array.js' );
-} else {
-	ctor = require( './polyfill.js' );
-}
-
-
-// EXPORTS //
-
-module.exports = ctor;
-
-},{"./polyfill.js":92,"./uint32array.js":93,"@stdlib/utils/detect-uint32array-support":104}],92:[function(require,module,exports){
-'use strict';
-
-// TODO: write polyfill
-
-// MAIN //
-
-/**
-* Typed array which represents an array of 32-bit unsigned integers in the platform byte order.
-*
-* @throws {Error} not implemented
-*/
-function polyfill() {
-	throw new Error( 'not implemented' );
-} // end FUNCTION polyfill()
-
-
-// EXPORTS //
-
-module.exports = polyfill;
-
-},{}],93:[function(require,module,exports){
-'use strict';
-
-// EXPORTS //
-
-module.exports = Uint32Array;
-
-},{}],94:[function(require,module,exports){
-'use strict';
-
-/**
-* Defines a read-only property.
-*
-* @param {Object} obj - object on which to define the property
-* @param {string} prop - property name
-* @param {*} value - value to set
-*
-* @example
-* var obj = {};
-* setReadOnly( obj, 'foo', 'bar' );
-* obj.foo = 'boop'; // => throws
-*/
-function setReadOnly( obj, prop, value ) {
-	Object.defineProperty( obj, prop, {
-		'value': value,
-		'configurable': false,
-		'writable': false,
-		'enumerable': true
-	});
-} // end FUNCTION setReadOnly()
-
-
-// EXPORTS //
-
-module.exports = setReadOnly;
-
-},{}],95:[function(require,module,exports){
-'use strict';
-
-/**
-* Defines a read-only property.
-*
-* @module @stdlib/utils/define-read-only-property
-*
-* @example
-* var setReadOnly = require( '@stdlib/utils/define-read-only-property' );
-*
-* var obj = {};
-* setReadOnly( obj, 'foo', 'bar' );
-* obj.foo = 'boop'; // => throws
-*/
-
-// MODULES //
-
-var setReadOnly = require( './define_read_only_property.js' );
-
-
-// EXPORTS //
-
-module.exports = setReadOnly;
-
-},{"./define_read_only_property.js":94}],96:[function(require,module,exports){
-'use strict';
-
-// MODULES //
-
-var isFloat64Array = require( '@stdlib/assert/is-float64array' );
-var GlobalFloat64Array = require( './float64array.js' );
-
-
-// MAIN //
-
-/**
-* Tests for native `Float64Array` support.
-*
-* @returns {boolean} boolean indicating if an environment has `Float64Array` support
-*
-* @example
-* var bool = hasFloat64ArraySupport();
-* // returns <boolean>
-*/
-function hasFloat64ArraySupport() {
-	var bool;
-	var arr;
-
-	if ( typeof GlobalFloat64Array !== 'function' ) {
-		return false;
-	}
-	// Test basic support...
-	try {
-		arr = new GlobalFloat64Array( [ 1.0, 3.14, -3.14, NaN ] );
-		bool = (
-			isFloat64Array( arr ) &&
-			arr[ 0 ] === 1.0 &&
-			arr[ 1 ] === 3.14 &&
-			arr[ 2 ] === -3.14 &&
-			arr[ 3 ] !== arr[ 3 ]
-		);
-	} catch ( err ) { // eslint-disable-line no-unused-vars
-		bool = false;
-	}
-	return bool;
-} // end FUNCTION hasFloat64ArraySupport()
-
-
-// EXPORTS //
-
-module.exports = hasFloat64ArraySupport;
-
-},{"./float64array.js":97,"@stdlib/assert/is-float64array":5}],97:[function(require,module,exports){
-'use strict';
-
-// EXPORTS //
-
-module.exports = ( typeof Float64Array === 'function' ) ? Float64Array : null;
-
-},{}],98:[function(require,module,exports){
-'use strict';
-
-/**
-* Test for native `Float64Array` support.
-*
-* @module @stdlib/utils/detect-float64array-support
-*
-* @example
-* var hasFloat64ArraySupport = require( '@stdlib/utils/detect-float64array-support' );
-*
-* var bool = hasFloat64ArraySupport();
-* // returns <boolean>
-*/
-
-// MODULES //
-
-var hasFloat64ArraySupport = require( './detect_float64array_support.js' );
-
-
-// EXPORTS //
-
-module.exports = hasFloat64ArraySupport;
-
-},{"./detect_float64array_support.js":96}],99:[function(require,module,exports){
-'use strict';
-
-// MAIN //
-
-/**
-* Tests for native `Symbol` support.
-*
-* @returns {boolean} boolean indicating if an environment has `Symbol` support
-*
-* @example
-* var bool = hasSymbolSupport();
-* // returns <boolean>
-*/
-function hasSymbolSupport() {
-	return (
-		typeof Symbol === 'function' &&
-		typeof Symbol( 'foo' ) === 'symbol'
-	);
-} // end FUNCTION hasSymbolSupport()
-
-
-// EXPORTS //
-
-module.exports = hasSymbolSupport;
-
-},{}],100:[function(require,module,exports){
-'use strict';
-
-/**
-* Test for native `Symbol` support.
-*
-* @module @stdlib/utils/detect-symbol-support
-*
-* @example
-* var hasSymbolSupport = require( '@stdlib/utils/detect-symbol-support' );
-*
-* var bool = hasSymbolSupport();
-* // returns <boolean>
-*/
-
-// MODULES //
-
-var hasSymbolSupport = require( './detect_symbol_support.js' );
-
-
-// EXPORTS //
-
-module.exports = hasSymbolSupport;
-
-},{"./detect_symbol_support.js":99}],101:[function(require,module,exports){
-'use strict';
-
-// MODULES //
-
-var hasSymbols = require( '@stdlib/utils/detect-symbol-support' )();
-
-
-// MAIN //
-
-/**
-* Tests for native `toStringTag` support.
-*
-* @returns {boolean} boolean indicating if an environment has `toStringTag` support
-*
-* @example
-* var bool = hasToStringTagSupport();
-* // returns <boolean>
-*/
-function hasToStringTagSupport() {
-	return ( hasSymbols && typeof Symbol.toStringTag === 'symbol' );
-} // end FUNCTION hasToStringTagSupport()
-
-
-// EXPORTS //
-
-module.exports = hasToStringTagSupport;
-
-},{"@stdlib/utils/detect-symbol-support":100}],102:[function(require,module,exports){
-'use strict';
-
-/**
-* Test for native `toStringTag` support.
-*
-* @module @stdlib/utils/detect-tostringtag-support
-*
-* @example
-* var hasToStringTagSupport = require( '@stdlib/utils/detect-tostringtag-support' );
-*
-* var bool = hasToStringTagSupport();
-* // returns <boolean>
-*/
-
-// MODULES //
-
-var hasToStringTagSupport = require( './has_tostringtag_support.js' );
-
-
-// EXPORTS //
-
-module.exports = hasToStringTagSupport;
-
-},{"./has_tostringtag_support.js":101}],103:[function(require,module,exports){
-'use strict';
-
-// MODULES //
-
-var isUint32Array = require( '@stdlib/assert/is-uint32array' );
-var UINT32_MAX = require( '@stdlib/math/constants/uint32-max' );
-var GlobalUint32Array = require( './uint32array.js' );
-
-
-// MAIN //
-
-/**
-* Tests for native `Uint32Array` support.
-*
-* @returns {boolean} boolean indicating if an environment has `Uint32Array` support
-*
-* @example
-* var bool = hasUint32ArraySupport();
-* // returns <boolean>
-*/
-function hasUint32ArraySupport() {
-	var bool;
-	var arr;
-
-	if ( typeof GlobalUint32Array !== 'function' ) {
-		return false;
-	}
-	// Test basic support...
-	try {
-		arr = [ 1, 3.14, -3.14, UINT32_MAX+1, UINT32_MAX+2 ];
-		arr = new GlobalUint32Array( arr );
-		bool = (
-			isUint32Array( arr ) &&
-			arr[ 0 ] === 1 &&
-			arr[ 1 ] === 3 &&            // truncation
-			arr[ 2 ] === UINT32_MAX-2 && // truncation and wrap around
-			arr[ 3 ] === 0 &&            // wrap around
-			arr[ 4 ] === 1               // wrap around
-		);
-	} catch ( err ) { // eslint-disable-line no-unused-vars
-		bool = false;
-	}
-	return bool;
-} // end FUNCTION hasUint32ArraySupport()
-
-
-// EXPORTS //
-
-module.exports = hasUint32ArraySupport;
-
-},{"./uint32array.js":105,"@stdlib/assert/is-uint32array":10,"@stdlib/math/constants/uint32-max":87}],104:[function(require,module,exports){
-'use strict';
-
-/**
-* Test for native `Uint32Array` support.
-*
-* @module @stdlib/utils/detect-uint32array-support
-*
-* @example
-* var hasUint32ArraySupport = require( '@stdlib/utils/detect-uint32array-support' );
-*
-* var bool = hasUint32ArraySupport();
-* // returns <boolean>
-*/
-
-// MODULES //
-
-var hasUint32ArraySupport = require( './detect_uint32array_support.js' );
-
-
-// EXPORTS //
-
-module.exports = hasUint32ArraySupport;
-
-},{"./detect_uint32array_support.js":103}],105:[function(require,module,exports){
-'use strict';
-
-// EXPORTS //
-
-module.exports = ( typeof Uint32Array === 'function' ) ? Uint32Array : null;
-
-},{}],106:[function(require,module,exports){
-'use strict';
-
-/**
-* Returns a string value indicating a specification defined classification of an object.
+* Return a string value indicating a specification defined classification of an object.
 *
 * @module @stdlib/utils/native-class
 *
@@ -6060,16 +9445,18 @@ module.exports = ( typeof Uint32Array === 'function' ) ? Uint32Array : null;
 
 // MODULES //
 
-var hasToStringTag = require( '@stdlib/utils/detect-tostringtag-support' )();
+var hasToStringTag = require( '@stdlib/assert/has-tostringtag-support' );
+var builtin = require( './native_class.js' );
+var polyfill = require( './polyfill.js' );
 
 
 // MAIN //
 
 var nativeClass;
-if ( hasToStringTag ) {
-	nativeClass = require( './polyfill.js' );
+if ( hasToStringTag() ) {
+	nativeClass = polyfill;
 } else {
-	nativeClass = require( './native_class.js' );
+	nativeClass = builtin;
 }
 
 
@@ -6077,7 +9464,25 @@ if ( hasToStringTag ) {
 
 module.exports = nativeClass;
 
-},{"./native_class.js":107,"./polyfill.js":108,"@stdlib/utils/detect-tostringtag-support":102}],107:[function(require,module,exports){
+},{"./native_class.js":140,"./polyfill.js":141,"@stdlib/assert/has-tostringtag-support":22}],140:[function(require,module,exports){
+/**
+* @license Apache-2.0
+*
+* Copyright (c) 2018 The Stdlib Authors.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*    http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
+
 'use strict';
 
 // MODULES //
@@ -6110,14 +9515,32 @@ var toStr = require( './tostring.js' );
 */
 function nativeClass( v ) {
 	return toStr.call( v );
-} // end FUNCTION nativeClass()
+}
 
 
 // EXPORTS //
 
 module.exports = nativeClass;
 
-},{"./tostring.js":109}],108:[function(require,module,exports){
+},{"./tostring.js":142}],141:[function(require,module,exports){
+/**
+* @license Apache-2.0
+*
+* Copyright (c) 2018 The Stdlib Authors.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*    http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
+
 'use strict';
 
 // MODULES //
@@ -6175,26 +9598,72 @@ function nativeClass( v ) {
 		delete v[ toStringTag ];
 	}
 	return out;
-} // end FUNCTION nativeClass()
+}
 
 
 // EXPORTS //
 
 module.exports = nativeClass;
 
-},{"./tostring.js":109,"./tostringtag.js":110,"@stdlib/assert/has-own-property":4}],109:[function(require,module,exports){
+},{"./tostring.js":142,"./tostringtag.js":143,"@stdlib/assert/has-own-property":18}],142:[function(require,module,exports){
+/**
+* @license Apache-2.0
+*
+* Copyright (c) 2018 The Stdlib Authors.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*    http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
+
 'use strict';
+
+// MAIN //
+
+var toStr = Object.prototype.toString;
+
 
 // EXPORTS //
 
-module.exports = Object.prototype.toString;
+module.exports = toStr;
 
-},{}],110:[function(require,module,exports){
+},{}],143:[function(require,module,exports){
+/**
+* @license Apache-2.0
+*
+* Copyright (c) 2018 The Stdlib Authors.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*    http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
+
 'use strict';
+
+// MAIN //
+
+var toStrTag = ( typeof Symbol === 'function' ) ? Symbol.toStringTag : '';
+
 
 // EXPORTS //
 
-module.exports = ( typeof Symbol === 'function' ) ? Symbol.toStringTag : '';
+module.exports = toStrTag;
 
 },{}]},{},[1])(1)
 });
