@@ -92,25 +92,27 @@ function modelToPercentileDecay(model, percentile = 0.5, coarse = false, toleran
   let flow = f(blow)
   let fhigh = f(bhigh)
   while (flow > 0 && fhigh > 0) {
-    // #Move the bracket up.
+    // Move the bracket up.
     blow = bhigh
     flow = fhigh
     bhigh += bracket_width
     fhigh = f(bhigh)
   }
   while (flow < 0 && fhigh < 0) {
-    // #Move the bracket down.
+    // Move the bracket down.
     bhigh = blow
     fhigh = flow
     blow -= bracket_width
     flow = f(blow)
   }
 
-  if (!(flow > 0 && fhigh < 0)) {
-    1;
-    throw new Error('failed to bracket')
-  }
-  return (exp(blow) + exp(bhigh)) / 2 * t0
+  if (!(flow > 0 && fhigh < 0)) { throw new Error('failed to bracket') }
+  if (coarse) { return (exp(blow) + exp(bhigh)) / 2 * t0; }
+  const fmin = require('minimize-golden-section-1d');
+  let status = {};
+  const sol = fmin(x => Math.abs(f(x)), {lowerBound: blow, upperBound: bhigh, tolerance}, status)
+  if (!status.converged) { throw error('failed to converge'); }
+  return exp(sol);
 }
 
 module.exports = {

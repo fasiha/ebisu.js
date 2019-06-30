@@ -1,6 +1,6 @@
 {
   "name": "ebisu-js",
-  "version": "0.5.7",
+  "version": "1.0.0",
   "main": "index.js",
   "license": "Unlicense",
   "dependencies": {
