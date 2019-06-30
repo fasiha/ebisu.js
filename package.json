@@ -4,7 +4,8 @@
   "main": "index.js",
   "license": "Unlicense",
   "dependencies": {
-    "@stdlib/stdlib": "0.0.60"
+    "@stdlib/stdlib": "0.0.60",
+    "minimize-golden-section-1d": "^3.0.0"
   },
   "devDependencies": {
     "browserify": "^16.2.3",
