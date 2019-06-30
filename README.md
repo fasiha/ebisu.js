@@ -101,7 +101,7 @@ That’s it! That’s the entire API:
 - `ebisu.updateRecall(model, result, tnow) -> model` to update the model given a quiz result and time after its last review.
 
 As a bonus, you can find the half-life (time for recall probability to decay to 50%), or actually, any percentile-life (time for recall probability to decay to any percentile):
-- `ebisu.modelToPercentileDecay(model, percentile = 0.5, coarse = false, tolerance = 1e-4)`, where, if `coarse` is falsey (the default), the returned value is accurate to within `tolerance` (i.e., if the true half-life is 1 week, the returned value will be between 0.9999 and 1.0001). If `coarse` is truthy, the returned value is only roughly within a factor of two of the actual value.
+- `ebisu.modelToPercentileDecay(model, percentile = 0.5, coarse = false, tolerance = 1e-4) -> number`, where, if `coarse` is falsey (the default), the returned value is accurate to within `tolerance` (i.e., if the true half-life is 1 week, the returned value will be between 0.9999 and 1.0001). If `coarse` is truthy, the returned value is only roughly within a factor of two of the actual value.
 
 ## Building
 

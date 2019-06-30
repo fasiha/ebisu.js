@@ -75,7 +75,7 @@
 </ul>
 <p>As a bonus, you can find the half-life (time for recall probability to decay to 50%), or actually, any percentile-life (time for recall probability to decay to any percentile):</p>
 <ul>
-<li><code>ebisu.modelToPercentileDecay(model, percentile = 0.5, coarse = false, tolerance = 1e-4)</code>, where, if <code>coarse</code> is falsey (the default), the returned value is accurate to within <code>tolerance</code> (i.e., if the true half-life is 1 week, the returned value will be between 0.9999 and 1.0001). If <code>coarse</code> is truthy, the returned value is only roughly within a factor of two of the actual value.</li>
+<li><code>ebisu.modelToPercentileDecay(model, percentile = 0.5, coarse = false, tolerance = 1e-4) -&gt; number</code>, where, if <code>coarse</code> is falsey (the default), the returned value is accurate to within <code>tolerance</code> (i.e., if the true half-life is 1 week, the returned value will be between 0.9999 and 1.0001). If <code>coarse</code> is truthy, the returned value is only roughly within a factor of two of the actual value.</li>
 </ul>
 <h2 id="building">Building</h2>
 <p>We use <code>tape</code> for tests: run <code>npm test</code>. This consumes <code>test.json</code>, which came from the <a href="https://fasiha.github.io/ebisu/">Ebisu Python reference implementation</a>.</p>
