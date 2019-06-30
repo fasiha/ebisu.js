@@ -3,14 +3,18 @@ var ebisu = require('./index');
 var fs = require('fs');
 var ref = JSON.parse(fs.readFileSync('test.json', 'utf8'));
 
-function relerr(dirt, gold) {
-  return (dirt === gold) ? 0 : Math.abs(dirt - gold) / Math.abs(gold);
-}
-function relerrs(dirts, golds) {
-  return Math.max(...dirts.map((d, i) => relerr(d, golds[i])));
-}
+function relerr(dirt, gold) { return (dirt === gold) ? 0 : Math.abs(dirt - gold) / Math.abs(gold); }
+function relerrs(dirts, golds) { return Math.max(...dirts.map((d, i) => relerr(d, golds[i]))); }
+
+test('verify halflife', t => {
+  const hl = 1;
+  t.ok(Math.abs(ebisu.modelToPercentileDecay([2, 2, hl], .5, true) - hl) > 1e-2);
+  t.ok(relerr(ebisu.modelToPercentileDecay([2, 2, hl], .5, false, 1e-6), hl) < 1e-3)
+  t.end();
+});
 
 test('compare', (t) => {
+  let n = 0;
   for (let elt of ref) {
     var [operation, prior, args, result] = elt;
     var err;
@@ -19,7 +23,7 @@ test('compare', (t) => {
       result = result.post
       err = relerrs(jsres, result);
     } else if (operation === 'predict') {
-      var jsres = ebisu.predictRecall(prior, ...args);
+      var jsres = ebisu.predictRecall(prior, ...args, true);
       result = result.mean;
       err = relerr(jsres, result);
     }

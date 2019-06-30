@@ -68,7 +68,7 @@ Given a set of models for facts that the student has learned, you can ask Ebisu 
 ```js
 var model = defaultModel;
 var elapsed = 1;
-var predictedRecall = ebisu.predictRecall(model, elapsed);
+var predictedRecall = ebisu.predictRecall(model, elapsed, true);
 console.log(predictedRecall);
 ```
 This function efficiently calculates the *mean* of the histogram of recall probabilities in the interactive demo above (it uses math, not histograms!). Below you can see what this function would return for different models.
@@ -77,6 +77,8 @@ This function efficiently calculates the *mean* of the histogram of recall proba
 
 A quiz app can call this function on each fact to find which fact is most in danger of being forgotten—that’s the one with the lowest predicted recall probability.
 
+> N.B. In your app, you should omit the third argument, i.e., use `predictRecall(model, elapsed)`, which skips a final exponential and saves some runtime. (See the full API below.)
+>
 > If your quiz app starts having thousands of facts, and it becomes computationally-burdensome to evaluate this function over and over again, you can build a look-up table containing a range of elapsed times and their predicted recall probabilities, then linearly-interpolate into it.
 
 ### Update a recall probability model given a quiz result: `ebisu.updateRecall`
@@ -91,18 +93,21 @@ console.log(newModel);
 ```
 The new model is a new 3-array with a new `[a, b, t]`. The Bayesian update magic happens inside here: see here for [the gory math details](https://fasiha.github.io/ebisu/#updating-the-posterior-with-quiz-results).
 
-### Summary
+### API summary
 
 That’s it! That’s the entire API:
-- `ebisu.defaultModel(t, [a, [b]]) -> model` if you can’t bother to create a 3-array,
-- `ebisu.predictRecall(model, tnow) -> number` predicts the current recall probability given a model and the time elapsed since the last review or quiz, and
+- `ebisu.defaultModel(t, [a, [b]]) -> model` if you can’t bother to create a 3-array.
+- `ebisu.predictRecall(model, tnow, exact = false) -> number` predicts the current recall probability given a model and the time elapsed since the last review or quiz. If `exact`, then the returned value is actually a real probability. If `exact` is falsey, a final exponential is skipped and the returned value is the log-probability: this is the default because it makes things a bit faster.
 - `ebisu.updateRecall(model, result, tnow) -> model` to update the model given a quiz result and time after its last review.
+
+As a bonus, you can find the half-life (time for recall probability to decay to 50%), or actually, any percentile-life (time for recall probability to decay to any percentile):
+- `ebisu.modelToPercentileDecay(model, percentile = 0.5, coarse = false, tolerance = 1e-4)`, where, if `coarse` is falsey (the default), the returned value is accurate to within `tolerance` (i.e., if the true half-life is 1 week, the returned value will be between 0.9999 and 1.0001). If `coarse` is truthy, the returned value is only roughly within a factor of two of the actual value.
 
 ## Building
 
 We use `tape` for tests: run `npm test`. This consumes `test.json`, which came from the [Ebisu Python reference implementation](https://fasiha.github.io/ebisu/).
 
-The version of this repo matches the Python reference’s.
+The version of this repo matches the Python reference’s version up to minor rev (i.e., Python Ebisu 1.0.x will match Ebisu.js 1.0.y).
 
 We use Browserify followed by Google Closure Compiler to minify Ebisu for the browser (and the interactive components of the website). `Makefile` coordinates the builds—I prefer `make` to npm scripts because Google Closure Compiler takes a few seconds to run, and `make` easily ensures it’s only run when it needs to.
 
