@@ -4,7 +4,7 @@ var choo = require('choo');
 var html = require('choo/html');
 
 var betarand =
-    require('@stdlib/stdlib/lib/node_modules/@stdlib/math/base/random/beta');
+    require('@stdlib/stdlib/lib/node_modules/@stdlib/random/base/beta');
 
 // Histogram plot
 function phistogram(ps, bins = 25) {
@@ -143,7 +143,7 @@ predict.use((state, emitter) => {
 var predictMain = function(state, emit) {
   var [a, b, t] = state.prior;
   var ts = Array.from(Array(100), (_, i) => i);
-  var ps = ts.map(t => ebisu.predictRecall(state.prior, +t));
+  var ps = ts.map(t => ebisu.predictRecall(state.prior, +t, true));
 
   renderPredictions(ts, ps, 'predict-render');
   return html`<div>

@@ -1,22 +1,24 @@
 "use strict";
-
-const betaln = require('@stdlib/stdlib/lib/node_modules/@stdlib/math/base/special/betaln');
+var gammaln = require('gamma').log;
 const logsumexp = require('./logsumexp');
 const exp = Math.exp;
 const log = Math.log;
 
-let BETALN_CACHE = new Map();
-function betalnCached(a, b) {
-  if (BETALN_CACHE.has([a, b])) { return BETALN_CACHE.get([a, b]); }
-  const cached = betaln(a, b);
-  BETALN_CACHE.set([a, b], cached);
-  return cached;
+const GAMMALN_CACHE = new Map();
+function gammalnCached(x) {
+  let hit = GAMMALN_CACHE.get(x);
+  if (hit) { return hit; }
+  hit = gammaln(x);
+  GAMMALN_CACHE.set(x, hit);
+  return hit;
 }
+function betalnRatio(a1, a, b) { return gammaln(a1) - gammaln(a1 + b) + gammalnCached(a + b) - gammalnCached(a); }
+function betaln(a, b) { return gammalnCached(a) + gammalnCached(b) - gammalnCached(a + b); }
 
 function predictRecall(prior, tnow, exact = false) {
   const [alpha, beta, t] = prior;
   const dt = tnow / t;
-  const ret = betaln(alpha + dt, beta) - betalnCached(alpha, beta);
+  const ret = betalnRatio(alpha + dt, alpha, beta);
   return exact ? exp(ret) : ret;
 }
 
@@ -31,13 +33,12 @@ function updateRecall(prior, result, tnow, rebalance = true, tback = undefined) 
       const proposed = [alpha + dt, beta, t];
       return rebalance ? _rebalance(prior, result, tnow, proposed) : proposed;
     }
-    const logDenominator = betaln(alpha + dt, beta)
-    const logmean = betaln(alpha + dt / et * (1 + et), beta) - logDenominator;
-    const logm2 = betaln(alpha + dt / et * (2 + et), beta) - logDenominator;
+    const logmean = betalnRatio(alpha + dt / et * (1 + et), alpha + dt, beta);
+    const logm2 = betalnRatio(alpha + dt / et * (2 + et), alpha + dt, beta);
     mean = exp(logmean);
     sig2 = _subexp(logm2, 2 * logmean);
   } else {
-    const logDenominator = _logsubexp(betalnCached(alpha, beta), betaln(alpha + dt, beta))
+    const logDenominator = _logsubexp(betaln(alpha, beta), betaln(alpha + dt, beta))
     mean = _subexp(betaln(alpha + dt / et, beta) - logDenominator,
                    betaln(alpha + dt / et * (et + 1), beta) - logDenominator)
     const m2 = _subexp(betaln(alpha + 2 * dt / et, beta) - logDenominator,
@@ -80,7 +81,7 @@ function defaultModel(t, a = 4.0, b = a) { return [a, b, t]; }
 function modelToPercentileDecay(model, percentile = 0.5, coarse = false, tolerance = 1e-4) {
   if (percentile < 0 || percentile > 1) { throw new Error('percentiles must be between (0, 1) exclusive'); }
   const [alpha, beta, t0] = model;
-  const logBab = betalnCached(alpha, beta);
+  const logBab = betaln(alpha, beta);
   const logPercentile = log(percentile);
   function f(lndelta) {
     const logMean = betaln(alpha + exp(lndelta), beta) - logBab;

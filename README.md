@@ -15,10 +15,12 @@ Then, in your code,
 var ebisu = require('ebisu-js');
 ```
 
-**Browser** Download [`dist/ebisu.min.js`](https://raw.githubusercontent.com/fasiha/ebisu.js/gh-pages/dist/ebisu.min.js) for the browser, then in your HTML:
+**Browser** Two choices. For maximal compatibility, download the ES5-compatible [`dist/ebisu.min.js`](https://raw.githubusercontent.com/fasiha/ebisu.js/gh-pages/dist/ebisu.min.js) for the browser (12 KB), then in your HTML:
 ```html
 <script type="text/javascript" src="ebisu.min.js"></script>
 ```
+
+If you want to target ES6-compatible browsers only, download and use [`dist/ebisu.min.es6.js`](https://raw.githubusercontent.com/fasiha/ebisu.js/gh-pages/dist/ebisu.min.es6.js). This is 8 KB.
 
 ## API howto
 
@@ -113,7 +115,9 @@ We use Browserify followed by Google Closure Compiler to minify Ebisu for the br
 
 ## Acknowledgements
 
-I’m super-grateful for, and happily acknowledge, the hard work of Athan Reines and collaborators on [Stdlib.js](https://github.com/stdlib-js/stdlib), which promises to be the math library JavaScript so badly needs.
+I use [gamma.js](https://github.com/substack/gamma.js), one of substack’s very lightweight and very useful modules.
+
+I’m super-grateful for, and happily acknowledge, the hard work of Athan Reines and collaborators on [Stdlib.js](https://github.com/stdlib-js/stdlib), which promises to be the math library JavaScript so badly needs. It is used here only for visualization purposes but I can recommend it.
 
 The interactive website uses [Choo](https://choo.io), which is, as advertised, quite cute.
 

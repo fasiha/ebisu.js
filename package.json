@@ -4,10 +4,11 @@
   "main": "index.js",
   "license": "Unlicense",
   "dependencies": {
-    "@stdlib/stdlib": "0.0.60",
+    "gamma": "^1.0.0",
     "minimize-golden-section-1d": "^3.0.0"
   },
   "devDependencies": {
+    "@stdlib/stdlib": "0.0.60",
     "browserify": "^16.2.3",
     "choo": "^5.4.0",
     "google-closure-compiler-js": "^20180101.0.0",

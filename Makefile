@@ -1,4 +1,4 @@
-all: index.html client/interactive.min.js dist/ebisu.min.js
+all: index.html client/interactive.min.js client/interactive.min.js dist/ebisu.min.js dist/ebisu.min.es6.js
 
 index.html: client/head.html client/foot.html README.md
 	cp client/head.html index.html
@@ -17,7 +17,10 @@ dist/ebisu.js: index.js logsumexp.js
 dist/ebisu.min.js: dist/ebisu.js
 	node_modules/.bin/google-closure-compiler-js --createSourceMap true dist/ebisu.js > dist/ebisu.min.js
 
-min: client/interactive.min.js dist/ebisu.min.js
+dist/ebisu.min.es6.js: dist/ebisu.js
+	node_modules/.bin/google-closure-compiler-js --createSourceMap true --languageOut ES6 dist/ebisu.js > dist/ebisu.min.es6.js
+
+min: client/interactive.min.js dist/ebisu.min.js dist/ebisu.min.es6.js
 
 client/choo.js:
 	node_modules/.bin/browserify
