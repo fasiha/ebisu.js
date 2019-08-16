@@ -9,16 +9,16 @@ client/interactive.js: interactive.js
 	node_modules/.bin/browserify interactive.js -o client/interactive.js
 
 client/interactive.min.js: client/interactive.js
-	node_modules/.bin/google-closure-compiler-js --createSourceMap true client/interactive.js > client/interactive.min.js
+	node_modules/.bin/google-closure-compiler --js=client/interactive.js --js_output_file=client/interactive.min.js
 
 dist/ebisu.js: index.js logsumexp.js
 	node_modules/.bin/browserify -s ebisu index.js -o dist/ebisu.js
 
 dist/ebisu.min.js: dist/ebisu.js
-	node_modules/.bin/google-closure-compiler-js --createSourceMap true dist/ebisu.js > dist/ebisu.min.js
+	node_modules/.bin/google-closure-compiler --js=dist/ebisu.js --js_output_file=dist/ebisu.min.js
 
 dist/ebisu.min.es6.js: dist/ebisu.js
-	node_modules/.bin/google-closure-compiler-js --createSourceMap true --languageOut ES6 dist/ebisu.js > dist/ebisu.min.es6.js
+	node_modules/.bin/google-closure-compiler --language_out ECMASCRIPT_2015 --js=dist/ebisu.js --js_output_file=dist/ebisu.min.es6.js
 
 min: client/interactive.min.js dist/ebisu.min.js dist/ebisu.min.es6.js
 

@@ -11,7 +11,7 @@
     "@stdlib/stdlib": "0.0.60",
     "browserify": "^16.2.3",
     "choo": "^5.4.0",
-    "google-closure-compiler-js": "^20180101.0.0",
+    "google-closure-compiler": "^20190729.0.0",
     "tape": "^4.6.3"
   },
   "repository": "fasiha/ebisu.js",
