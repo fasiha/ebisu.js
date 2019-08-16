@@ -20,7 +20,7 @@ var ebisu = require('ebisu-js');
 <script type="text/javascript" src="ebisu.min.js"></script>
 ```
 
-If you want to target ES6-compatible browsers only, download and use [`dist/ebisu.min.es6.js`](https://raw.githubusercontent.com/fasiha/ebisu.js/gh-pages/dist/ebisu.min.es6.js). This is 8 KB.
+If you want to target ES6-compatible browsers only, download and use [`dist/ebisu.min.es6.js`](https://raw.githubusercontent.com/fasiha/ebisu.js/gh-pages/dist/ebisu.min.es6.js). This is 5 KB.
 
 ## API howto
 
