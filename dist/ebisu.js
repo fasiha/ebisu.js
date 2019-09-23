@@ -114,7 +114,7 @@ function modelToPercentileDecay(model, percentile = 0.5, coarse = false, toleran
   let status = {};
   const sol = fmin(x => Math.abs(f(x)), {lowerBound: blow, upperBound: bhigh, tolerance}, status)
   if (!status.converged) { throw error('failed to converge'); }
-  return exp(sol);
+  return exp(sol) * t0;
 }
 
 module.exports = {
