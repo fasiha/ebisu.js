@@ -7,7 +7,7 @@ function relerr(dirt, gold) { return (dirt === gold) ? 0 : Math.abs(dirt - gold)
 function relerrs(dirts, golds) { return Math.max(...dirts.map((d, i) => relerr(d, golds[i]))); }
 
 test('verify halflife', t => {
-  const hl = 1;
+  const hl = 20;
   t.ok(Math.abs(ebisu.modelToPercentileDecay([2, 2, hl], .5, true) - hl) > 1e-2);
   t.ok(relerr(ebisu.modelToPercentileDecay([2, 2, hl], .5, false, 1e-6), hl) < 1e-3)
   t.end();
