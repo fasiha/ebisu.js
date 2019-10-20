@@ -112,7 +112,7 @@ function modelToPercentileDecay(model, percentile = 0.5, coarse = false, toleran
   const fmin = require('minimize-golden-section-1d');
   let status = {};
   const sol = fmin(x => Math.abs(f(x)), {lowerBound: blow, upperBound: bhigh, tolerance}, status)
-  if (!status.converged) { throw new Error('failed to converge'); } // unknown how to test this...
+  if (!status.converged) { throw new Error('failed to converge'); }
   return exp(sol) * t0;
 }
 
