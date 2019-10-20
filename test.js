@@ -10,11 +10,11 @@ test('verify halflife', t => {
   const hl = 20;
   t.ok(Math.abs(ebisu.modelToPercentileDecay([2, 2, hl], .5, true) - hl) > 1e-2);
   t.ok(relerr(ebisu.modelToPercentileDecay([2, 2, hl], .5, false, 1e-6), hl) < 1e-3)
+  t.throws(() => ebisu.modelToPercentileDecay([2, 2, hl], .5, false, 1e-150), 'unreachable tolerance causes throw');
   t.end();
 });
 
 test('compare', (t) => {
-  let n = 0;
   for (let elt of ref) {
     var [operation, prior, args, result] = elt;
     var err;
