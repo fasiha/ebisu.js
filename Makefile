@@ -2,7 +2,7 @@ all: index.html client/interactive.min.js client/interactive.min.js dist/ebisu.m
 
 index.html: client/head.html client/foot.html README.md
 	cp client/head.html index.html
-	pandoc -f markdown_github-hard_line_breaks -t html5 README.md >> index.html
+	pandoc -f markdown_github-hard_line_breaks+yaml_metadata_block+markdown_in_html_blocks+auto_identifiers --highlight-style=tango -t html5 README.md >> index.html
 	cat client/foot.html >> index.html
 
 client/interactive.js: interactive.js

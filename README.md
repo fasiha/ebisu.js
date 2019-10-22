@@ -35,7 +35,7 @@ or if you’re developing in this repo,
 var ebisu = require('./index');
 ```
 
-(The `ebisu` module is loaded in this webpage. Pop open your JavaScript console to try it out.)
+(The `ebisu` module is loaded in [this webpage](https://fasiha.github.io/ebisu.js). Pop open your JavaScript console to try it out.)
 
 ### Memory model
 
