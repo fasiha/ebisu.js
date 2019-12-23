@@ -2,6 +2,7 @@
   "name": "ebisu-js",
   "version": "1.0.3",
   "main": "index.js",
+  "types": "index.d.js",
   "license": "Unlicense",
   "dependencies": {
     "gamma": "^1.0.0",
