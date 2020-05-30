@@ -15,12 +15,12 @@ Then, in your code,
 var ebisu = require('ebisu-js');
 ```
 
-**Browser** Two choices. For maximal compatibility, download the ES5-compatible [`dist/ebisu.min.js`](https://raw.githubusercontent.com/fasiha/ebisu.js/gh-pages/dist/ebisu.min.js) for the browser (12 KB), then in your HTML:
+**Browser** Two choices. For maximal compatibility, download the ES5-compatible [`dist/ebisu.min.js`](https://raw.githubusercontent.com/fasiha/ebisu.js/gh-pages/dist/ebisu.min.js) for the browser (13 KB uncompressed, 5 KB after gzip), then in your HTML:
 ```html
 <script type="text/javascript" src="ebisu.min.js"></script>
 ```
 
-If you want to target ES6-compatible browsers only, download and use [`dist/ebisu.min.es6.js`](https://raw.githubusercontent.com/fasiha/ebisu.js/gh-pages/dist/ebisu.min.es6.js). This is 5 KB.
+If you want to target ES6-compatible browsers only, download and use [`dist/ebisu.min.es6.js`](https://raw.githubusercontent.com/fasiha/ebisu.js/gh-pages/dist/ebisu.min.es6.js). This is 5 KB uncompressed, 2.5 KB after gzip.
 
 ## API howto
 
@@ -85,12 +85,16 @@ A quiz app can call this function on each fact to find which fact is most in dan
 
 ### Update a recall probability model given a quiz result: `ebisu.updateRecall`
 
-Suppose your quiz app has chosen a fact to quiz and the result is in, either success or failure.
+Suppose your quiz app has chosen a fact to review, and tests the student. Out of a `total` number of trials, the student gets `successes` of them correct. 
+
+> Version 1 of Ebisu required `total=1`, i.e., binary quizzes. Version 2 relaxed this so `total` can be an integer greater than one, which models the case where each trial is a statistically-independent review of the fact under test. Note that this doesn’t mean you just ask the same fact multiple times!, since then the trials become highly dependent. Having `total` greater than 1 may make sense if, for example, the student is reviewing a verb conjugation, and conjugates the same verb in different sentences.
+
 ```js
 var model = defaultModel;
-var result = true;
+var successes = 1;
+var total = 1;
 var elapsed = 10;
-var newModel = ebisu.updateRecall(model, result, elapsed);
+var newModel = ebisu.updateRecall(model, successes, total, elapsed);
 console.log(newModel);
 ```
 The new model is a new 3-array with a new `[a, b, t]`. The Bayesian update magic happens inside here: see here for [the gory math details](https://fasiha.github.io/ebisu/#updating-the-posterior-with-quiz-results).
@@ -99,8 +103,8 @@ The new model is a new 3-array with a new `[a, b, t]`. The Bayesian update magic
 
 That’s it! That’s the entire API:
 - `ebisu.defaultModel(t, [a, [b]]) -> model` if you can’t bother to create a 3-array.
-- `ebisu.predictRecall(model, tnow, exact = false) -> number` predicts the current recall probability given a model and the time elapsed since the last review or quiz. If `exact`, then the returned value is actually a real probability. If `exact` is falsey, a final exponential is skipped and the returned value is the log-probability: this is the default because it makes things a bit faster.
-- `ebisu.updateRecall(model, result, tnow) -> model` to update the model given a quiz result and time after its last review.
+- `ebisu.predictRecall(model, elapsed, exact = false) -> number` predicts the current recall probability given a model and the time elapsed since the last review or quiz. If `exact`, then the returned value is actually a real probability. If `exact` is falsey, a final exponential is skipped and the returned value is the log-probability: this is the default because it makes things a bit faster.
+- `ebisu.updateRecall(model, successes, total, elapsed) -> model` to update the model after a quiz session with `successes` out of `total` statistically-independent trials exercising the fact, and time after its last review.
 
 As a bonus, you can find the half-life (time for recall probability to decay to 50%), or actually, any percentile-life (time for recall probability to decay to any percentile):
 - `ebisu.modelToPercentileDecay(model, percentile = 0.5, coarse = false, tolerance = 1e-4) -> number`, where, if `coarse` is falsey (the default), the returned value is accurate to within `tolerance` (i.e., if the true half-life is 1 week, the returned value will be between 0.9999 and 1.0001). If `coarse` is truthy, the returned value is only roughly within a factor of two of the actual value.

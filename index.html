@@ -88,9 +88,9 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
 <pre><code>$ npm install --save ebisu-js</code></pre>
 <p>Then, in your code,</p>
 <div class="sourceCode" id="cb2"><pre class="sourceCode js"><code class="sourceCode javascript"><span id="cb2-1"><a href="#cb2-1"></a><span class="kw">var</span> ebisu <span class="op">=</span> <span class="at">require</span>(<span class="st">&#39;ebisu-js&#39;</span>)<span class="op">;</span></span></code></pre></div>
-<p><strong>Browser</strong> Two choices. For maximal compatibility, download the ES5-compatible <a href="https://raw.githubusercontent.com/fasiha/ebisu.js/gh-pages/dist/ebisu.min.js"><code>dist/ebisu.min.js</code></a> for the browser (12 KB), then in your HTML:</p>
+<p><strong>Browser</strong> Two choices. For maximal compatibility, download the ES5-compatible <a href="https://raw.githubusercontent.com/fasiha/ebisu.js/gh-pages/dist/ebisu.min.js"><code>dist/ebisu.min.js</code></a> for the browser (13 KB uncompressed, 5 KB after gzip), then in your HTML:</p>
 <div class="sourceCode" id="cb3"><pre class="sourceCode html"><code class="sourceCode html"><span id="cb3-1"><a href="#cb3-1"></a><span class="kw">&lt;script</span><span class="ot"> type=</span><span class="st">&quot;text/javascript&quot;</span><span class="ot"> src=</span><span class="st">&quot;ebisu.min.js&quot;</span><span class="kw">&gt;&lt;/script&gt;</span></span></code></pre></div>
-<p>If you want to target ES6-compatible browsers only, download and use <a href="https://raw.githubusercontent.com/fasiha/ebisu.js/gh-pages/dist/ebisu.min.es6.js"><code>dist/ebisu.min.es6.js</code></a>. This is 5 KB.</p>
+<p>If you want to target ES6-compatible browsers only, download and use <a href="https://raw.githubusercontent.com/fasiha/ebisu.js/gh-pages/dist/ebisu.min.es6.js"><code>dist/ebisu.min.es6.js</code></a>. This is 5 KB uncompressed, 2.5 KB after gzip.</p>
 <h2 id="api-howto">API howto</h2>
 <p>Let’s start working immediately with code and we’ll explain as we go.</p>
 <p>First, in Node, e.g.,</p>
@@ -138,19 +138,23 @@ This function efficiently calculates the <em>mean</em> of the histogram of recal
 <p>If your quiz app starts having thousands of facts, and it becomes computationally-burdensome to evaluate this function over and over again, you can build a look-up table containing a range of elapsed times and their predicted recall probabilities, then linearly-interpolate into it.</p>
 </blockquote>
 <h3 id="update-a-recall-probability-model-given-a-quiz-result-ebisuupdaterecall">Update a recall probability model given a quiz result: <code>ebisu.updateRecall</code></h3>
-<p>Suppose your quiz app has chosen a fact to quiz and the result is in, either success or failure.</p>
+<p>Suppose your quiz app has chosen a fact to review, and tests the student. Out of a <code>total</code> number of trials, the student gets <code>successes</code> of them correct.</p>
+<blockquote>
+<p>Version 1 of Ebisu required <code>total=1</code>, i.e., binary quizzes. Version 2 relaxed this so <code>total</code> can be an integer greater than one, which models the case where each trial is a statistically-independent review of the fact under test. Note that this doesn’t mean you just ask the same fact multiple times!, since then the trials become highly dependent. Having <code>total</code> greater than 1 may make sense if, for example, the student is reviewing a verb conjugation, and conjugates the same verb in different sentences.</p>
+</blockquote>
 <div class="sourceCode" id="cb8"><pre class="sourceCode js"><code class="sourceCode javascript"><span id="cb8-1"><a href="#cb8-1"></a><span class="kw">var</span> model <span class="op">=</span> defaultModel<span class="op">;</span></span>
-<span id="cb8-2"><a href="#cb8-2"></a><span class="kw">var</span> result <span class="op">=</span> <span class="kw">true</span><span class="op">;</span></span>
-<span id="cb8-3"><a href="#cb8-3"></a><span class="kw">var</span> elapsed <span class="op">=</span> <span class="dv">10</span><span class="op">;</span></span>
-<span id="cb8-4"><a href="#cb8-4"></a><span class="kw">var</span> newModel <span class="op">=</span> <span class="va">ebisu</span>.<span class="at">updateRecall</span>(model<span class="op">,</span> result<span class="op">,</span> elapsed)<span class="op">;</span></span>
-<span id="cb8-5"><a href="#cb8-5"></a><span class="va">console</span>.<span class="at">log</span>(newModel)<span class="op">;</span></span></code></pre></div>
+<span id="cb8-2"><a href="#cb8-2"></a><span class="kw">var</span> successes <span class="op">=</span> <span class="dv">1</span><span class="op">;</span></span>
+<span id="cb8-3"><a href="#cb8-3"></a><span class="kw">var</span> total <span class="op">=</span> <span class="dv">1</span><span class="op">;</span></span>
+<span id="cb8-4"><a href="#cb8-4"></a><span class="kw">var</span> elapsed <span class="op">=</span> <span class="dv">10</span><span class="op">;</span></span>
+<span id="cb8-5"><a href="#cb8-5"></a><span class="kw">var</span> newModel <span class="op">=</span> <span class="va">ebisu</span>.<span class="at">updateRecall</span>(model<span class="op">,</span> successes<span class="op">,</span> total<span class="op">,</span> elapsed)<span class="op">;</span></span>
+<span id="cb8-6"><a href="#cb8-6"></a><span class="va">console</span>.<span class="at">log</span>(newModel)<span class="op">;</span></span></code></pre></div>
 <p>The new model is a new 3-array with a new <code>[a, b, t]</code>. The Bayesian update magic happens inside here: see here for <a href="https://fasiha.github.io/ebisu/#updating-the-posterior-with-quiz-results">the gory math details</a>.</p>
 <h3 id="api-summary">API summary</h3>
 <p>That’s it! That’s the entire API:</p>
 <ul>
 <li><code>ebisu.defaultModel(t, [a, [b]]) -&gt; model</code> if you can’t bother to create a 3-array.</li>
-<li><code>ebisu.predictRecall(model, tnow, exact = false) -&gt; number</code> predicts the current recall probability given a model and the time elapsed since the last review or quiz. If <code>exact</code>, then the returned value is actually a real probability. If <code>exact</code> is falsey, a final exponential is skipped and the returned value is the log-probability: this is the default because it makes things a bit faster.</li>
-<li><code>ebisu.updateRecall(model, result, tnow) -&gt; model</code> to update the model given a quiz result and time after its last review.</li>
+<li><code>ebisu.predictRecall(model, elapsed, exact = false) -&gt; number</code> predicts the current recall probability given a model and the time elapsed since the last review or quiz. If <code>exact</code>, then the returned value is actually a real probability. If <code>exact</code> is falsey, a final exponential is skipped and the returned value is the log-probability: this is the default because it makes things a bit faster.</li>
+<li><code>ebisu.updateRecall(model, successes, total, elapsed) -&gt; model</code> to update the model after a quiz session with <code>successes</code> out of <code>total</code> statistically-independent trials exercising the fact, and time after its last review.</li>
 </ul>
 <p>As a bonus, you can find the half-life (time for recall probability to decay to 50%), or actually, any percentile-life (time for recall probability to decay to any percentile):</p>
 <ul>
