@@ -22,51 +22,43 @@ function predictRecall(prior, tnow, exact = false) {
   return exact ? exp(ret) : ret;
 }
 
-function updateRecall(prior, result, tnow, rebalance = true, tback = undefined) {
+function binomln(n, k) { return -betaln(1 + n - k, 1 + k) - Math.log(n + 1); }
+
+function updateRecall(prior, successes, total, tnow, rebalance = true, tback = undefined) {
   const [alpha, beta, t] = prior
   tback = tback || t
   const dt = tnow / t;
-  const et = tnow / tback;
-  let mean, sig2;
-  if (result) {
-    if (tback === t) {
-      const proposed = [alpha + dt, beta, t];
-      return rebalance ? _rebalance(prior, result, tnow, proposed) : proposed;
-    }
-    const logmean = betalnRatio(alpha + dt / et * (1 + et), alpha + dt, beta);
-    const logm2 = betalnRatio(alpha + dt / et * (2 + et), alpha + dt, beta);
-    mean = exp(logmean);
-    sig2 = _subexp(logm2, 2 * logmean);
-  } else {
-    const logDenominator = _logsubexp(betaln(alpha, beta), betaln(alpha + dt, beta))
-    mean = _subexp(betaln(alpha + dt / et, beta) - logDenominator,
-                   betaln(alpha + dt / et * (et + 1), beta) - logDenominator)
-    const m2 = _subexp(betaln(alpha + 2 * dt / et, beta) - logDenominator,
-                       betaln(alpha + dt / et * (et + 2), beta) - logDenominator)
-    if (m2 <= 0) { throw new Error('invalid second moment found'); }
-    sig2 = m2 - mean ** 2
+  const et = tback / tnow;
+
+  const binomlns = Array.from(Array(total - successes + 1), (_, i) => binomln(total - successes, i));
+  const [logDenominator, logMeanNum, logM2Num] = [0, 1, 2].map(m => {
+    const a = Array.from(Array(total - successes + 1),
+                         (_, i) => binomlns[i] + betaln(beta, alpha + dt * (successes + i) + m * dt * et));
+    const b = Array.from(Array(total - successes + 1), (_, i) => Math.pow(-1, i));
+    return logsumexp(a, b)[0]
+  });
+
+  const mean = Math.exp(logMeanNum - logDenominator)
+  const m2 = Math.exp(logM2Num - logDenominator)
+  const meanSq = Math.exp(2 * (logMeanNum - logDenominator));
+  const sig2 = m2 - meanSq;
+
+  if (![mean, m2, sig2].every(x => isFinite(x) && x >= 0)) {
+    throw new Error(JSON.stringify({prior, successes, total, tnow, rebalance, tback, mean, m2, sig2}));
   }
-  if (mean <= 0) { throw new Error('invalid mean found'); }
-  if (sig2 <= 0) { throw new Error('invalid variance found'); }
-  const [newAlpha, newBeta] = _meanVarToBeta(mean, sig2);
+
+  const [newAlpha, newBeta] = _meanVarToBeta(mean, sig2)
   const proposed = [newAlpha, newBeta, tback];
-  return rebalance ? _rebalance(prior, result, tnow, proposed) : proposed;
+  return rebalance ? _rebalance(prior, successes, total, tnow, proposed) : proposed;
 }
 
-function _rebalance(prior, result, tnow, proposed) {
+function _rebalance(prior, k, n, tnow, proposed) {
   const [newAlpha, newBeta, _] = proposed;
   if (newAlpha > 2 * newBeta || newBeta > 2 * newAlpha) {
     const roughHalflife = modelToPercentileDecay(proposed, 0.5, true);
-    return updateRecall(prior, result, tnow, false, roughHalflife);
+    return updateRecall(prior, k, n, tnow, false, roughHalflife);
   }
   return proposed;
-}
-
-function _logsubexp(a, b) { return logsumexp([a, b], [1, -1])[0]; }
-
-function _subexp(x, y) {
-  const maxval = Math.max(x, y)
-  return exp(maxval) * (exp(x - maxval) - exp(y - maxval));
 }
 
 function _meanVarToBeta(mean, v) {
