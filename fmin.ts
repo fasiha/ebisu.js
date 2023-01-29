@@ -1,7 +1,7 @@
 export const fmin = require("minimize-golden-section-1d") as (
   objective: (x: number) => number,
   options: Partial<Options>,
-  status: undefined | {} | Status
+  status?: {} | Status
 ) => number;
 
 export interface Options {

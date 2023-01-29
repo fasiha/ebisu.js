@@ -1,5 +1,5 @@
-import { fmin, Status } from "./fmin";
-import { gammaln } from "./gamma";
+import { fmin } from "./fmin";
+import { gammaln, gamma } from "./gamma";
 import { logsumexp } from "./logsumexp";
 
 import { type Model } from "./interfaces";
@@ -25,36 +25,10 @@ function betalnRatio(a1: number, a: number, b: number) {
 function betaln(a: number, b: number) {
   return gammalnCached(a) + gammalnCached(b) - gammalnCached(a + b);
 }
+function betafn(a: number, b: number) {
+  return (gamma(a) * gamma(b)) / gamma(a + b);
+}
 
-/**
- * Expected recall probability now, given a prior distribution on it.
- *
- * `prior` is a tuple representing the prior distribution on recall probability
- * after a specific unit of time has elapsed since this fact's last review.
- * Specifically,  it's a 3-tuple, `(alpha, beta, t)` where `alpha` and `beta`
- * parameterize a Beta distribution that is the prior on recall probability at
- * time `t`.
- *
- * `tnow` is the *actual* time elapsed since this fact's most recent review.
- *
- * Optional keyword parameter `exact` makes the return value a probability,
- * specifically, the expected recall probability `tnow` after the last review: a
- * number between 0 and 1. If `exact` is false (the default), some calculations
- * are skipped and the return value won't be a probability, but can still be
- * compared against other values returned by this function. That is, if
- *
- * > predictRecall(prior1, tnow1, True) < predictRecall(prior2, tnow2, True)
- *
- * then it is guaranteed that
- *
- * > predictRecall(prior1, tnow1, False) < predictRecall(prior2, tnow2, False)
- *
- * The default is set to false for computational efficiency.
- *
- * @param model
- * @param tnow
- * @param exact
- */
 export function predictRecall(prior: Model, tnow: number, exact = false) {
   const [alpha, beta, t] = prior;
   const dt = tnow / t;
@@ -112,69 +86,83 @@ export function updateRecall(
   total: number,
   tnow: number,
   rebalance = true,
-  tback: number | undefined = undefined
+  tback: number | undefined = undefined,
+  q0: number | undefined = undefined
 ): Model {
-  const [alpha, beta, t] = prior;
-  tback = tback || t;
-  const dt = tnow / t;
-  const et = tback / tnow;
-
-  const binomlns = Array.from(Array(total - successes + 1), (_, i) =>
-    binomln(total - successes, i)
-  );
-  const [logDenominator, logMeanNum, logM2Num] = [0, 1, 2].map((m) => {
-    const a = Array.from(
-      Array(total - successes + 1),
-      (_, i) =>
-        binomlns[i] + betaln(beta, alpha + dt * (successes + i) + m * dt * et)
-    );
-    const b = Array.from(Array(total - successes + 1), (_, i) =>
-      Math.pow(-1, i)
-    );
-    return logsumexp(a, b)[0];
-  });
-
-  const mean = exp(logMeanNum - logDenominator);
-  const m2 = exp(logM2Num - logDenominator);
-  const meanSq = exp(2 * (logMeanNum - logDenominator));
-  const sig2 = m2 - meanSq;
-
-  if (![mean, m2, sig2].every((x) => isFinite(x) && x >= 0)) {
+  if (0 > successes || successes > total || total < 1) {
     throw new Error(
-      JSON.stringify({
-        prior,
-        successes,
-        total,
-        tnow,
-        rebalance,
-        tback,
-        mean,
-        m2,
-        sig2,
-      })
+      "0 <= successes and successes <= total and 1 <= total must be true"
     );
   }
 
-  const [newAlpha, newBeta] = _meanVarToBeta(mean, sig2);
-  const proposed: Model = [newAlpha, newBeta, tback];
-  return rebalance
-    ? _rebalance(prior, successes, total, tnow, proposed)
-    : proposed;
-}
-
-function _rebalance(
-  prior: Model,
-  k: number,
-  n: number,
-  tnow: number,
-  proposed: Model
-) {
-  const [newAlpha, newBeta, _] = proposed;
-  if (newAlpha > 2 * newBeta || newBeta > 2 * newAlpha) {
-    const roughHalflife = modelToPercentileDecay(proposed, 0.5, true);
-    return updateRecall(prior, k, n, tnow, false, roughHalflife);
+  if (total === 1) {
+    return _updateRecallSingle(prior, successes, tnow, rebalance, tback, q0);
   }
-  return proposed;
+
+  let [alpha, beta, t] = prior;
+  let dt = tnow / t;
+  let failures = total - successes;
+  let binomlns: number[] = [];
+  for (let i = 0; i <= failures; i++) {
+    binomlns.push(binomln(failures, i));
+  }
+
+  function unnormalizedLogMoment(m: number, et: number) {
+    let logProbs = [];
+    for (let i = 0; i <= failures; i++) {
+      logProbs.push(
+        binomlns[i] + betaln(alpha + dt * (successes + i) + m * dt * et, beta)
+      );
+    }
+    let signs = [];
+    for (let i = 0; i <= failures; i++) {
+      signs.push(Math.pow(-1, i));
+    }
+    return logsumexp(logProbs, signs)[0];
+  }
+
+  let logDenominator = unnormalizedLogMoment(0, 0);
+
+  let et: number;
+  if (rebalance) {
+    let target = Math.log(0.5);
+    let rootfn = function (et: number) {
+      return unnormalizedLogMoment(1, et) - logDenominator - target;
+    };
+    const status = {};
+    let sol = fmin((x) => Math.abs(rootfn(x)), {}, status);
+    if (!("converged" in status) || !status.converged) {
+      throw new Error("failed to converge");
+    }
+
+    et = sol;
+    tback = et * tnow;
+  }
+  if (tback) {
+    et = tback / tnow;
+  } else {
+    tback = t;
+    et = tback / tnow;
+  }
+
+  let logMean = unnormalizedLogMoment(1, et) - logDenominator;
+  let mean = Math.exp(logMean);
+  let m2 = Math.exp(unnormalizedLogMoment(2, et) - logDenominator);
+
+  if (mean <= 0) {
+    throw new Error("negative mean encountered");
+  }
+  if (m2 <= 0) {
+    throw new Error("negative 2nd moment encountered");
+  }
+
+  let meanSq = Math.exp(2 * logMean);
+  let variance = m2 - meanSq;
+  if (variance <= 0) {
+    throw new Error("negative variance encountered");
+  }
+  let [newAlpha, newBeta] = _meanVarToBeta(mean, variance);
+  return [newAlpha, newBeta, tback];
 }
 
 function _meanVarToBeta(mean: number, v: number) {
@@ -182,6 +170,74 @@ function _meanVarToBeta(mean: number, v: number) {
   var alpha = mean * tmp;
   var beta = (1 - mean) * tmp;
   return [alpha, beta];
+}
+
+function _updateRecallSingle(
+  prior: Model,
+  result: number,
+  tnow: number,
+  rebalance = true,
+  tback?: number,
+  q0?: number
+): Model {
+  let [alpha, beta, t] = prior;
+
+  let z = result > 0.5;
+  let q1 = z ? result : 1 - result;
+  if (q0 === undefined) {
+    q0 = 1 - q1;
+  }
+
+  let dt = tnow / t;
+
+  let [c, d] = z ? [q1 - q0, q0] : [q0 - q1, 1 - q0];
+  if (z === false) {
+    c = q0 - q1;
+    d = 1 - q0;
+  } else {
+    c = q1 - q0;
+    d = q0;
+  }
+
+  let den = c * betafn(alpha + dt, beta) + d * (betafn(alpha, beta) || 0);
+
+  function moment(N: number, et: number) {
+    let num = c * betafn(alpha + dt + N * dt * et, beta);
+    if (d !== 0) {
+      num += d * betafn(alpha + N * dt * et, beta);
+    }
+    return num / den;
+  }
+
+  let et: number;
+  if (rebalance) {
+    let rootfn = (et: number) => moment(1, et) - 0.5;
+    const status = {};
+    let sol = fmin(
+      (x) => Math.abs(rootfn(x)),
+      _findBracket(rootfn, 1 / dt),
+      status
+    );
+    if (!("converged" in status) || !status.converged) {
+      throw new Error("failed to converge");
+    }
+    et = sol;
+    tback = et * tnow;
+  } else if (tback) {
+    et = tback / tnow;
+  } else {
+    tback = t;
+    et = tback / tnow;
+  }
+
+  let mean = moment(1, et);
+  let secondMoment = moment(2, et);
+
+  let variance = secondMoment - mean * mean;
+  let [newAlpha, newBeta] = _meanVarToBeta(mean, variance);
+  if (newAlpha <= 0 || newBeta <= 0)
+    throw new Error("newAlpha and newBeta must be greater than zero");
+  return [newAlpha, newBeta, tback];
 }
 
 /**
@@ -222,7 +278,6 @@ export function defaultModel(t: number, a = 4.0, b = a) {
 export function modelToPercentileDecay(
   model: Model,
   percentile = 0.5,
-  coarse = false,
   tolerance = 1e-4
 ) {
   if (percentile < 0 || percentile > 1) {
@@ -231,48 +286,58 @@ export function modelToPercentileDecay(
   const [alpha, beta, t0] = model;
   const logBab = betaln(alpha, beta);
   const logPercentile = log(percentile);
-  function f(lndelta: number) {
-    const logMean = betaln(alpha + exp(lndelta), beta) - logBab;
+  function f(delta: number) {
+    const logMean = betaln(alpha + delta, beta) - logBab;
     return logMean - logPercentile;
   }
-  const bracket_width = coarse ? 1 : 6;
-  let blow = -bracket_width / 2.0;
-  let bhigh = bracket_width / 2.0;
+  let status = {};
+  const sol = fmin((x) => Math.abs(f(x)), { lowerBound: 0, tolerance }, status);
+  if (!("converged" in status) || !status.converged) {
+    throw new Error("failed to converge");
+  }
+  return sol * t0;
+}
+
+function _findBracket(
+  f: (x: number) => number,
+  init = 1,
+  growfactor = 2
+): { lowerBound: number; upperBound: number } {
+  let factorhigh = growfactor;
+  let factorlow = 1 / factorhigh;
+  let blow = factorlow * init;
+  let bhigh = factorhigh * init;
   let flow = f(blow);
   let fhigh = f(bhigh);
   while (flow > 0 && fhigh > 0) {
-    // Move the bracket up.
     blow = bhigh;
     flow = fhigh;
-    bhigh += bracket_width;
+    bhigh *= factorhigh;
     fhigh = f(bhigh);
   }
   while (flow < 0 && fhigh < 0) {
-    // Move the bracket down.
     bhigh = blow;
     fhigh = flow;
-    blow -= bracket_width;
+    blow *= factorlow;
     flow = f(blow);
   }
 
-  if (!(flow > 0 && fhigh < 0)) {
-    throw new Error("failed to bracket");
+  if (!(flow > 0 && fhigh < 0))
+    throw new Error("assertion failed: flow > 0 and fhigh < 0");
+  return { lowerBound: blow, upperBound: bhigh };
+}
+
+export function rescaleHalflife(prior: Model, scale = 1): Model {
+  let [alpha, beta, t] = prior;
+  let oldHalflife = modelToPercentileDecay(prior);
+  let dt = oldHalflife / t;
+
+  let logDenominator = betaln(alpha, beta);
+  let logm2 = betaln(alpha + 2 * dt, beta) - logDenominator;
+  let m2 = Math.exp(logm2);
+  let newAlphaBeta = 1 / (8 * m2 - 2) - 0.5;
+  if (!(newAlphaBeta > 0)) {
+    throw new Error("Assertion error: newAlphaBeta should be greater than 0");
   }
-  if (coarse) {
-    return ((exp(blow) + exp(bhigh)) / 2) * t0;
-  }
-  let status: {} | Status = {};
-  const sol = fmin(
-    (x) => Math.abs(f(x)),
-    { lowerBound: blow, upperBound: bhigh, tolerance },
-    status
-  );
-  if (!("converged" in status)) {
-    // just to satisfy typescript
-    throw new Error("unexpected status in fmin");
-  }
-  if (!status.converged) {
-    throw new Error("failed to converge");
-  }
-  return exp(sol) * t0;
+  return [newAlphaBeta, newAlphaBeta, oldHalflife * scale];
 }
