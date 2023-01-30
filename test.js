@@ -20,9 +20,9 @@ test('verify halflife', t => {
 test('compare', (t) => {
   var STDLIB_THRESH = 3e-3;
   var SUBSTACK_THRESH = 3e-2;
-  for(const useSubstack of [true, false]) {
+  for (const useSubstack of [true, false]) {
     var THRESH = useSubstack ? SUBSTACK_THRESH : STDLIB_THRESH;
-    if(useSubstack) {
+    if (useSubstack) {
       ebisu.customizeMath(substackEbisu)
     } else {
       ebisu.customizeMath(stdlibEbisu)
