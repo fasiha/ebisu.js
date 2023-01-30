@@ -5,6 +5,7 @@
   "types": "index.js",
   "license": "Unlicense",
   "dependencies": {
+    "@stdlib/math": "^0.0.11",
     "gamma": "^1.0.0",
     "minimize-golden-section-1d": "^3.0.0"
   },

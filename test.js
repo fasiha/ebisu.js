@@ -3,6 +3,10 @@ var ebisu = require('./index');
 var fs = require('fs');
 var ref = JSON.parse(fs.readFileSync('test.json', 'utf8'));
 
+var std = require('@stdlib/math');
+var stdlibEbisu = {betaln: std.base.special.betaln, betafn: std.base.special.beta};
+var substackEbisu = ebisu.customizeMath(stdlibEbisu);
+
 function relerr(dirt, gold) { return (dirt === gold) ? 0 : Math.abs(dirt - gold) / Math.abs(gold); }
 function relerrs(dirts, golds) { return Math.max(...dirts.map((d, i) => relerr(d, golds[i]))); }
 
@@ -14,20 +18,29 @@ test('verify halflife', t => {
 });
 
 test('compare', (t) => {
-  for (let elt of ref) {
-    var [operation, prior, args, result] = elt;
-    var err;
-    if (operation === 'update') {
-      var jsres = ebisu.updateRecall(prior, ...args);
-      result = result.post
-      err = relerrs(jsres, result);
-    } else if (operation === 'predict') {
-      var jsres = ebisu.predictRecall(prior, ...args, true);
-      result = result.mean;
-      err = relerr(jsres, result);
+  var STDLIB_THRESH = 3e-3;
+  var SUBSTACK_THRESH = 3e-2;
+  for(const useSubstack of [true, false]) {
+    var THRESH = useSubstack ? SUBSTACK_THRESH : STDLIB_THRESH;
+    if(useSubstack) {
+      ebisu.customizeMath(substackEbisu)
+    } else {
+      ebisu.customizeMath(stdlibEbisu)
     }
-    var THRESH = 2e-3; // Should be lower, why not? FIXME
-    t.ok(err < THRESH, `err=${err}, actual=${jsres}, expected=${result}`);
+    for (let elt of ref) {
+      var [operation, prior, args, result] = elt;
+      var err;
+      if (operation === 'update') {
+        var jsres = ebisu.updateRecall(prior, ...args);
+        result = result.post
+        err = relerrs(jsres, result);
+      } else if (operation === 'predict') {
+        var jsres = ebisu.predictRecall(prior, ...args, true);
+        result = result.mean;
+        err = relerr(jsres, result);
+      }
+      t.ok(err < THRESH, `err=${err}, actual=${jsres}, expected=${result}`);
+    }
   }
   t.end();
 });

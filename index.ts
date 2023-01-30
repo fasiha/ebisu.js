@@ -22,11 +22,21 @@ function betalnRatio(a1: number, a: number, b: number) {
     gammaln(a1) - gammaln(a1 + b) + gammalnCached(a + b) - gammalnCached(a)
   );
 }
-function betaln(a: number, b: number) {
+let betaln = (a: number, b: number) => {
   return gammalnCached(a) + gammalnCached(b) - gammalnCached(a + b);
-}
-function betafn(a: number, b: number) {
+};
+let betafn = (a: number, b: number) => {
   return (gamma(a) * gamma(b)) / gamma(a + b);
+};
+export function customizeMath(args: Record<string, any>) {
+  const orig = { betaln, betafn };
+  if (args.betaln) {
+    betaln = args.betaln;
+  }
+  if (args.betafn) {
+    betafn = args.betafn;
+  }
+  return orig;
 }
 
 export function predictRecall(prior: Model, tnow: number, exact = false) {
