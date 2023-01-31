@@ -121,15 +121,15 @@ export function updateRecall(
     successes: number,
     total: number,
     tnow: number,
+    q0?: number,
     rebalance = true,
-    tback: number|undefined = undefined,
-    q0: number|undefined = undefined,
+    tback?: number,
     ): Model {
   if (0 > successes || successes > total || total < 1) {
     throw new Error("0 <= successes and successes <= total and 1 <= total must be true");
   }
 
-  if (total === 1) { return _updateRecallSingle(prior, successes, tnow, rebalance, tback, q0); }
+  if (total === 1) { return _updateRecallSingle(prior, successes, tnow, q0, rebalance, tback); }
 
   const [alpha, beta, t] = prior;
   const dt = tnow / t;
@@ -181,8 +181,14 @@ export function updateRecall(
   return [newAlpha, newBeta, tback];
 }
 
-function _updateRecallSingle(prior: Model, result: number, tnow: number, rebalance = true, tback?: number,
-                             q0?: number): Model {
+function _updateRecallSingle(
+    prior: Model,
+    result: number,
+    tnow: number,
+    q0?: number,
+    rebalance = true,
+    tback?: number,
+    ): Model {
   const [alpha, beta, t] = prior;
 
   const z = result > 0.5;
