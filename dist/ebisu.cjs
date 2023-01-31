@@ -307,12 +307,12 @@ function predictRecall(prior, tnow, exact = false) {
   const ret = betalnRatio(alpha + dt, alpha, beta);
   return exact ? Math.exp(ret) : ret;
 }
-function updateRecall(prior, successes, total, tnow, rebalance = true, tback = void 0, q0 = void 0) {
+function updateRecall(prior, successes, total, tnow, q0, rebalance = true, tback) {
   if (0 > successes || successes > total || total < 1) {
     throw new Error("0 <= successes and successes <= total and 1 <= total must be true");
   }
   if (total === 1) {
-    return _updateRecallSingle(prior, successes, tnow, rebalance, tback, q0);
+    return _updateRecallSingle(prior, successes, tnow, q0, rebalance, tback);
   }
   const [alpha, beta, t] = prior;
   const dt = tnow / t;
@@ -336,9 +336,7 @@ function updateRecall(prior, successes, total, tnow, rebalance = true, tback = v
   let et;
   if (rebalance) {
     const target = Math.log(0.5);
-    const rootfn = function(et2) {
-      return unnormalizedLogMoment(1, et2) - logDenominator - target;
-    };
+    const rootfn = (et2) => unnormalizedLogMoment(1, et2) - logDenominator - target;
     const status = {};
     const sol = fmin((x) => Math.abs(rootfn(x)), {}, status);
     if (!("converged" in status) || !status.converged) {
@@ -370,7 +368,7 @@ function updateRecall(prior, successes, total, tnow, rebalance = true, tback = v
   const [newAlpha, newBeta] = _meanVarToBeta(mean, variance);
   return [newAlpha, newBeta, tback];
 }
-function _updateRecallSingle(prior, result, tnow, rebalance = true, tback, q0) {
+function _updateRecallSingle(prior, result, tnow, q0, rebalance = true, tback) {
   const [alpha, beta, t] = prior;
   const z = result > 0.5;
   const q1 = z ? result : 1 - result;

@@ -152,7 +152,7 @@ export function updateRecall(
   let et: number;
   if (rebalance) {
     const target = Math.log(0.5);
-    const rootfn = function(et: number) { return unnormalizedLogMoment(1, et) - logDenominator - target; };
+    const rootfn = (et: number) => unnormalizedLogMoment(1, et) - logDenominator - target;
     const status = {};
     const sol = fmin((x) => Math.abs(rootfn(x)), {}, status);
     if (!("converged" in status) || !status.converged) { throw new Error("failed to converge"); }
