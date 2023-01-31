@@ -49,7 +49,7 @@ function _meanVarToBeta(mean: number, v: number) {
   0 and 1. If `exact` is falsey, we return the log-probability; pass truthy for
   true linear probability (between 0 and 1).
  */
-export function predictRecall(prior: Model, tnow: number, exact = false) {
+export function predictRecall(prior: Model, tnow: number, exact = false): number {
   const [alpha, beta, t] = prior;
   const dt = tnow / t;
   const ret = betalnRatio(alpha + dt, alpha, beta);
@@ -250,7 +250,7 @@ function _updateRecallSingle(
   newly-learned facts. If `beta` is omitted, it is taken to be the same as
   `alpha`.
  */
-export function defaultModel(t: number, a = 4.0, b = a) { return [a, b, t]; }
+export function defaultModel(t: number, a = 4.0, b = a): Model { return [a, b, t]; }
 
 /**
   When will memory decay to a given percentile?
@@ -260,7 +260,7 @@ export function defaultModel(t: number, a = 4.0, b = a) { return [a, b, t]; }
   half-life), find the time it takes for memory to decay to
   `percentile`.
  */
-export function modelToPercentileDecay(model: Model, percentile = 0.5, tolerance = 1e-4) {
+export function modelToPercentileDecay(model: Model, percentile = 0.5, tolerance = 1e-4): number {
   if (percentile < 0 || percentile > 1) { throw new Error("percentiles must be between (0, 1) exclusive"); }
   const [alpha, beta, t0] = model;
   const logBab = betaln(alpha, beta);
