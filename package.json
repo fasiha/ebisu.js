@@ -20,6 +20,7 @@
   "repository": "fasiha/ebisu.js",
   "bugs": "https://github.com/fasiha/ebisu.js/issues",
   "scripts": {
+    "release": "npm run compile && npm run test && npm run build; if git diff-index --quiet HEAD; then npm publish; else echo 'Working directory is not clean, please commit your changes first.'; fi",
     "build": "npm run build-node-cjs && npm run build-esm && npm run build-browser",
     "build-node-cjs": "esbuild index.ts --bundle --platform=node --target=node10 --format=cjs --outfile=dist/ebisu.cjs",
     "build-esm": "esbuild index.ts --bundle --minify --sourcemap --platform=neutral --format=esm --outfile=dist/ebisu.min.mjs",

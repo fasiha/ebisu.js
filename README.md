@@ -194,5 +194,7 @@ We use ESbuild to create CommonJS (for Node `require`), ES modules (for Node and
 
 I use [gamma.js](https://github.com/substack/gamma.js), one of substack’s very lightweight and very useful modules.
 
-I’m super-grateful for, and happily acknowledge, the hard work of Athan Reines and collaborators on [Stdlib.js](https://github.com/stdlib-js/stdlib), which promises to be the math library JavaScript so badly needs. It is used here only for visualization purposes but I can recommend it.
+We also use this fine [golden section minimization](https://github.com/scijs/minimize-golden-section-1d) routine from the wonderful Scijs package.
+
+I’m super-grateful for, and happily acknowledge, the hard work of Athan Reines and collaborators on [Stdlib.js](https://github.com/stdlib-js/stdlib), which promises to be the math library JavaScript so badly needs. It is used here only for testing purposes but I can recommend it.
 
