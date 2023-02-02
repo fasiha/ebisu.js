@@ -314,6 +314,9 @@ function updateRecall(prior, successes, total, tnow, q0, rebalance = true, tback
   if (total === 1) {
     return _updateRecallSingle(prior, successes, tnow, q0, rebalance, tback);
   }
+  if (!(successes === Math.trunc(successes) && total === Math.trunc(total))) {
+    throw new Error("expecting integer successes and total");
+  }
   const [alpha, beta, t] = prior;
   const dt = tnow / t;
   const failures = total - successes;
@@ -369,6 +372,9 @@ function updateRecall(prior, successes, total, tnow, q0, rebalance = true, tback
   return [newAlpha, newBeta, tback];
 }
 function _updateRecallSingle(prior, result, tnow, q0, rebalance = true, tback) {
+  if (!(0 <= result && result <= 1)) {
+    throw new Error("expecting result between 0 and 1 inclusive");
+  }
   const [alpha, beta, t] = prior;
   const z = result > 0.5;
   const q1 = z ? result : 1 - result;
@@ -377,13 +383,6 @@ function _updateRecallSingle(prior, result, tnow, q0, rebalance = true, tback) {
   }
   const dt = tnow / t;
   let [c, d] = z ? [q1 - q0, q0] : [q0 - q1, 1 - q0];
-  if (z === false) {
-    c = q0 - q1;
-    d = 1 - q0;
-  } else {
-    c = q1 - q0;
-    d = q0;
-  }
   const den = c * betafn(alpha + dt, beta) + d * (betafn(alpha, beta) || 0);
   function moment(N, et2) {
     let num = c * betafn(alpha + dt + N * dt * et2, beta);
@@ -444,8 +443,8 @@ function rescaleHalflife(prior, scale = 1) {
   const logm2 = betaln(alpha + 2 * dt, beta) - logDenominator;
   const m2 = Math.exp(logm2);
   const newAlphaBeta = 1 / (8 * m2 - 2) - 0.5;
-  if (!(newAlphaBeta > 0)) {
-    throw new Error("Assertion error: newAlphaBeta should be greater than 0");
+  if (newAlphaBeta <= 0) {
+    throw new Error("non-positive alpha, beta encountered");
   }
   return [newAlphaBeta, newAlphaBeta, oldHalflife * scale];
 }
