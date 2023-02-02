@@ -13,6 +13,7 @@ This is a TypeScript/JavaScript port of the original Python implementation of [E
     - [Manual halflife override: `ebisu.rescaleHalflife`](#manual-halflife-override-ebisurescalehalflife)
     - [API summary](#api-summary)
   - [Building](#building)
+  - [Changelog](#changelog)
   - [Acknowledgements](#acknowledgements)
 
 ## Install
@@ -186,9 +187,12 @@ This is a TypeScript library. For a one-shot compile, run `npm run compile`. You
 
 We use `tape` for tests: after compiling, run `npm test`. This consumes `test.json`, which came from the [Ebisu Python reference implementation](https://fasiha.github.io/ebisu/).
 
+We use ESbuild to create CommonJS (for Node `require`), ES modules (for Node and browsers' `import`), and an IIFE (for browsers' `<script>` tag). `npm run build` will generate all three.
+
+## Changelog
 The version of this repo matches the Python reference’s version up to minor rev (i.e., Python Ebisu 1.0.x will match Ebisu.js 1.0.y). See the Python Ebisu [changelog](https://github.com/fasiha/ebisu/blob/gh-pages/CHANGELOG.md).
 
-We use ESbuild to create CommonJS (for Node `require`), ES modules (for Node and browsers' `import`), and an IIFE (for browsers' `<script>` tag). `npm run build` will generate all three.
+This JavaScript port is version 2.1, which as of now (Feb 2023) is the latest Python Ebisu release adding soft-binary quizzes, `rescaleHalflife`, and changes to `updateRecall` so that it always rebalances.
 
 ## Acknowledgements
 
