@@ -131,6 +131,10 @@ export function updateRecall(
 
   if (total === 1) { return _updateRecallSingle(prior, successes, tnow, q0, rebalance, tback); }
 
+  if (!(successes === Math.trunc(successes) && total === Math.trunc(total))) {
+    throw new Error('expecting integer successes and total')
+  }
+
   const [alpha, beta, t] = prior;
   const dt = tnow / t;
   const failures = total - successes;
@@ -189,6 +193,7 @@ function _updateRecallSingle(
     rebalance = true,
     tback?: number,
     ): Model {
+  if (!(0 <= result && result <= 1)) { throw new Error('expecting result between 0 and 1 inclusive') }
   const [alpha, beta, t] = prior;
 
   const z = result > 0.5;
@@ -198,13 +203,6 @@ function _updateRecallSingle(
   const dt = tnow / t;
 
   let [c, d] = z ? [q1 - q0, q0] : [q0 - q1, 1 - q0];
-  if (z === false) {
-    c = q0 - q1;
-    d = 1 - q0;
-  } else {
-    c = q1 - q0;
-    d = q0;
-  }
 
   const den = c * betafn(alpha + dt, beta) + d * (betafn(alpha, beta) || 0);
 
@@ -304,6 +302,6 @@ export function rescaleHalflife(prior: Model, scale = 1): Model {
   const logm2 = betaln(alpha + 2 * dt, beta) - logDenominator;
   const m2 = Math.exp(logm2);
   const newAlphaBeta = 1 / (8 * m2 - 2) - 0.5;
-  if (!(newAlphaBeta > 0)) { throw new Error("Assertion error: newAlphaBeta should be greater than 0"); }
+  if (newAlphaBeta <= 0) { throw new Error("non-positive alpha, beta encountered"); }
   return [newAlphaBeta, newAlphaBeta, oldHalflife * scale];
 }
