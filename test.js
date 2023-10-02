@@ -44,3 +44,15 @@ test('compare', (t) => {
   }
   t.end();
 });
+
+// Fixes #20
+test("super-long t", (t) => {
+  ebisu.customizeMath(substackEbisu);
+  t.ok(ebisu.updateRecall([4, 4, 0.0607], 1, 1, 3.56))
+  t.ok(ebisu.updateRecall([4, 4, 0.24], 1, 1, 14.39))
+
+  t.ok(ebisu.updateRecall([4, 4, 1], 1, 1, 1_000))
+  t.ok(ebisu.updateRecall([4, 4, 1], 1, 1, 10_000))
+  t.ok(ebisu.updateRecall([4, 4, 1], 1, 1, 100_000))
+  t.end();
+});

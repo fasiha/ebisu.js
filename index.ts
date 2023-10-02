@@ -16,6 +16,7 @@ function betalnRatio(a1: number, a: number, b: number) {
   return (gammaln(a1) - gammaln(a1 + b) + gammalnCached(a + b) - gammalnCached(a));
 }
 let betaln = (a: number, b: number) => { return gammalnCached(a) + gammalnCached(b) - gammalnCached(a + b); };
+let betalnUncached = (a: number, b: number) => { return gammaln(a) + gammaln(b) - gammaln(a + b); };
 let betafn = (a: number, b: number) => { return (gamma(a) * gamma(b)) / gamma(a + b); };
 function binomln(n: number, k: number) { return -betaln(1 + n - k, 1 + k) - Math.log(n + 1); }
 export function customizeMath(args: Record<string, any>) {
@@ -124,12 +125,13 @@ export function updateRecall(
     q0?: number,
     rebalance = true,
     tback?: number,
+    _useLog?: boolean,
     ): Model {
   if (0 > successes || successes > total || total < 1) {
     throw new Error("0 <= successes and successes <= total and 1 <= total must be true");
   }
 
-  if (total === 1) { return _updateRecallSingle(prior, successes, tnow, q0, rebalance, tback); }
+  if (total === 1) { return _updateRecallSingle(prior, successes, tnow, q0, rebalance, tback, _useLog); }
 
   if (!(successes === Math.trunc(successes) && total === Math.trunc(total))) {
     throw new Error('expecting integer successes and total')
@@ -192,6 +194,7 @@ function _updateRecallSingle(
     q0?: number,
     rebalance = true,
     tback?: number,
+    _useLog: boolean = false,
     ): Model {
   if (!(0 <= result && result <= 1)) { throw new Error('expecting result between 0 and 1 inclusive') }
   const [alpha, beta, t] = prior;
@@ -205,18 +208,43 @@ function _updateRecallSingle(
   let [c, d] = z ? [q1 - q0, q0] : [q0 - q1, 1 - q0];
 
   const den = c * betafn(alpha + dt, beta) + d * (betafn(alpha, beta) || 0);
+  const logden =
+      _useLog ? logsumexp([betalnUncached(alpha + dt, beta), (betalnUncached(alpha, beta) || -Infinity)], [c, d])[0]
+              : 0;
 
   function moment(N: number, et: number) {
     let num = c * betafn(alpha + dt + N * dt * et, beta);
     if (d !== 0) { num += d * betafn(alpha + N * dt * et, beta); }
     return num / den;
   }
+  function logmoment(N: number, et: number) {
+    if (d !== 0) {
+      const res =
+          logsumexp([betalnUncached(alpha + dt + N * dt * et, beta), betalnUncached(alpha + N * dt * et, beta)], [c, d])
+      return res[0] - logden
+    }
+    return Math.log(c) + betalnUncached(alpha + dt + N * dt * et, beta) - logden
+  }
 
   let et: number;
   if (rebalance) {
     const status = {};
-    const sol = fmin((et) => Math.abs(moment(1, et) - 0.5), {lowerBound: 0}, status);
-    if (!("converged" in status) || !status.converged) { throw new Error("failed to converge"); }
+    let sol: number;
+    if (_useLog) {
+      const target = Math.log(0.5)
+      sol = fmin((et) => Math.abs(logmoment(1, et) - target), {lowerBound: 0}, status);
+    } else {
+      sol = fmin((et) => Math.abs(moment(1, et) - 0.5), {lowerBound: 0}, status);
+    }
+    if (!("converged" in status) || !status.converged) {
+      if (!_useLog) {
+        // for very long t, Substack's Gamma results in a lot of NaNs? But this can be avoided by using logs:
+        return _updateRecallSingle(prior, result, tnow, q0, rebalance, tback, true);
+      }
+
+      console.error(status, {prior, result, tnow, q0, rebalance, tback});
+      throw new Error("failed to converge");
+    }
     et = sol;
     tback = et * tnow;
   } else if (tback) {
@@ -226,8 +254,8 @@ function _updateRecallSingle(
     et = tback / tnow;
   }
 
-  const mean = moment(1, et);
-  const secondMoment = moment(2, et);
+  const mean = _useLog ? Math.exp(logmoment(1, et)) : moment(1, et);
+  const secondMoment = _useLog ? Math.exp(logmoment(2, et)) : moment(2, et);
 
   const variance = secondMoment - mean * mean;
   const [newAlpha, newBeta] = _meanVarToBeta(mean, variance);
