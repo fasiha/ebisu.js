@@ -279,6 +279,9 @@ function betalnRatio(a1, a, b) {
 var betaln = (a, b) => {
   return gammalnCached(a) + gammalnCached(b) - gammalnCached(a + b);
 };
+var betalnUncached = (a, b) => {
+  return gammaln(a) + gammaln(b) - gammaln(a + b);
+};
 var betafn = (a, b) => {
   return gamma(a) * gamma(b) / gamma(a + b);
 };
@@ -307,12 +310,12 @@ function predictRecall(prior, tnow, exact = false) {
   const ret = betalnRatio(alpha + dt, alpha, beta);
   return exact ? Math.exp(ret) : ret;
 }
-function updateRecall(prior, successes, total, tnow, q0, rebalance = true, tback) {
+function updateRecall(prior, successes, total, tnow, q0, rebalance = true, tback, _useLog) {
   if (0 > successes || successes > total || total < 1) {
     throw new Error("0 <= successes and successes <= total and 1 <= total must be true");
   }
   if (total === 1) {
-    return _updateRecallSingle(prior, successes, tnow, q0, rebalance, tback);
+    return _updateRecallSingle(prior, successes, tnow, q0, rebalance, tback, _useLog);
   }
   if (!(successes === Math.trunc(successes) && total === Math.trunc(total))) {
     throw new Error("expecting integer successes and total");
@@ -371,7 +374,7 @@ function updateRecall(prior, successes, total, tnow, q0, rebalance = true, tback
   const [newAlpha, newBeta] = _meanVarToBeta(mean, variance);
   return [newAlpha, newBeta, tback];
 }
-function _updateRecallSingle(prior, result, tnow, q0, rebalance = true, tback) {
+function _updateRecallSingle(prior, result, tnow, q0, rebalance = true, tback, _useLog = false) {
   if (!(0 <= result && result <= 1)) {
     throw new Error("expecting result between 0 and 1 inclusive");
   }
@@ -384,6 +387,7 @@ function _updateRecallSingle(prior, result, tnow, q0, rebalance = true, tback) {
   const dt = tnow / t;
   let [c, d] = z ? [q1 - q0, q0] : [q0 - q1, 1 - q0];
   const den = c * betafn(alpha + dt, beta) + d * (betafn(alpha, beta) || 0);
+  const logden = _useLog ? logsumexp([betalnUncached(alpha + dt, beta), betalnUncached(alpha, beta) || -Infinity], [c, d])[0] : 0;
   function moment(N, et2) {
     let num = c * betafn(alpha + dt + N * dt * et2, beta);
     if (d !== 0) {
@@ -391,11 +395,28 @@ function _updateRecallSingle(prior, result, tnow, q0, rebalance = true, tback) {
     }
     return num / den;
   }
+  function logmoment(N, et2) {
+    if (d !== 0) {
+      const res = logsumexp([betalnUncached(alpha + dt + N * dt * et2, beta), betalnUncached(alpha + N * dt * et2, beta)], [c, d]);
+      return res[0] - logden;
+    }
+    return Math.log(c) + betalnUncached(alpha + dt + N * dt * et2, beta) - logden;
+  }
   let et;
   if (rebalance) {
     const status = {};
-    const sol = fmin((et2) => Math.abs(moment(1, et2) - 0.5), { lowerBound: 0 }, status);
+    let sol;
+    if (_useLog) {
+      const target = Math.log(0.5);
+      sol = fmin((et2) => Math.abs(logmoment(1, et2) - target), { lowerBound: 0 }, status);
+    } else {
+      sol = fmin((et2) => Math.abs(moment(1, et2) - 0.5), { lowerBound: 0 }, status);
+    }
     if (!("converged" in status) || !status.converged) {
+      if (!_useLog) {
+        return _updateRecallSingle(prior, result, tnow, q0, rebalance, tback, true);
+      }
+      console.error(status, { prior, result, tnow, q0, rebalance, tback });
       throw new Error("failed to converge");
     }
     et = sol;
@@ -406,8 +427,8 @@ function _updateRecallSingle(prior, result, tnow, q0, rebalance = true, tback) {
     tback = t;
     et = tback / tnow;
   }
-  const mean = moment(1, et);
-  const secondMoment = moment(2, et);
+  const mean = _useLog ? Math.exp(logmoment(1, et)) : moment(1, et);
+  const secondMoment = _useLog ? Math.exp(logmoment(2, et)) : moment(2, et);
   const variance = secondMoment - mean * mean;
   const [newAlpha, newBeta] = _meanVarToBeta(mean, variance);
   if (newAlpha <= 0 || newBeta <= 0)
