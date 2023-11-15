@@ -239,7 +239,7 @@ function _updateRecallSingle(
       if (!_useLog) {
         console.log("TRYING BACKUP")
         // for very long t, Substack's Gamma results in a lot of NaNs? But this can be avoided by using logs:
-        return _updateRecallSingle(prior, result, tnow, q0, rebalance, tback, true);
+        return _updateRecallSingle(prior, result, tnow, q0, rebalance, tback, !_useLog);
       }
 
       console.error(status, {prior, result, tnow, q0, rebalance, tback});
@@ -259,8 +259,13 @@ function _updateRecallSingle(
 
   const variance = secondMoment - mean * mean;
   const [newAlpha, newBeta] = _meanVarToBeta(mean, variance);
-  console.log({mean, secondMoment, _useLog})
   if (newAlpha <= 0 || newBeta <= 0) throw new Error("newAlpha and newBeta must be greater than zero");
+  if (!(newAlpha > 0 && newBeta > 0 && isFinite(newAlpha) && isFinite(newBeta))) {
+    // same as above: as a last-ditch effort to salvage this, try rerunning this function in the log-domain
+    if (!_useLog) { return _updateRecallSingle(prior, result, tnow, q0, rebalance, tback, !_useLog); }
+
+    throw new Error("newAlpha and newBeta must be finite and greater than zero");
+  }
   return [newAlpha, newBeta, tback];
 }
 

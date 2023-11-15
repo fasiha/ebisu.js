@@ -1,5 +1,5 @@
 var test = require('tape');
-var ebisu = require('./index');
+var ebisu = require('./ebisu2');
 var fs = require('fs');
 var ref = JSON.parse(fs.readFileSync('test.json', 'utf8'));
 
@@ -54,5 +54,9 @@ test("super-long t", (t) => {
   t.ok(ebisu.updateRecall([4, 4, 1], 1, 1, 1_000))
   t.ok(ebisu.updateRecall([4, 4, 1], 1, 1, 10_000))
   t.ok(ebisu.updateRecall([4, 4, 1], 1, 1, 100_000))
+
+  t.ok(ebisu.updateRecall([2, 2, 10], 1, 1, 10000))
+  t.ok(ebisu.updateRecall([2, 2, 10], 1, 1, 1000))
+  t.ok(ebisu.updateRecall([2, 2, 10], 1, 1, 100))
   t.end();
 });

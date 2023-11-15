@@ -27,6 +27,6 @@
     "build-browser": "esbuild index.ts --bundle --minify  --sourcemap --platform=browser --format=iife --global-name=ebisu --outfile=dist/ebisu.min.js",
     "compile": "tsc -p .",
     "compile-watch": "tsc -p . --watch",
-    "test": "npm run compile && tape test.js"
+    "test": "npm run compile && tape test*.js"
   }
 }
