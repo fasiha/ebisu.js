@@ -414,7 +414,7 @@ function _updateRecallSingle(prior, result, tnow, q0, rebalance = true, tback, _
     }
     if (!("converged" in status) || !status.converged) {
       if (!_useLog) {
-        return _updateRecallSingle(prior, result, tnow, q0, rebalance, tback, true);
+        return _updateRecallSingle(prior, result, tnow, q0, rebalance, tback, !_useLog);
       }
       console.error(status, { prior, result, tnow, q0, rebalance, tback });
       throw new Error("failed to converge");
@@ -431,8 +431,12 @@ function _updateRecallSingle(prior, result, tnow, q0, rebalance = true, tback, _
   const secondMoment = _useLog ? Math.exp(logmoment(2, et)) : moment(2, et);
   const variance = secondMoment - mean * mean;
   const [newAlpha, newBeta] = _meanVarToBeta(mean, variance);
-  if (newAlpha <= 0 || newBeta <= 0)
-    throw new Error("newAlpha and newBeta must be greater than zero");
+  if (!(newAlpha > 0 && newBeta > 0 && isFinite(newAlpha) && isFinite(newBeta))) {
+    if (!_useLog) {
+      return _updateRecallSingle(prior, result, tnow, q0, rebalance, tback, !_useLog);
+    }
+    throw new Error("newAlpha and newBeta must be finite and greater than zero");
+  }
   return [newAlpha, newBeta, tback];
 }
 function defaultModel(t, a = 4, b = a) {
