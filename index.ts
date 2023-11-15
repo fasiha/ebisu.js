@@ -14,6 +14,7 @@ export interface InitModelArgs {
 export function initModel(
     {firstHalflife, lastHalflife = 10e3 * firstHalflife, firstWeight = 0.9, numAtoms = 5, initialAlphaBeta = 2}:
         InitModelArgs): Model3 {
+  if (!(isFinite(firstHalflife) && firstHalflife > 0)) { throw new Error('expecting positive firstHalflife'); }
   const fminStatus = {};
   const solution = fmin((d) => {
     let sum = 0
@@ -66,7 +67,7 @@ function _binomialLogProbability(successes: number, total: number, p: number): n
   return logNChooseK(total, successes) + successes * Math.log(p) + (total - successes) * Math.log(1 - p);
 }
 
-interface UpdateRecallArgs {
+export interface UpdateRecallArgs {
   model: Model3;
   successes: number;
   total?: number;

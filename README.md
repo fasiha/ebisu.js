@@ -1,9 +1,11 @@
-# Ebisu.js 2.1
+# Ebisu.js 3.0.0-rc.1 Release Candidate
 
 This is a TypeScript/JavaScript port of the original Python implementation of [Ebisu](https://github.com/fasiha/ebisu), a public-domain library intended for use by quiz apps to intelligently handle scheduling. See [Ebisu’s literate documentation](https://github.com/fasiha/ebisu) for *all* the details! This document just contains a quick guide to how things work for browser and Node.js.
 
+> See also the documentation related to Python version 3's release candidate at https://github.com/fasiha/ebisu/tree/v3-release-candidate#readme
+
 **Table of contents**
-- [Ebisu.js 2.1](#ebisujs-21)
+- [Ebisu.js 3.0.0-rc.1 Release Candidate](#ebisujs-300-rc1-release-candidate)
   - [Install](#install)
   - [API howto](#api-howto)
     - [Memory model](#memory-model)
@@ -11,7 +13,6 @@ This is a TypeScript/JavaScript port of the original Python implementation of [E
     - [Update a recall probability model given a quiz result: `ebisu.updateRecall`](#update-a-recall-probability-model-given-a-quiz-result-ebisuupdaterecall)
     - [Model to halflife: `ebisu.modelToPercentileDecay`](#model-to-halflife-ebisumodeltopercentiledecay)
     - [Manual halflife override: `ebisu.rescaleHalflife`](#manual-halflife-override-ebisurescalehalflife)
-    - [API summary](#api-summary)
   - [Building](#building)
   - [Changelog](#changelog)
   - [Acknowledgements](#acknowledgements)
@@ -21,8 +22,8 @@ This is a TypeScript/JavaScript port of the original Python implementation of [E
 As always, we support both Node.js (CommonJS/`require` as well as ES modules/`import`) and browser (ES modules/`import` as well as IIFE for `<script>`).
 
 **Node.js** First,
-```
-$ npm install --save ebisu-js
+```sh
+$ npm i "https://github.com/fasiha/ebisu.js#v3"   # this will be updated once v3 is published to npm
 ```
 Then, in your code, if you use CommonJS and `require`, simply:
 ```js
@@ -62,44 +63,57 @@ It’s important to know that Ebisu is a very narrowly-scoped library: it aims t
 
 Ebisu doesn’t concern itself with what these facts are, what they mean, nor does it handle *storing* the results of reviews. The external quiz app, at a minimum, stores a probability *model* with each fact’s memory strength, and it is this *model* that Ebisu transforms into predictions about recall probability or into *new* models after a quiz occurs.
 
-Create a *default* model to assign newly-learned facts:
+When a student first learns a fact, create a model to represent that fact:
 ```js
-var defaultModel = ebisu.defaultModel(24);
-// Also ok: `ebisu.defaultModel(24, 4)` or even `ebisu.defaultModel(24, 4, 4)`.
-console.log(defaultModel);
+var model = ebisu.initModel({firstHalflife: 24});
+console.log(model);
+/*
+[
+  { log2weight: -0.15200309345004, alpha: 2, beta: 2, time: 23.999999999999993 },
+  { log2weight: -3.473801293120639, alpha: 2, beta: 2, time: 239.99999999999994 },
+  { log2weight: -6.795599492791237, alpha: 2, beta: 2, time: 2399.9999999999995 },
+  { log2weight: -10.117397692461836, alpha: 2, beta: 2, time: 24000.00000000002 },
+  { log2weight: -13.439195892132435, alpha: 2, beta: 2, time: 240000.00000000017 }
+]
+*/
 ```
-This returns a three-element array of numbers: we’ll call them `[a, b, t]`.
+This is the simplest memory model you can construct in Ebisu. We don't want to get too much into the mathematical apparatus but this reveals that our model contains 5 atoms that together form a weighted ensemble probability. The five atoms are:
+1. halflife 24 hours, weight 90%
+2. halflife 240 hours (10 days), wieght 9%
+3. halflife 2400 hours (100 days), weight 0.9%
+4. halflife 1000 days (2 years, 9 months), weight 0.09%
+5. halflife 27 years, weight 0.009%.
 
-These three numbers describe the probability distribution on a fact’s recall probability. Specifically, they say that, `24` hours after review, we believe this fact’s recall probability will have a `Beta(a, b) = Beta(4, 4)` distribution, whose histogram looks like this, for a hundred thousand samples:
+Note how each halflife and each weight is logarithmically-spaced: this gives us a nice approximation to a power law decay that governs human memory. Each atom hypothesizes that if the student goes for this atom's halflife without reviewing this fact, the probability of recall according to this atom drops to 50% (that's what "halflife" means). You requesting `firstHalflife: 24` initialized the first and most-weighted atom to 24 hours, but the longer-duration and lightly-weighted atoms help Ebisu track your memory as it journeys to maturity.
 
-![Histogram with x axis running from 0 to 1 (recall probability) and y axis from 0 to several thousand (frequency), showing a symmetric plot with a peak at 0.5 and decaying to the edges](./plots/hist.png)
-
-The above distribution only applies 24 hours after learning the fact. Ebisu can transform this distribution given any time horizon though. That is, given you think the recall probability follows `Beta(4, 4)` a day after a fact is learned, here are the recall probability after just six hours, and after four days:
-
-![Two histograms: after six hours later (histogram is bunched to the right, starting from 0.6 to 1.0, with a peak at 0.9) and four days later (bunched to the left, peak at 0 and rapidly fading to almost nothing at 0.5)](./plots/hist2.png)
-
-You can also tune `a` and `b` via `defaultModel`, i.e., `ebisu.defaultModel(24, 4)` will explicitly initialize `a` and `b` to 4. In words, the lower the `a=b`, the less sure you are that `t=24` is the halflife. In pictures, here are the histograms for 1.5, 4, and 12:
-
-![Three histograms. All three have peaks at 0.5 but the first (1.5, 1.5) is quite smooth and has a lot of density at 0 and 1. The second (4, 4) has died out by 0.1 and 0.9. The third (12, 12) has died out by 0.25 and 0.75.](./plots/hist3.png)
-
-I recommend using `a=b` around 2-4: this is loose and allows the quiz data to aggressively guide the scheduling. You don't want to go lower than 1 because `a=b=1` is the flat distribution: you have no confidence that 24 hours is the halflife, and the math gets weird.
+There are a number of optional parmeters you can pass into `initModel`:
+- `lastHalflife`: by default `10_000` times the first halflife;
+- `numAtoms`: the number of atoms to create (default 5);
+- `firstWeight`: instead of 0.9 (90%), what weight to give the first atom? 
+  - The rest of the weights follow from this since they all need to sum to 1. This has to be at least 0.2 because otherwise there's no set of weights that are both logarithmically decreasing and sum to 1.
+- `initialAlphaBeta`: each atom is initialized with a `Beta(α, β)` random variable with `α = β = initialAlphaBeta`. This should be greater than 1 and the higher it goes, the more confident you are that the halflife is the *true* halflife, i.e., that the student's probability of recall after not reviewing the fact for the halflife is exactly 50% and unlikely to be 33% or 80%. The default `initialAlphaBeta = 2` is a nice loose prior.
 
 > We use the [Beta distribution](https://en.wikipedia.org/wiki/Beta_distribution), and not some other probability distribution on numbers between 0 and 1, for [statistical reasons](https://en.wikipedia.org/wiki/Conjugate_prior) that are indicated in depth in the [Ebisu math](https://fasiha.github.io/ebisu/#bernoulli-quizzes) writeup.
 
-This should give you some insight into what those three numbers, `[4, 4, 24]` mean, and why you might want to customize them—you might want the half-life to be just two hours instead of a whole day, in which case you’d set `defaultModel` to `ebisu.defaultModel(2)`.
-
 ### Predict current recall probability: `ebisu.predictRecall`
 
-Given a set of models for facts that the student has learned, you can ask Ebisu to predict each fact’s recall probability by passing in its model and the currently elapsed time since that fact was last reviewed or quizzed via `ebisu.predictRecall`:
-```js
-var model = ebisu.defaultModel(24);
-var elapsed = 1; // hours elapsed since the fact was last seen
-var predictedRecall = ebisu.predictRecall(model, elapsed, true);
-console.log(predictedRecall);
-```
-This function efficiently calculates the *mean* of the histogram of recall probabilities in the interactive demo above (but it uses math, not histograms!). It's a bit faster if you let the third argument be `false`, in which case this function returns *log*-probabilities.
+Suppose the student has learned a few flashcards and you've created a few memory models.
 
-In either case, a quiz app can call this function on each fact to find which fact is most in danger of being forgotten—that’s the one with the lowest predicted recall probability.
+You can now ask Ebisu to predict each fact’s recall probability by passing in its model and the currently elapsed time since that fact was last reviewed or quizzed via `ebisu.predictRecall`:
+```js
+var model = ebisu.initModel({firstHalflife: 24});
+var elapsed = 1; // hours elapsed since the fact was last seen
+var predictedRecall = ebisu.predictRecall(model, elapsed);
+console.log(predictedRecall);
+// 0.969
+```
+This function calculates the *mean* (expected) recall probability. It's just been an hour so we are confident that the student should remember this fact. After two days, however, the expected recall probability has dropped considerably:
+```js
+console.log(ebisu.predictRecall(model, 48));
+// 0.356
+```
+
+A quiz app can call this function on each fact to find which fact is most in danger of being forgotten—that’s the one with the lowest predicted recall probability.
 
 ### Update a recall probability model given a quiz result: `ebisu.updateRecall`
 
@@ -110,16 +124,25 @@ Suppose your quiz app has chosen a fact to review, and tests the student. It's t
    1. `Probability(passed quiz | actually remembers)`, or $q_1$ in the derivation below, is the probability that, assuming the student *actually* remembers the fact, they got the quiz right? This should be 1.0 (100%), especially if your app is nice and lets students change their grade (typos, etc.), but might be less if your app doesn’t allow this. Second, you can specify
    2. `Probability(passed quiz | actually forgot)`, or $q_0$ that is, given the student actually forgot the fact, what’s the probability they passed the quiz? This might be greater than zero if, for example, you provided multiple-choice quizzes and the student only remembered the answer because they recognized it in the list of choices. Or consider a foreign language reader app where users can read texts and click on words they don’t remember: imagine they read a sentence without clicking on any words—you’d like to be able to model the situation where, if you actually quizzed them on one of the words, they would fail the quiz, but all you know is they didn’t click on a word to see its definition.
 
-The `updateRecall` function handles all these cases. It wants an Ebisu model (output by `defaultModel` for example), the number of `successes` out of `total` points, and the time `elapsed`. Let's illustrate the simple binary case here:
+The `updateRecall` function handles all these cases. It wants an Ebisu model (output by `initModel` for example), the number of `successes` out of `total` points, and the `elapsedTime`. Let's illustrate the simple binary case here:
 ```js
-var model = ebisu.defaultModel(24);
+var model = ebisu.initModel({firstHalflife: 24});
 var successes = 1;
 var total = 1;
-var elapsed = 10;
-var newModel = ebisu.updateRecall(model, successes, total, elapsed);
+var elapsedTime = 10;
+var newModel = ebisu.updateRecall({model, successes, total, elapsedTime});
 console.log(newModel);
+/*
+[
+  { alpha: 2.011, beta: 2.011, time: 28.264, log2weight: -0.199 },
+  { alpha: 2.001, beta: 2.001, time: 244.283, log2weight: -3.110 },
+  { alpha: 2.000, beta: 2.000, time: 2404.285, log2weight: -6.387 },
+  { alpha: 2.000, beta: 2.000, time: 24004.285, log2weight: -9.704 },
+  { alpha: 2.000, beta: 2.000, time: 240004.285, log2weight: -13.025 }
+]
+*/
 ```
-The new model is a new 3-array with a new `[a, b, t]`. The Bayesian update magic happens inside here: see here for [the gory math details](https://fasiha.github.io/ebisu/#updating-the-posterior-with-quiz-results).
+The new model is similar to the original model, but with each's Beta distribution parameters and weights adjusted according to this quiz result. Notice that each atom's halflife has increased: quite a bit for the shortest ones but barely any for the longer ones—this makes sense because an atom expecting the halflife of years will not be impressed with a successful quiz after only ten hours.
 
 For the plain binary and binomial cases, `successes` is an integer between 0 and `total` (inclusive).
 
@@ -128,36 +151,47 @@ For the noisy-binary case, `total` must be 1 and `successes` can be a float goin
 - `Probability(passed quiz | actually remembers)` is called `q1` in the Ebisu [math derivation](https://fasiha.github.io/ebisu/#bonus-soft-binary-quizzes) and is taken to be `max(successes, 1-successes)`. That is, if `successes` is =0.1 or 0.9, this conditional probability `q1` is the same, 0.9.
 - The other probability `Probability(passed quiz | actually forgot)` is called `q0` in the Ebisu derivation and defaults to `1-q1`, but can be customized: it's passed in as another argument after the elapsed time.
 
-The following code snippet illustrates how to use the default `q0` and how to specify it:
+The following code snippet illustrates how to use the default `q0` and how to specify it, for a quiz that happens three days after the student last reviewed this fact:
 ```js
-var model = ebisu.defaultModel(24);
+var model = ebisu.initModel({firstHalflife: 24});
 var successes = 0.95;
 var total = 1;
-var elapsed = 96;
-var updated1 = ebisu.updateRecall(model, successes, total, elapsed); // default q0
+var elapsedTime = 96;
+var updated1 = ebisu.updateRecall({model, successes, total, elapsedTime}); // default q0
 
 var q0 = 0.2;
-var updated2 = ebisu.updateRecall(model, successes, total, elapsed, q0);
+var updated2 = ebisu.updateRecall({model, successes, total, elapsedTime, q0});
 
 // compare halflives of these two cases
 console.log([updated1, updated2].map(m => ebisu.modelToPercentileDecay(m)))
-// [ 34.76462629898456, 28.024103424692004 ]
+// [ 82.06755294961737, 48.72178919241523 ]
 ```
-Both updates model a successful quiz with `q1` = 0.95. But the first defaulted  `q0` to the complement of `q1`, i.e., 0.05, as plausible. The second explicitly set a higher `q0`. The result can be seen in the halflife of the resultant models: 35 hours versus 28 hours.
+Both updates model a successful quiz with `q1` = 0.95. But the first defaulted  `q0` to the complement of `q1`, i.e., 0.05, as plausible. The second explicitly set a higher `q0`. The result can be seen in the halflife of the resultant models: 82 hours versus 48 hours.
 
-This code snippet also illustrates another function in the API, which we look at next.
+There are two advanced arguments we have not discussed:
+- `updateThreshold` and 
+- `weightThreshold`
+
+and these specify how to handle the inevitable early failures when it comes to long-duration halflives. We expect some quiz failures but it wouldn't make sense to update a one-year-halflife atom with a quiz failure after a day: we want that long-halflife atom to continue providing a little bit of probability that this fact's memory will grow so strong. The details of what these parameters do are omitted here and will be available in the Python v3-release-candidate docs: https://github.com/fasiha/ebisu/tree/v3-release-candidate#readme
+
+The code snippet above also illustrates another function in the API, which we look at next.
 
 ### Model to halflife: `ebisu.modelToPercentileDecay`
-Sometimes it's useful to convert an Ebisu model (an `[a, b, t]` array) into the halflife it represents. We did this above to compare the result of choosing different `q0` for the soft-binary case. `ebisu.modelToPercentileDecay` accepts a model and optionally a percentile, and uses a golden section root finder to find the time needed for the model's recall probability to decay to that percentile:
+Sometimes it's useful to find what delay makes an Ebisu model decay to 70%, 60%, 50% probability of recall. Some apps, for example, schedule a review for when a fact drops below some threshold. `ebisu.modelToPercentileDecay` accepts a model and optionally a percentile, and uses a golden section root finder to find the time needed for the model's recall probability to decay to that percentile:
 ```js
-var model = ebisu.defaultModel(24);
-console.log(ebisu.modelToPercentileDecay(model)); // 23.999553931988203
-console.log(ebisu.modelToPercentileDecay(model, 0.1)); // 99.331489589545
-console.log(ebisu.modelToPercentileDecay(model, 0.9)); // 3.375025317798656
+var model = ebisu.initModel({firstHalflife: 24});
+console.log(ebisu.modelToPercentileDecay(model));
+// 28.105893555287135
+console.log(ebisu.modelToPercentileDecay(model, 0.1));
+// 211.34206599189068
+console.log(ebisu.modelToPercentileDecay(model, 0.9));
+// 3.4566882903035907
 ```
 
+Note how the halflife of a freshly-initialized model is a little bit more than the `firstHalflife` you provided—28 hours versus 24 hours. This is because, while the first atom has the bulk of the weight, the longer-duration atoms do contribute a little bit to the halflife (and therefore the probability of recall).
+
 ### Manual halflife override: `ebisu.rescaleHalflife`
-It happens. You initialized a model and you updated it with some quizzes, but your initial halflife was wrong. Your student tells your quiz app that it's just not the right halflife, and they want to see this fact more or less frequently. Ebisu gives you a function to accurately deal with this: `ebisu.rescaleHalflife` takes an `[a, b, t]` model and a `scale` argument, a positive number, and returns a new model with the same probability distribution on recall probability but scaled to `t * scale`.
+It happens. You initialized a model and you updated it with some quizzes, but your initial halflife was just wrong. Your student tells your quiz app that it's just not the right halflife, and they want to see this fact more or less frequently. Ebisu gives you a function to accurately deal with this: `ebisu.rescaleHalflife` takes a model and a `scale` argument, a positive number, and returns a new model with the same probability distribution on recall probability but scaled to `t * scale`.
 
 The following two code snippets let you say "I want to see this fact twice as often" versus "I'm seeing this fact ten times too often":
 ```js
@@ -170,29 +204,19 @@ var newModel = ebisu.rescaleHalflife(model, 0.5);
 var newModel2 = ebisu.rescaleHalflife(model, 10);
 ```
 
-### API summary
-
-That’s it! That’s the entire API:
-- `ebisu.defaultModel(t: number, a = 4.0, b = a): Model` if you can’t bother to create a 3-array (a `Model`). The units of `t` are the units of all other time inputs—you decide if you want to deal with hours, days, etc.
-- `ebisu.predictRecall(prior: Model, tnow: number, exact = false): number` returns the recall log-probability given a model and the time elapsed since the last review or quiz. If `exact`, you get linear probability (between 0 and 1) instead of log-probability (-∞ to 0).
-- `ebisu.updateRecall(prior: Model, successes: number, total: number, tnow: number, q0?: number): Model` to update the model after a quiz session with `successes` out of `total` statistically-independent trials exercising the fact, and time after its last review. See above for the noisy-binary case where `0 <= successes <= 1` is a float and optionally `q0`. Returns a new model.
-
-Two bonus functions:
-- `ebisu.modelToPercentileDecay(model: Model, percentile = 0.5, tolerance = 1e-4): number` to find the half-life (time for recall probability to decay to 50%), or actually, any percentile-life (time for recall probability to decay to any percentile). `tolerance` tunes how accurate you want the result to be.
-- `ebisu.rescaleHalflife(prior: Model, scale = 1): Model` will return a new `Model` with the halflife scaled by `scale`.
-
 ## Building
 
 This is a TypeScript library. For a one-shot compile, run `npm run compile`. You can also run the TypeScript compiler in watch mode with `npm run compile-watch`.
 
-We use `tape` for tests: after compiling, run `npm test`. This consumes `test.json`, which came from the [Ebisu Python reference implementation](https://fasiha.github.io/ebisu/).
+We use `tape` for tests: after compiling, run `npm test`. This consumes `test.json` and `test3.json`, which came from the [Ebisu Python reference implementation](https://fasiha.github.io/ebisu/).
 
 We use ESbuild to create CommonJS (for Node `require`), ES modules (for Node and browsers' `import`), and an IIFE (for browsers' `<script>` tag). `npm run build` will generate all three.
 
 ## Changelog
 The version of this repo matches the Python reference’s version up to minor rev (i.e., Python Ebisu 1.0.x will match Ebisu.js 1.0.y). See the Python Ebisu [changelog](https://github.com/fasiha/ebisu/blob/gh-pages/CHANGELOG.md).
 
-This JavaScript port is version 2.1, which as of now (Feb 2023) is the latest Python Ebisu release adding soft-binary quizzes, `rescaleHalflife`, and changes to `updateRecall` so that it always rebalances.
+- JavaScript Ebisu version 3-rc.1 moves us from a single atom to an ensemble. This will give us much more accurate `predictRecall` predictions.
+- JavaScript Ebisu version 2.1 added soft-binary quizzes, `rescaleHalflife`, and changes to `updateRecall` so that it always rebalances from the Python version.
 
 ## Acknowledgements
 
