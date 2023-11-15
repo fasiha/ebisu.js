@@ -1,14 +1,16 @@
-const exp = Math.exp;
-const log = Math.log;
-const sign = Math.sign;
-const max = Math.max;
+import {kahanSum} from "./math";
 
-export function logsumexp(a: number[], b: number[]) {
-  const a_max = max(...a);
-  let s = 0;
-  for (let i = a.length - 1; i >= 0; i--) { s += b[i] * exp(a[i] - a_max); }
-  const sgn = sign(s);
-  s *= sgn;
-  const out = log(s) + a_max;
-  return [out, sgn];
+// Only works for positive `b`, i.e., doesn't check the sign
+export function logsumexp(a: number[], b?: number[]): number {
+  const amax = Math.max(...a)
+  const s = kahanSum(a.map((a, i) => Math.exp(a - amax) * (b?.[i] ?? 1)))
+  if (s < 0) { throw new Error('s must be positive') };
+  return Math.log(s) + amax;
+}
+
+export function sumexp(a: number[], b?: number[]): number {
+  const amax = Math.max(...a)
+  const s = kahanSum(a.map((a, i) => Math.exp(a - amax) * (b?.[i] ?? 1)))
+  if (s < 0) { throw new Error('s must be positive') };
+  return s * Math.exp(amax);
 }
