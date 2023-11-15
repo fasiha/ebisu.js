@@ -137,3 +137,11 @@ export function rescaleHalflife(model: Model3, scale: number, tolerance?: number
     return { alpha: scaled[0], beta: scaled[1], time: scaled[2], log2weight: m.log2weight }
   });
 }
+
+export * as ebisu2 from './ebisu2';
+export * from './interfaces';
+export * as math from './math';
+export * as logsumexp from './logsumexp';
+// these are common-js
+export * as fmin from './fmin';
+export * as gamma from './gamma';

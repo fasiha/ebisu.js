@@ -229,6 +229,23 @@ var require_gamma = __commonJS({
 // index.ts
 var ebisu_exports = {};
 __export(ebisu_exports, {
+  ebisu2: () => ebisu2_exports,
+  fmin: () => fmin_exports,
+  gamma: () => gamma_exports,
+  initModel: () => initModel,
+  logsumexp: () => logsumexp_exports,
+  math: () => math_exports,
+  modelToPercentileDecay: () => modelToPercentileDecay2,
+  predictRecall: () => predictRecall2,
+  predictRecallApproximate: () => predictRecallApproximate,
+  rescaleHalflife: () => rescaleHalflife2,
+  updateRecall: () => updateRecall2
+});
+module.exports = __toCommonJS(ebisu_exports);
+
+// ebisu2.ts
+var ebisu2_exports = {};
+__export(ebisu2_exports, {
   customizeMath: () => customizeMath,
   defaultModel: () => defaultModel,
   modelToPercentileDecay: () => modelToPercentileDecay,
@@ -236,33 +253,106 @@ __export(ebisu_exports, {
   rescaleHalflife: () => rescaleHalflife,
   updateRecall: () => updateRecall
 });
-module.exports = __toCommonJS(ebisu_exports);
 
 // fmin.ts
+var fmin_exports = {};
+__export(fmin_exports, {
+  fmin: () => fmin
+});
 var fmin = require_minimize_golden_section_1d();
 
 // gamma.ts
+var gamma_exports = {};
+__export(gamma_exports, {
+  gamma: () => gamma,
+  gammaln: () => gammaln
+});
 var gamma = require_gamma();
 var gammaln = gamma.log;
 
 // logsumexp.ts
-var exp = Math.exp;
-var log = Math.log;
-var sign = Math.sign;
-var max = Math.max;
-function logsumexp(a, b) {
-  const a_max = max(...a);
-  let s = 0;
-  for (let i = a.length - 1; i >= 0; i--) {
-    s += b[i] * exp(a[i] - a_max);
+var logsumexp_exports = {};
+__export(logsumexp_exports, {
+  logsumexp: () => logsumexp,
+  sumexp: () => sumexp
+});
+
+// math.ts
+var math_exports = {};
+__export(math_exports, {
+  exceedsThresholdLeft: () => exceedsThresholdLeft,
+  kahanSum: () => kahanSum,
+  logNChooseK: () => logNChooseK,
+  logspace: () => logspace,
+  sum: () => sum
+});
+function sum(v) {
+  return v.reduce((p, c) => p + c, 0);
+}
+function kahanSum(v) {
+  let sum2 = 0, c = 0;
+  for (const x of v) {
+    const y = x - c;
+    const t = sum2 + y;
+    c = t - sum2 - y;
+    sum2 = t;
   }
-  const sgn = sign(s);
-  s *= sgn;
-  const out = log(s) + a_max;
-  return [out, sgn];
+  return sum2;
+}
+function logspace(a, b, len) {
+  const end = len - 1;
+  const d = (b - a) / end;
+  const arr = new Array(len);
+  let tmp = a;
+  arr[0] = 10 ** tmp;
+  for (var i = 1; i < end; i++) {
+    tmp += d;
+    arr[i] = 10 ** tmp;
+  }
+  arr[end] = 10 ** b;
+  return arr;
+}
+function logNChooseK(n, k) {
+  return gammaln(n + 1) - gammaln(k + 1) - gammaln(n - k + 1);
+}
+function exceedsThresholdLeft(v, threshold) {
+  const res = [];
+  let sum2 = 0;
+  for (let i = v.length - 1; i >= 0; --i) {
+    sum2 += v[i];
+    res.push(sum2 > threshold);
+  }
+  res.reverse();
+  return res;
 }
 
-// index.ts
+// logsumexp.ts
+function logsumexp(a, b) {
+  const amax = Math.max(...a);
+  const s = kahanSum(a.map((a2, i) => {
+    var _a;
+    return Math.exp(a2 - amax) * ((_a = b == null ? void 0 : b[i]) != null ? _a : 1);
+  }));
+  if (s < 0) {
+    throw new Error("s must be positive");
+  }
+  ;
+  return Math.log(s) + amax;
+}
+function sumexp(a, b) {
+  const amax = Math.max(...a);
+  const s = kahanSum(a.map((a2, i) => {
+    var _a;
+    return Math.exp(a2 - amax) * ((_a = b == null ? void 0 : b[i]) != null ? _a : 1);
+  }));
+  if (s < 0) {
+    throw new Error("s must be positive");
+  }
+  ;
+  return s * Math.exp(amax);
+}
+
+// ebisu2.ts
 var GAMMALN_CACHE = /* @__PURE__ */ new Map();
 function gammalnCached(x) {
   let hit = GAMMALN_CACHE.get(x);
@@ -336,7 +426,7 @@ function updateRecall(prior, successes, total, tnow, q0, rebalance = true, tback
     for (let i = 0; i <= failures; i++) {
       signs.push(Math.pow(-1, i));
     }
-    return logsumexp(logProbs, signs)[0];
+    return logsumexp(logProbs, signs);
   }
   const logDenominator = unnormalizedLogMoment(0, 0);
   let et;
@@ -387,7 +477,7 @@ function _updateRecallSingle(prior, result, tnow, q0, rebalance = true, tback, _
   const dt = tnow / t;
   let [c, d] = z ? [q1 - q0, q0] : [q0 - q1, 1 - q0];
   const den = c * betafn(alpha + dt, beta) + d * (betafn(alpha, beta) || 0);
-  const logden = _useLog ? logsumexp([betalnUncached(alpha + dt, beta), betalnUncached(alpha, beta) || -Infinity], [c, d])[0] : 0;
+  const logden = _useLog ? logsumexp([betalnUncached(alpha + dt, beta), betalnUncached(alpha, beta) || -Infinity], [c, d]) : 0;
   function moment(N, et2) {
     let num = c * betafn(alpha + dt + N * dt * et2, beta);
     if (d !== 0) {
@@ -398,7 +488,7 @@ function _updateRecallSingle(prior, result, tnow, q0, rebalance = true, tback, _
   function logmoment(N, et2) {
     if (d !== 0) {
       const res = logsumexp([betalnUncached(alpha + dt + N * dt * et2, beta), betalnUncached(alpha + N * dt * et2, beta)], [c, d]);
-      return res[0] - logden;
+      return res - logden;
     }
     return Math.log(c) + betalnUncached(alpha + dt + N * dt * et2, beta) - logden;
   }
@@ -414,7 +504,8 @@ function _updateRecallSingle(prior, result, tnow, q0, rebalance = true, tback, _
     }
     if (!("converged" in status) || !status.converged) {
       if (!_useLog) {
-        return _updateRecallSingle(prior, result, tnow, q0, rebalance, tback, true);
+        console.log("TRYING BACKUP");
+        return _updateRecallSingle(prior, result, tnow, q0, rebalance, tback, !_useLog);
       }
       console.error(status, { prior, result, tnow, q0, rebalance, tback });
       throw new Error("failed to converge");
@@ -433,6 +524,12 @@ function _updateRecallSingle(prior, result, tnow, q0, rebalance = true, tback, _
   const [newAlpha, newBeta] = _meanVarToBeta(mean, variance);
   if (newAlpha <= 0 || newBeta <= 0)
     throw new Error("newAlpha and newBeta must be greater than zero");
+  if (!(newAlpha > 0 && newBeta > 0 && isFinite(newAlpha) && isFinite(newBeta))) {
+    if (!_useLog) {
+      return _updateRecallSingle(prior, result, tnow, q0, rebalance, tback, !_useLog);
+    }
+    throw new Error("newAlpha and newBeta must be finite and greater than zero");
+  }
   return [newAlpha, newBeta, tback];
 }
 function defaultModel(t, a = 4, b = a) {
@@ -456,9 +553,9 @@ function modelToPercentileDecay(model, percentile = 0.5, tolerance = 1e-4) {
   }
   return sol * t0;
 }
-function rescaleHalflife(prior, scale = 1) {
+function rescaleHalflife(prior, scale = 1, tolerance) {
   const [alpha, beta, t] = prior;
-  const oldHalflife = modelToPercentileDecay(prior);
+  const oldHalflife = modelToPercentileDecay(prior, 0.5, tolerance);
   const dt = oldHalflife / t;
   const logDenominator = betaln(alpha, beta);
   const logm2 = betaln(alpha + 2 * dt, beta) - logDenominator;
@@ -469,12 +566,129 @@ function rescaleHalflife(prior, scale = 1) {
   }
   return [newAlphaBeta, newAlphaBeta, oldHalflife * scale];
 }
+
+// index.ts
+function initModel({ firstHalflife, lastHalflife = 1e4 * firstHalflife, firstWeight = 0.9, numAtoms = 5, initialAlphaBeta = 2 }) {
+  const fminStatus = {};
+  const solution = fmin((d) => {
+    let sum2 = 0;
+    for (let i = 0; i < numAtoms; i++) {
+      sum2 += firstWeight * d ** i;
+    }
+    return Math.abs(sum2 - 1);
+  }, { lowerBound: 1e-3, guess: 0.5, tolerance: 1e-10, maxIterations: 1e3 }, fminStatus);
+  if (!(fminStatus.converged && isFinite(solution) && 0 < solution && solution < 1)) {
+    throw new Error("unable to initialize: " + fminStatus);
+  }
+  const weights = [];
+  for (let i = 0; i < numAtoms; i++) {
+    weights.push(firstWeight * solution ** i);
+  }
+  const wsum = kahanSum(weights);
+  const halflives = logspace(Math.log10(firstHalflife), Math.log10(lastHalflife), numAtoms);
+  return weights.map(
+    (w, i) => ({ log2weight: Math.log2(w / wsum), alpha: initialAlphaBeta, beta: initialAlphaBeta, time: halflives[i] })
+  );
+}
+var LN2 = Math.log(2);
+function predictRecall2(model, elapsedTime) {
+  const logps = model.map((m) => LN2 * m.log2weight + predictRecall([m.alpha, m.beta, m.time], elapsedTime));
+  const result = sumexp(logps);
+  if (!(isFinite(result) && 0 <= result && result <= 1)) {
+    throw new Error("unexpected result");
+  }
+  return result;
+}
+function predictRecallApproximate(model, elapsedTime) {
+  return sumexp(model.map((m) => LN2 * (m.log2weight - elapsedTime / m.time)));
+}
+function modelToPercentileDecay2(model, percentile = 0.5) {
+  if (!(0 < percentile && percentile < 1)) {
+    throw new Error("percentile \u2208 (0, 1)");
+  }
+  const fminStatus = {};
+  const res = fmin((h) => Math.abs(percentile - predictRecall2(model, h)), { lowerBound: 0.01, guess: model[0].time }, fminStatus);
+  if (!fminStatus.converged) {
+    throw new Error("failed to converge");
+  }
+  return res;
+}
+function _noisyLogProbability(result, q1, q0, p) {
+  const z = result >= 0.5;
+  return Math.log(z ? (q1 - q0) * p + q0 : (q0 - q1) * p + (1 - q0));
+}
+function _binomialLogProbability(successes, total, p) {
+  return logNChooseK(total, successes) + successes * Math.log(p) + (total - successes) * Math.log(1 - p);
+}
+function updateRecall2({
+  model,
+  successes,
+  total = 1,
+  elapsedTime,
+  q0 = 1 - Math.max(successes, 1 - successes),
+  updateThreshold = 0.9,
+  weightThreshold = 0.9
+}) {
+  if (!(total === Math.floor(total) && total >= 1 && 0 <= successes && successes <= total)) {
+    throw new Error("total must be positive integer and successes \u2208 [0, total]");
+  }
+  const updatedModels = model.map((m) => updateRecall([m.alpha, m.beta, m.time], successes, total, elapsedTime, q0));
+  const pRecalls = model.map((m) => predictRecall([m.alpha, m.beta, m.time], elapsedTime, true));
+  let individualLogProbabilities;
+  if (total === 1) {
+    const q1 = Math.max(successes, 1 - successes);
+    individualLogProbabilities = pRecalls.map((p) => _noisyLogProbability(successes, q1, q0, p));
+  } else {
+    if (successes !== Math.floor(successes)) {
+      throw new Error("total>1 implies successes is integer");
+    }
+    individualLogProbabilities = pRecalls.map((p) => _binomialLogProbability(successes, total, p));
+  }
+  if (!individualLogProbabilities.every((x) => x < 0)) {
+    throw new Error("all log-probabilities must be negative");
+  }
+  const newAtoms = [];
+  const exceedsWeight = exceedsThresholdLeft(model.map((m) => 2 ** m.log2weight), weightThreshold);
+  for (const [idx, oldAtom] of model.entries()) {
+    const updatedAtom = updatedModels[idx];
+    const exceeds = exceedsWeight[idx];
+    const lp = individualLogProbabilities[idx];
+    const oldHl = oldAtom.time;
+    const newHl = updatedAtom[2];
+    const scal = newHl / oldHl;
+    const newLog2Weight = oldAtom.log2weight + lp / LN2;
+    if (scal > updateThreshold || exceeds) {
+      newAtoms.push({ alpha: updatedAtom[0], beta: updatedAtom[1], time: updatedAtom[2], log2weight: newLog2Weight });
+    } else {
+      newAtoms.push({ ...oldAtom, log2weight: newLog2Weight });
+    }
+  }
+  const log2WeightSum = logsumexp(newAtoms.map((m) => m.log2weight * LN2)) / LN2;
+  for (const atom of newAtoms) {
+    atom.log2weight -= log2WeightSum;
+  }
+  return newAtoms;
+}
+function rescaleHalflife2(model, scale, tolerance) {
+  if (scale <= 0) {
+    throw new Error("scale > 0");
+  }
+  return model.map((m) => {
+    const scaled = rescaleHalflife([m.alpha, m.beta, m.time], scale, tolerance);
+    return { alpha: scaled[0], beta: scaled[1], time: scaled[2], log2weight: m.log2weight };
+  });
+}
 // Annotate the CommonJS export names for ESM import in node:
 0 && (module.exports = {
-  customizeMath,
-  defaultModel,
+  ebisu2,
+  fmin,
+  gamma,
+  initModel,
+  logsumexp,
+  math,
   modelToPercentileDecay,
   predictRecall,
+  predictRecallApproximate,
   rescaleHalflife,
   updateRecall
 });
