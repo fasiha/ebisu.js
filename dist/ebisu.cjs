@@ -569,6 +569,9 @@ function rescaleHalflife(prior, scale = 1, tolerance) {
 
 // index.ts
 function initModel({ firstHalflife, lastHalflife = 1e4 * firstHalflife, firstWeight = 0.9, numAtoms = 5, initialAlphaBeta = 2 }) {
+  if (!(isFinite(firstHalflife) && firstHalflife > 0)) {
+    throw new Error("expecting positive firstHalflife");
+  }
   const fminStatus = {};
   const solution = fmin((d) => {
     let sum2 = 0;
