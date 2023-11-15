@@ -1,2 +1,5 @@
 node_modules/
-*.js
+/*.js
+.DS_Store
+.vscode
+!/test*.js
