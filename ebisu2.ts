@@ -327,9 +327,9 @@ export function modelToPercentileDecay(model: Model2, percentile = 0.5, toleranc
   That is the distribution this function returns, except at the *scaled*
   halflife.
  */
-export function rescaleHalflife(prior: Model2, scale = 1): Model2 {
+export function rescaleHalflife(prior: Model2, scale = 1, tolerance?: number): Model2 {
   const [alpha, beta, t] = prior;
-  const oldHalflife = modelToPercentileDecay(prior);
+  const oldHalflife = modelToPercentileDecay(prior, .5, tolerance);
   const dt = oldHalflife / t;
 
   const logDenominator = betaln(alpha, beta);

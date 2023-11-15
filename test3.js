@@ -29,16 +29,26 @@ test('compare', t => {
   for (const [type, input, expected] of ref) {
     if (type === 'init') {
       const actual = ebisu.initModel(input);
-      t.ok(modelsEqual(actual, expected))
+      t.ok(modelsEqual(actual, expected), 'initModel')
     } else if (type === 'predict') {
       const actual = ebisu.predictRecall(...input)
-      t.ok(relerr(actual, expected) < EPS * 1e-5)
+      t.ok(relerr(actual, expected) < EPS * 1e-5, 'predictRecall')
     } else if (type === 'update') {
       const actual = ebisu.updateRecall(input)
       const ok = modelsEqual(actual, expected);
       if (!ok) { console.error(JSON.stringify({input, actual, expected}, null, 1)) }
-      t.ok(ok)
+      t.ok(ok, 'updateRecall')
     } else if (type === 'modelToPercentileDecay') {
+      const actual = ebisu.modelToPercentileDecay(...input)
+      const ok = relerr(actual, expected) < EPS;
+      if (!ok) console.log({actual, expected, err: relerr(actual, expected), input});
+      t.ok(ok, 'modelToPercentileDecay')
+    } else if (type === 'rescale') {
+      const tighterTolerance = 1e-8;
+      const actual = ebisu.rescaleHalflife(...input, tighterTolerance);
+      const ok = modelsEqual(actual, expected);
+      if (!ok) { console.error(JSON.stringify({input, actual, expected}, null, 1)) }
+      t.ok(ok, 'rescaleHalflife')
     } else {
       t.ok(false, 'unknown type')
     }

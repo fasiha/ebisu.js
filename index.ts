@@ -130,10 +130,10 @@ export function updateRecall({
   return newAtoms;
 }
 
-export function rescaleHalflife(model: Model3, scale: number): Model3 {
+export function rescaleHalflife(model: Model3, scale: number, tolerance?: number): Model3 {
   if (scale <= 0) { throw new Error('scale > 0'); }
   return model.map(m => {
-    const scaled = ebisu2.rescaleHalflife([m.alpha, m.beta, m.time], scale);
+    const scaled = ebisu2.rescaleHalflife([m.alpha, m.beta, m.time], scale, tolerance);
     return { alpha: scaled[0], beta: scaled[1], time: scaled[2], log2weight: m.log2weight }
   });
 }
