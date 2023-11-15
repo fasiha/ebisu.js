@@ -18,8 +18,8 @@ export function initModel(
   const solution = fmin((d) => {
     let sum = 0
     for (let i = 0; i < numAtoms; i++) { sum += firstWeight * d ** i; }
-    return sum;
-  }, {lowerBound: 1e-3, guess: 0.5}, fminStatus);
+    return Math.abs(sum - 1);
+  }, {lowerBound: 1e-3, guess: 0.5, tolerance: 1e-10, maxIterations: 1000}, fminStatus);
   if (!((fminStatus as Status).converged && isFinite(solution) && 0 < solution && solution < 1)) {
     throw new Error('unable to initialize: ' + fminStatus)
   }
@@ -63,7 +63,7 @@ function _noisyLogProbability(result: number, q1: number, q0: number, p: number)
 }
 
 function _binomialLogProbability(successes: number, total: number, p: number): number {
-  return logNChooseK(successes, total) + successes * Math.log(p) + (total - successes) * Math.log(1 - p);
+  return logNChooseK(total, successes) + successes * Math.log(p) + (total - successes) * Math.log(1 - p);
 }
 
 interface UpdateRecallArgs {
@@ -101,7 +101,7 @@ export function updateRecall({
     individualLogProbabilities = pRecalls.map(p => _binomialLogProbability(successes, total, p));
   }
 
-  if (!individualLogProbabilities.every(x => x < 0)) { throw new Error('all log-probabilities must be negative') }
+  if (!individualLogProbabilities.every(x => x < 0)) { throw new Error('all log-probabilities must be negative'); }
 
   const newAtoms: Model3 = []
 
