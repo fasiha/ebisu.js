@@ -229,12 +229,10 @@ var require_gamma = __commonJS({
 // index.ts
 var ebisu_exports = {};
 __export(ebisu_exports, {
-  customizeMath: () => customizeMath,
   defaultModel: () => defaultModel,
   modelToPercentileDecay: () => modelToPercentileDecay,
-  predictRecall: () => predictRecall,
-  rescaleHalflife: () => rescaleHalflife,
-  updateRecall: () => updateRecall
+  predictRecall: () => predictRecall2,
+  updateRecall: () => updateRecall2
 });
 module.exports = __toCommonJS(ebisu_exports);
 
@@ -262,7 +260,7 @@ function logsumexp(a, b) {
   return [out, sgn];
 }
 
-// index.ts
+// ebisu2.ts
 var GAMMALN_CACHE = /* @__PURE__ */ new Map();
 function gammalnCached(x) {
   let hit = GAMMALN_CACHE.get(x);
@@ -287,16 +285,6 @@ var betafn = (a, b) => {
 };
 function binomln(n, k) {
   return -betaln(1 + n - k, 1 + k) - Math.log(n + 1);
-}
-function customizeMath(args) {
-  const orig = { betaln, betafn };
-  if (args.betaln) {
-    betaln = args.betaln;
-  }
-  if (args.betafn) {
-    betafn = args.betafn;
-  }
-  return orig;
 }
 function _meanVarToBeta(mean, v) {
   var tmp = mean * (1 - mean) / v - 1;
@@ -439,46 +427,35 @@ function _updateRecallSingle(prior, result, tnow, q0, rebalance = true, tback, _
   }
   return [newAlpha, newBeta, tback];
 }
-function defaultModel(t, a = 4, b = a) {
-  return [a, b, t];
+
+// index.ts
+function predictRecall2(model, elapsedTime, exact) {
+  const l = Math.log2(1 + elapsedTime / model[2]);
+  return predictRecall(model, l * model[2], exact);
 }
-function modelToPercentileDecay(model, percentile = 0.5, tolerance = 1e-4) {
-  if (percentile < 0 || percentile > 1) {
-    throw new Error("percentiles must be between (0, 1) exclusive");
+function updateRecall2(model, successes, total, elapsedTime, q0) {
+  const l = Math.log2(1 + elapsedTime / model[2]);
+  return updateRecall(model, successes, total, l * model[2], q0, false);
+}
+function modelToPercentileDecay(model, percentile = 0.5, tolerance) {
+  if (!(0 < percentile && percentile < 1)) {
+    throw new Error("percentile \u2208 (0, 1)");
   }
-  const [alpha, beta, t0] = model;
-  const logBab = betaln(alpha, beta);
-  const logPercentile = Math.log(percentile);
-  function f(delta) {
-    const logMean = betaln(alpha + delta, beta) - logBab;
-    return Math.abs(logMean - logPercentile);
-  }
-  let status = {};
-  const sol = fmin(f, { lowerBound: 0, tolerance }, status);
-  if (!("converged" in status) || !status.converged) {
+  const lp = Math.log(percentile);
+  const fminStatus = {};
+  const res = fmin((h) => Math.abs(lp - predictRecall2(model, h)), { lowerBound: 1e-14, guess: model[2], tolerance }, fminStatus);
+  if (!fminStatus.converged) {
     throw new Error("failed to converge");
   }
-  return sol * t0;
+  return res;
 }
-function rescaleHalflife(prior, scale = 1) {
-  const [alpha, beta, t] = prior;
-  const oldHalflife = modelToPercentileDecay(prior);
-  const dt = oldHalflife / t;
-  const logDenominator = betaln(alpha, beta);
-  const logm2 = betaln(alpha + 2 * dt, beta) - logDenominator;
-  const m2 = Math.exp(logm2);
-  const newAlphaBeta = 1 / (8 * m2 - 2) - 0.5;
-  if (newAlphaBeta <= 0) {
-    throw new Error("non-positive alpha, beta encountered");
-  }
-  return [newAlphaBeta, newAlphaBeta, oldHalflife * scale];
+function defaultModel(t, a = 2, b = a) {
+  return [a, b, t];
 }
 // Annotate the CommonJS export names for ESM import in node:
 0 && (module.exports = {
-  customizeMath,
   defaultModel,
   modelToPercentileDecay,
   predictRecall,
-  rescaleHalflife,
   updateRecall
 });

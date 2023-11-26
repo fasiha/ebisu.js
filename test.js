@@ -1,5 +1,5 @@
 var test = require('tape');
-var ebisu = require('./index');
+var ebisu = require('./ebisu2');
 var fs = require('fs');
 var ref = JSON.parse(fs.readFileSync('test.json', 'utf8'));
 
