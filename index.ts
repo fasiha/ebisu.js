@@ -2,7 +2,7 @@ import {fmin} from "./fmin";
 import {gamma, gammaln} from "./gamma";
 import {logsumexp} from "./logsumexp";
 
-import {type Model} from "./interfaces";
+import {MinimizeParams, type Model} from "./interfaces";
 
 const GAMMALN_CACHE = new Map();
 function gammalnCached(x: number) {
@@ -125,13 +125,13 @@ export function updateRecall(
     q0?: number,
     rebalance = true,
     tback?: number,
-    _useLog?: boolean,
+    {useLog = false, tolerance = 1e-8}: Partial<MinimizeParams> = {},
     ): Model {
   if (0 > successes || successes > total || total < 1) {
     throw new Error("0 <= successes and successes <= total and 1 <= total must be true");
   }
 
-  if (total === 1) { return _updateRecallSingle(prior, successes, tnow, q0, rebalance, tback, _useLog); }
+  if (total === 1) { return _updateRecallSingle(prior, successes, tnow, q0, rebalance, tback, {useLog, tolerance}); }
 
   if (!(successes === Math.trunc(successes) && total === Math.trunc(total))) {
     throw new Error('expecting integer successes and total')
@@ -160,8 +160,11 @@ export function updateRecall(
     const target = Math.log(0.5);
     const rootfn = (et: number) => unnormalizedLogMoment(1, et) - logDenominator - target;
     const status = {};
-    const sol = fmin((x) => Math.abs(rootfn(x)), {}, status);
-    if (!("converged" in status) || !status.converged) { throw new Error("failed to converge"); }
+    const sol = fmin((x) => Math.abs(rootfn(x)), {tolerance}, status);
+    if (!("converged" in status) || !status.converged) {
+      console.log(status);
+      throw new Error("failed to converge: binomial");
+    }
 
     et = sol;
     tback = et * tnow;
@@ -194,7 +197,7 @@ function _updateRecallSingle(
     q0?: number,
     rebalance = true,
     tback?: number,
-    _useLog: boolean = false,
+    {useLog = false, tolerance = 1e-8}: Partial<MinimizeParams> = {},
     ): Model {
   if (!(0 <= result && result <= 1)) { throw new Error('expecting result between 0 and 1 inclusive') }
   const [alpha, beta, t] = prior;
@@ -209,8 +212,7 @@ function _updateRecallSingle(
 
   const den = c * betafn(alpha + dt, beta) + d * (betafn(alpha, beta) || 0);
   const logden =
-      _useLog ? logsumexp([betalnUncached(alpha + dt, beta), (betalnUncached(alpha, beta) || -Infinity)], [c, d])[0]
-              : 0;
+      useLog ? logsumexp([betalnUncached(alpha + dt, beta), (betalnUncached(alpha, beta) || -Infinity)], [c, d])[0] : 0;
 
   function moment(N: number, et: number) {
     let num = c * betafn(alpha + dt + N * dt * et, beta);
@@ -230,16 +232,16 @@ function _updateRecallSingle(
   if (rebalance) {
     const status = {};
     let sol: number;
-    if (_useLog) {
+    if (useLog) {
       const target = Math.log(0.5)
-      sol = fmin((et) => Math.abs(logmoment(1, et) - target), {lowerBound: 0}, status);
+      sol = fmin((et) => Math.abs(logmoment(1, et) - target), {lowerBound: 0, tolerance}, status);
     } else {
       sol = fmin((et) => Math.abs(moment(1, et) - 0.5), {lowerBound: 0}, status);
     }
     if (!("converged" in status) || !status.converged) {
-      if (!_useLog) {
+      if (!useLog) {
         // for very long t, Substack's Gamma results in a lot of NaNs? But this can be avoided by using logs:
-        return _updateRecallSingle(prior, result, tnow, q0, rebalance, tback, !_useLog);
+        return _updateRecallSingle(prior, result, tnow, q0, rebalance, tback, {tolerance, useLog: !useLog});
       }
 
       console.error(status, {prior, result, tnow, q0, rebalance, tback});
@@ -254,14 +256,16 @@ function _updateRecallSingle(
     et = tback / tnow;
   }
 
-  const mean = _useLog ? Math.exp(logmoment(1, et)) : moment(1, et);
-  const secondMoment = _useLog ? Math.exp(logmoment(2, et)) : moment(2, et);
+  const mean = useLog ? Math.exp(logmoment(1, et)) : moment(1, et);
+  const secondMoment = useLog ? Math.exp(logmoment(2, et)) : moment(2, et);
 
   const variance = secondMoment - mean * mean;
   const [newAlpha, newBeta] = _meanVarToBeta(mean, variance);
   if (!(newAlpha > 0 && newBeta > 0 && isFinite(newAlpha) && isFinite(newBeta))) {
     // same as above: as a last-ditch effort to salvage this, try rerunning this function in the log-domain
-    if (!_useLog) { return _updateRecallSingle(prior, result, tnow, q0, rebalance, tback, !_useLog); }
+    if (!useLog) {
+      return _updateRecallSingle(prior, result, tnow, q0, rebalance, tback, {tolerance, useLog: !useLog});
+    }
 
     throw new Error("newAlpha and newBeta must be finite and greater than zero");
   }
