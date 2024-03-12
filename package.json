@@ -1,6 +1,6 @@
 {
   "name": "ebisu-js",
-  "version": "2.1.2",
+  "version": "2.1.3",
   "main": "dist/ebisu.cjs",
   "module": "dist/ebisu.min.mjs",
   "types": "index.ts",

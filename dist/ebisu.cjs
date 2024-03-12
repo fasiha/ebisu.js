@@ -310,12 +310,12 @@ function predictRecall(prior, tnow, exact = false) {
   const ret = betalnRatio(alpha + dt, alpha, beta);
   return exact ? Math.exp(ret) : ret;
 }
-function updateRecall(prior, successes, total, tnow, q0, rebalance = true, tback, _useLog) {
+function updateRecall(prior, successes, total, tnow, q0, rebalance = true, tback, { useLog = false, tolerance = 1e-8 } = {}) {
   if (0 > successes || successes > total || total < 1) {
     throw new Error("0 <= successes and successes <= total and 1 <= total must be true");
   }
   if (total === 1) {
-    return _updateRecallSingle(prior, successes, tnow, q0, rebalance, tback, _useLog);
+    return _updateRecallSingle(prior, successes, tnow, q0, rebalance, tback, { useLog, tolerance });
   }
   if (!(successes === Math.trunc(successes) && total === Math.trunc(total))) {
     throw new Error("expecting integer successes and total");
@@ -344,9 +344,10 @@ function updateRecall(prior, successes, total, tnow, q0, rebalance = true, tback
     const target = Math.log(0.5);
     const rootfn = (et2) => unnormalizedLogMoment(1, et2) - logDenominator - target;
     const status = {};
-    const sol = fmin((x) => Math.abs(rootfn(x)), {}, status);
+    const sol = fmin((x) => Math.abs(rootfn(x)), { tolerance }, status);
     if (!("converged" in status) || !status.converged) {
-      throw new Error("failed to converge");
+      console.log(status);
+      throw new Error("failed to converge: binomial");
     }
     et = sol;
     tback = et * tnow;
@@ -374,7 +375,7 @@ function updateRecall(prior, successes, total, tnow, q0, rebalance = true, tback
   const [newAlpha, newBeta] = _meanVarToBeta(mean, variance);
   return [newAlpha, newBeta, tback];
 }
-function _updateRecallSingle(prior, result, tnow, q0, rebalance = true, tback, _useLog = false) {
+function _updateRecallSingle(prior, result, tnow, q0, rebalance = true, tback, { useLog = false, tolerance = 1e-8 } = {}) {
   if (!(0 <= result && result <= 1)) {
     throw new Error("expecting result between 0 and 1 inclusive");
   }
@@ -387,7 +388,7 @@ function _updateRecallSingle(prior, result, tnow, q0, rebalance = true, tback, _
   const dt = tnow / t;
   let [c, d] = z ? [q1 - q0, q0] : [q0 - q1, 1 - q0];
   const den = c * betafn(alpha + dt, beta) + d * (betafn(alpha, beta) || 0);
-  const logden = _useLog ? logsumexp([betalnUncached(alpha + dt, beta), betalnUncached(alpha, beta) || -Infinity], [c, d])[0] : 0;
+  const logden = useLog ? logsumexp([betalnUncached(alpha + dt, beta), betalnUncached(alpha, beta) || -Infinity], [c, d])[0] : 0;
   function moment(N, et2) {
     let num = c * betafn(alpha + dt + N * dt * et2, beta);
     if (d !== 0) {
@@ -406,15 +407,15 @@ function _updateRecallSingle(prior, result, tnow, q0, rebalance = true, tback, _
   if (rebalance) {
     const status = {};
     let sol;
-    if (_useLog) {
+    if (useLog) {
       const target = Math.log(0.5);
-      sol = fmin((et2) => Math.abs(logmoment(1, et2) - target), { lowerBound: 0 }, status);
+      sol = fmin((et2) => Math.abs(logmoment(1, et2) - target), { lowerBound: 0, tolerance }, status);
     } else {
       sol = fmin((et2) => Math.abs(moment(1, et2) - 0.5), { lowerBound: 0 }, status);
     }
     if (!("converged" in status) || !status.converged) {
-      if (!_useLog) {
-        return _updateRecallSingle(prior, result, tnow, q0, rebalance, tback, !_useLog);
+      if (!useLog) {
+        return _updateRecallSingle(prior, result, tnow, q0, rebalance, tback, { tolerance, useLog: !useLog });
       }
       console.error(status, { prior, result, tnow, q0, rebalance, tback });
       throw new Error("failed to converge");
@@ -427,13 +428,13 @@ function _updateRecallSingle(prior, result, tnow, q0, rebalance = true, tback, _
     tback = t;
     et = tback / tnow;
   }
-  const mean = _useLog ? Math.exp(logmoment(1, et)) : moment(1, et);
-  const secondMoment = _useLog ? Math.exp(logmoment(2, et)) : moment(2, et);
+  const mean = useLog ? Math.exp(logmoment(1, et)) : moment(1, et);
+  const secondMoment = useLog ? Math.exp(logmoment(2, et)) : moment(2, et);
   const variance = secondMoment - mean * mean;
   const [newAlpha, newBeta] = _meanVarToBeta(mean, variance);
   if (!(newAlpha > 0 && newBeta > 0 && isFinite(newAlpha) && isFinite(newBeta))) {
-    if (!_useLog) {
-      return _updateRecallSingle(prior, result, tnow, q0, rebalance, tback, !_useLog);
+    if (!useLog) {
+      return _updateRecallSingle(prior, result, tnow, q0, rebalance, tback, { tolerance, useLog: !useLog });
     }
     throw new Error("newAlpha and newBeta must be finite and greater than zero");
   }

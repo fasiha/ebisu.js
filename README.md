@@ -194,6 +194,10 @@ The version of this repo matches the Python reference’s version up to minor re
 
 This JavaScript port is version 2.1, which as of now (Feb 2023) is the latest Python Ebisu release adding soft-binary quizzes, `rescaleHalflife`, and changes to `updateRecall` so that it always rebalances.
 
+**2.1.3** Allow you to pass in `tolerance` into `updateRecall` for extremely unbalanced cases. Reducing this from the default 1e-8 to 1e-6 or 1e-4 might make `updateRecall` work when it otherwise didn't. The `tolerance` is passed into [`minimize-golden-section-1d`](https://github.com/scijs/minimize-golden-section-1d), which iterates until `Math.abs(previousAlphaBeta - nextAlphaBeta) < tolerance`. See https://github.com/fasiha/ebisu.js/issues/20.
+
+**2.1.2 and 2.1.1** Internal improvements to detect divergence of the Gamma function when elapsed time is significantly greater than halflife. In this situation, we retry the calculation in the log domain. See https://github.com/fasiha/ebisu.js/pull/24 and https://github.com/fasiha/ebisu.js/pull/21 respectively.
+
 ## Acknowledgements
 
 I use [gamma.js](https://github.com/substack/gamma.js), one of substack’s very lightweight and very useful modules.

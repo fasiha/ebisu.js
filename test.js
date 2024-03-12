@@ -48,15 +48,25 @@ test('compare', (t) => {
 // Fixes #20
 test("super-long t", (t) => {
   ebisu.customizeMath(substackEbisu);
-  t.ok(ebisu.updateRecall([4, 4, 0.0607], 1, 1, 3.56))
-  t.ok(ebisu.updateRecall([4, 4, 0.24], 1, 1, 14.39))
+  for (const total of [1, 2]) {
+    const allowedSuccesses = [0, 1, 2].filter(s => s <= total);
+    for (const successes of allowedSuccesses) {
+      t.ok(ebisu.updateRecall([4, 4, 0.0607], successes, total, 3.56))
+      t.ok(ebisu.updateRecall([4, 4, 0.24], successes, total, 14.39))
 
-  t.ok(ebisu.updateRecall([4, 4, 1], 1, 1, 1_000))
-  t.ok(ebisu.updateRecall([4, 4, 1], 1, 1, 10_000))
-  t.ok(ebisu.updateRecall([4, 4, 1], 1, 1, 100_000))
+      t.ok(ebisu.updateRecall([4, 4, 1], successes, total, 1_000))
+      t.ok(ebisu.updateRecall([4, 4, 1], successes, total, 10_000))
+      t.ok(ebisu.updateRecall([4, 4, 1], successes, total, 100_000))
 
-  t.ok(ebisu.updateRecall([2, 2, 10], 1, 1, 10000))
-  t.ok(ebisu.updateRecall([2, 2, 10], 1, 1, 1000))
-  t.ok(ebisu.updateRecall([2, 2, 10], 1, 1, 100))
+      t.ok(ebisu.updateRecall([2, 2, 10], successes, total, 10000))
+      t.ok(ebisu.updateRecall([2, 2, 10], successes, total, 1000))
+      t.ok(ebisu.updateRecall([2, 2, 10], successes, total, 100))
+    }
+  }
+
+  // even more extreme, see https://github.com/fasiha/ebisu.js/issues/20#issuecomment-1989133935
+  t.throws(() => ebisu.updateRecall([4, 4, 1e9], 1, 1, 1.5));
+  t.ok(ebisu.updateRecall([4, 4, 1e9], 1, 1, 1.5, undefined, undefined, undefined, {tolerance: 1e-6}));
+
   t.end();
 });
